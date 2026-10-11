@@ -838,9 +838,23 @@ const ACCOUNTS = [
    episodes: [{ title, url }]  (url = plays on YouTube)  or  [{ title, parts: [{ src, dur }] }]  (plays in GNS+; parts play back to back) } */
 const ROWS = [
   { id: "broadcasts", name: "Broadcasts", empty: "No broadcasts yet", emptyNote: "Broadcasts will show up here as soon as they're added." },
-  { id: "originals", name: "GNS+ Originals", empty: "No GNS+ Originals yet", emptyNote: "Original shows will show up here as soon as they're added." }
+  { id: "originals", name: "GNS+ Originals", empty: "No GNS+ Originals yet", emptyNote: "Original shows will show up here as soon as they're added." },
+  { id: "games", name: "Games", empty: "No games yet", emptyNote: "Games will show up here as soon as they're added." }
 ];
 const TITLES = [
+  {
+    id: "vp-day-game",
+    row: "games",
+    title: "The Day in the Life of Glenn Bourbon",
+    kind: "Game",
+    site: "vp-day-grown-up.html",
+    poster: "media/vp-day-game.jpg",
+    thumb: "media/vp-day-game-sm.jpg",
+    posterHasTitle: true,
+    added: "2026-10-11",
+    description: "Be Vice President Glenn Bourbon for a day. Work the VP's office, ride the motorcade home to the Naval Observatory, and solve the problems that come up. Grown-up edition, 18+.",
+    episodes: [{ title: "Play", desc: "100 problems, a new mix every day you play. Ends with a grown-up joke." }]
+  },
   {
     id: "vp-address",
     row: "broadcasts",
@@ -1238,7 +1252,7 @@ function listRow(item, i, rank, extra) {
     <button type="button" class="list-art" data-details="${esc(item.id)}" data-hover="${esc(item.id)}" data-hover-ep="${i}" aria-label="${esc(item.title)}, more info"><img src="${esc(item.thumb || item.poster)}" alt="" loading="lazy"></button>
     <div class="list-text">
       <h3>${esc(item.title)}${multi ? `<span class="list-ep">${esc(ep.title)}</span>` : ""}</h3>
-      <p class="list-meta">${esc(item.kind)}${ep.parts ? " \u00b7 " + fmtLen(epLen(ep)) : " \u00b7 on YouTube"}${extra ? " \u00b7 " + extra : ""}</p>
+      <p class="list-meta">${esc(item.kind)}${ep.parts ? " \u00b7 " + fmtLen(epLen(ep)) : item.site ? "" : " \u00b7 on YouTube"}${extra ? " \u00b7 " + extra : ""}</p>
       <p class="list-desc">${esc(ep.desc || item.description || "")}</p>
       <div class="list-actions">${playControl(item, i)}${likeBtn(item.id)}</div>
     </div>
@@ -2019,8 +2033,36 @@ function dropProfile(name) { writeProfiles(readProfiles().filter(p => !sameName(
 
 const logoIntro = $("logoIntro"), pf = $("profiles");
 let liTimer = 0, pfEditing = false, pfAdding = false;
+/* The GNS+ stinger: two low hits and a rising swell, made in the browser (plays when the browser allows sound) */
+function plusStinger() {
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+    const ac = new AC(); if (ac.state === "suspended") ac.resume().catch(() => {});
+    const now = ac.currentTime + 0.05, out = ac.createGain(); out.gain.value = 0.9; out.connect(ac.destination);
+    const thump = (t, f, len, vol) => {
+      const o = ac.createOscillator(), g = ac.createGain(); o.type = "sine";
+      o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 0.55, t + len);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.001, t + len);
+      o.connect(g); g.connect(out); o.start(t); o.stop(t + len + 0.05);
+      const n = ac.createBufferSource(), buf = ac.createBuffer(1, ac.sampleRate * 0.25, ac.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
+      const lp = ac.createBiquadFilter(), ng = ac.createGain(); lp.type = "lowpass"; lp.frequency.value = 900; ng.gain.value = vol * 0.5;
+      n.buffer = buf; n.connect(lp); lp.connect(ng); ng.connect(out); n.start(t);
+    };
+    thump(now, 70, 0.45, 0.8); thump(now + 0.32, 62, 1.6, 1);
+    const pad = ac.createGain(), lp2 = ac.createBiquadFilter(); lp2.type = "lowpass";
+    lp2.frequency.setValueAtTime(200, now + 0.32); lp2.frequency.exponentialRampToValueAtTime(2600, now + 1.6); lp2.frequency.exponentialRampToValueAtTime(400, now + 3.4);
+    pad.gain.setValueAtTime(0, now + 0.32); pad.gain.linearRampToValueAtTime(0.16, now + 1.3); pad.gain.exponentialRampToValueAtTime(0.001, now + 3.6);
+    lp2.connect(pad); pad.connect(out);
+    [55, 82.4, 110, 164.8, 220].forEach((f, k) => [-6, 6].forEach(det => {
+      const o = ac.createOscillator(); o.type = "sawtooth"; o.frequency.value = f; o.detune.value = det + k;
+      o.connect(lp2); o.start(now + 0.32); o.stop(now + 3.8);
+    }));
+  } catch (e) {}
+}
 function playLogoIntro(next) {
   const reduce = mqm("(prefers-reduced-motion: reduce)");
+  plusStinger();
   logoIntro.hidden = false; logoIntro.classList.remove("done");
   logoIntro.querySelectorAll(".li-bg, .li-logo, .li-l, .li-glow, .li-v, .li-h, .li-shine").forEach(n => { n.style.animation = "none"; void n.offsetWidth; n.style.animation = ""; });
   let finished = false;
