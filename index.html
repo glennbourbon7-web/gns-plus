@@ -453,12 +453,39 @@
 
   /* Section pages */
   .page-head { padding: 112px var(--gutter) 6px; text-align: center; }
-  .live-badge { display: inline-block; vertical-align: middle; font-family: var(--font-ui); font-size: 15px; font-weight: 800; letter-spacing: .08em; background: var(--crimson-hi); color: #fff; padding: 4px 10px; border-radius: 4px; transform: translateY(-4px); }
-  .live-wrap { padding: 18px var(--gutter) 64px; display: grid; gap: 12px; max-width: 1200px; margin: 0 auto; }
-  .live-frame { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: #000; border-radius: 6px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
-  .live-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  .live-note { margin: 0; color: var(--muted); font-size: 14px; }
-  .live-note a { color: var(--gold); }
+  .lv { position: relative; isolation: isolate; padding: 96px var(--gutter) 72px; overflow: hidden; }
+  .lv-glow { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(ellipse 60% 45% at 50% 38%, rgba(181,22,31,.35), transparent 70%), radial-gradient(ellipse 90% 60% at 50% 0%, rgba(58,6,11,.9), transparent 75%), linear-gradient(180deg, #1a0b0d 0%, var(--ground) 70%); }
+  .lv-head { max-width: 1100px; margin: 0 auto 22px; display: grid; gap: 8px; }
+  .lv-kicker { margin: 0; display: flex; align-items: center; gap: 12px; color: var(--muted); font-weight: 600; font-size: 14px; letter-spacing: .04em; }
+  .lv-pill { display: inline-flex; align-items: center; gap: 7px; background: var(--crimson-hi); color: #fff; font-weight: 800; font-size: 13px; letter-spacing: .12em; padding: 5px 10px 5px 9px; border-radius: 4px; box-shadow: 0 0 24px rgba(181,22,31,.55); }
+  .lv-pill i { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: lvBlink 1.2s ease-in-out infinite; }
+  .lv-pill-off { background: rgba(255,255,255,.14); box-shadow: none; }
+  @keyframes lvBlink { 50% { opacity: .25; } }
+  .lv-head h1 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(40px, 7vw, 84px); line-height: .95; letter-spacing: -.01em; text-shadow: 0 6px 30px rgba(0,0,0,.6); }
+  .lv-desc { margin: 0; max-width: 60ch; color: #d9cfcb; font-size: clamp(15px, 1.6vw, 18px); }
+  .lv-stage { max-width: 1100px; margin: 0 auto; }
+  .lv-frame { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: #000; border-radius: 8px; overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 0 60px rgba(181,22,31,.35), 0 30px 80px rgba(0,0,0,.7); }
+  .lv-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .lv-slate { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 6px; text-align: center;
+    background: radial-gradient(ellipse at 50% 40%, #2a1214, #0b0607 75%); }
+  .lv-slate::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 2px, transparent 2px 4px); pointer-events: none; }
+  .lv-logo { --logo-size: clamp(40px, 8vw, 84px); opacity: .9; }
+  .lv-off { margin: 8px 0 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(22px, 3.4vw, 38px); letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+  .lv-soon { margin: 0; color: var(--muted); }
+  .lv-note { max-width: 1100px; margin: 12px auto 0; color: var(--muted); font-size: 14px; }
+  .lv-note a { color: var(--gold); }
+  .lv-up { max-width: 1100px; margin: 40px auto 0; }
+  .lv-up h2 { margin: 0 0 14px; font-family: var(--font-display); font-weight: 800; font-size: 24px; }
+  .lv-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 12px; }
+  .lv-ev { display: flex; gap: 14px; align-items: flex-start; background: var(--raise); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; min-width: 0; }
+  .lv-ev div { min-width: 0; }
+  .lv-when { flex: none; font-weight: 800; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(216,182,108,.45); border-radius: 4px; padding: 4px 8px; }
+  .lv-ev h3 { margin: 0 0 3px; font-size: 16px; }
+  .lv-ev p { margin: 0; color: var(--muted); font-size: 14px; }
+  .lv-none { opacity: .75; }
+  @media (max-width: 760px) { .lv { padding-top: 132px; } }
   .nav-links [data-page="live"]::before, .nav-links [data-hub="live"]::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--crimson-hi); margin-right: 6px; vertical-align: middle; box-shadow: 0 0 0 0 rgba(181,22,31,.7); animation: livePulse 1.8s ease-out infinite; }
   @keyframes livePulse { 70% { box-shadow: 0 0 0 7px rgba(181,22,31,0); } 100% { box-shadow: 0 0 0 0 rgba(181,22,31,0); } }
   .page-head h1 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(34px, 5vw, 56px); }
@@ -1119,7 +1146,13 @@ let page = "home";
 /* ===== GNS Live =====
    Paste the GNS YouTube channel ID here (it starts with "UC"). The Live page then shows
    whatever that channel is streaming right now; when nobody is live, YouTube shows its offline card. */
-const LIVE = { channelId: "" };
+const LIVE = {
+  channelId: "",
+  title: "GNS Live",
+  description: "Breaking news, press conferences and special coverage from the GNS newsroom, as it happens.",
+  // Upcoming broadcasts shown under the player: { when: "Tonight 8 PM", title: "...", desc: "..." }
+  schedule: []
+};
 const PAGES = [{ id: "home", name: "Home" }, { id: "live", name: "Live" }, { id: "new", name: "New & Popular" }, ...ROWS.map(r => ({ id: r.id, name: r.name })), { id: "liked", name: "Liked" }];
 
 const INFO_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.2v.1" stroke-linecap="round"/></svg>';
@@ -1288,15 +1321,24 @@ function viewNew() {
 }
 function viewLive() {
   const id = (LIVE.channelId || "").trim();
-  if (!id) return `<div class="page-head"><h1>GNS Live</h1></div>
-    <div class="empty-state"><h2>Live streams are coming soon</h2><p>When GNS goes live, the broadcast will play right here.</p></div>`;
-  const src = `https://www.youtube.com/embed/live_stream?channel=${encodeURIComponent(id)}&autoplay=1&playsinline=1&rel=0&modestbranding=1`;
-  return `<div class="page-head"><h1><span class="live-badge">LIVE</span> GNS Live</h1></div>
-    <div class="live-wrap">
-      <div class="live-frame"><iframe src="${esc(src)}" title="GNS Live" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-      <p class="live-note">If nothing is on right now, the player says the stream is offline. Check back when GNS announces a broadcast.
-        <a href="https://www.youtube.com/channel/${encodeURIComponent(id)}/live" target="_blank" rel="noopener">Open on YouTube</a></p>
-    </div>`;
+  const src = id ? `https://www.youtube.com/embed/live_stream?channel=${encodeURIComponent(id)}&autoplay=1&playsinline=1&rel=0&modestbranding=1` : "";
+  const player = id
+    ? `<iframe src="${esc(src)}" title="${esc(LIVE.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`
+    : `<div class="lv-slate"><span class="logo lv-logo" aria-label="GNS+"><span class="logo-gns">GNS</span><span class="logo-plus">+</span></span><p class="lv-off">Off Air</p><p class="lv-soon">We'll be live soon. Stay tuned.</p></div>`;
+  const sched = (LIVE.schedule || []).length
+    ? LIVE.schedule.map(s => `<li class="lv-ev"><span class="lv-when">${esc(s.when)}</span><div><h3>${esc(s.title)}</h3>${s.desc ? `<p>${esc(s.desc)}</p>` : ""}</div></li>`).join("")
+    : `<li class="lv-ev lv-none"><span class="lv-when">TBA</span><div><h3>No broadcasts scheduled yet</h3><p>Upcoming GNS live coverage will be listed here.</p></div></li>`;
+  return `<section class="lv">
+    <div class="lv-glow" aria-hidden="true"></div>
+    <div class="lv-head">
+      <p class="lv-kicker">${id ? `<span class="lv-pill"><i></i>LIVE</span>` : `<span class="lv-pill lv-pill-off">OFF AIR</span>`}<span>Only on GNS+</span></p>
+      <h1>${esc(LIVE.title)}</h1>
+      <p class="lv-desc">${esc(LIVE.description)}</p>
+    </div>
+    <div class="lv-stage"><div class="lv-frame">${player}</div></div>
+    ${id ? `<p class="lv-note">If the player says the stream is offline, nobody is live right now. <a href="https://www.youtube.com/channel/${encodeURIComponent(id)}/live" target="_blank" rel="noopener">Open on YouTube</a></p>` : ""}
+    <div class="lv-up"><h2>Up next on GNS Live</h2><ul class="lv-list">${sched}</ul></div>
+  </section>`;
 }
 function viewLiked() {
   const liked = Object.entries(readLikes()).sort((a, b) => b[1] - a[1]).map(([id]) => TITLES.find(t => t.id === id)).filter(Boolean);
