@@ -453,6 +453,14 @@
 
   /* Section pages */
   .page-head { padding: 112px var(--gutter) 6px; text-align: center; }
+  .live-badge { display: inline-block; vertical-align: middle; font-family: var(--font-ui); font-size: 15px; font-weight: 800; letter-spacing: .08em; background: var(--crimson-hi); color: #fff; padding: 4px 10px; border-radius: 4px; transform: translateY(-4px); }
+  .live-wrap { padding: 18px var(--gutter) 64px; display: grid; gap: 12px; max-width: 1200px; margin: 0 auto; }
+  .live-frame { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: #000; border-radius: 6px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+  .live-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .live-note { margin: 0; color: var(--muted); font-size: 14px; }
+  .live-note a { color: var(--gold); }
+  .nav-links [data-page="live"]::before, .nav-links [data-hub="live"]::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--crimson-hi); margin-right: 6px; vertical-align: middle; box-shadow: 0 0 0 0 rgba(181,22,31,.7); animation: livePulse 1.8s ease-out infinite; }
+  @keyframes livePulse { 70% { box-shadow: 0 0 0 7px rgba(181,22,31,0); } 100% { box-shadow: 0 0 0 0 rgba(181,22,31,0); } }
   .page-head h1 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(34px, 5vw, 56px); }
   .grid {
     display: grid; gap: 14px 8px; padding: 18px var(--gutter) 56px;
@@ -1108,7 +1116,11 @@ function fadeIntoHome(name) {
 
 /* ===== App ===== */
 let page = "home";
-const PAGES = [{ id: "home", name: "Home" }, { id: "new", name: "New & Popular" }, ...ROWS.map(r => ({ id: r.id, name: r.name })), { id: "liked", name: "Liked" }];
+/* ===== GNS Live =====
+   Paste the GNS YouTube channel ID here (it starts with "UC"). The Live page then shows
+   whatever that channel is streaming right now; when nobody is live, YouTube shows its offline card. */
+const LIVE = { channelId: "" };
+const PAGES = [{ id: "home", name: "Home" }, { id: "live", name: "Live" }, { id: "new", name: "New & Popular" }, ...ROWS.map(r => ({ id: r.id, name: r.name })), { id: "liked", name: "Liked" }];
 
 const INFO_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.2v.1" stroke-linecap="round"/></svg>';
 const CLOSE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
@@ -1274,6 +1286,18 @@ function viewNew() {
         <ol class="list">${fresh.map(t => listRow(t, 0, 0, addedOn(t.added))).join("")}</ol></section>
     </div>`;
 }
+function viewLive() {
+  const id = (LIVE.channelId || "").trim();
+  if (!id) return `<div class="page-head"><h1>GNS Live</h1></div>
+    <div class="empty-state"><h2>Live streams are coming soon</h2><p>When GNS goes live, the broadcast will play right here.</p></div>`;
+  const src = `https://www.youtube.com/embed/live_stream?channel=${encodeURIComponent(id)}&autoplay=1&playsinline=1&rel=0&modestbranding=1`;
+  return `<div class="page-head"><h1><span class="live-badge">LIVE</span> GNS Live</h1></div>
+    <div class="live-wrap">
+      <div class="live-frame"><iframe src="${esc(src)}" title="GNS Live" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+      <p class="live-note">If nothing is on right now, the player says the stream is offline. Check back when GNS announces a broadcast.
+        <a href="https://www.youtube.com/channel/${encodeURIComponent(id)}/live" target="_blank" rel="noopener">Open on YouTube</a></p>
+    </div>`;
+}
 function viewLiked() {
   const liked = Object.entries(readLikes()).sort((a, b) => b[1] - a[1]).map(([id]) => TITLES.find(t => t.id === id)).filter(Boolean);
   return `<div class="page-head"><h1>Your liked media</h1></div>
@@ -1332,7 +1356,7 @@ function render() {
   $("navLinks").innerHTML = PAGES.map(p =>
     `<button type="button" data-page="${p.id}"${p.id === page ? ' aria-current="page"' : ""}>${esc(p.name)}</button>`).join("");
   hideHover(true);
-  $("pages").innerHTML = page === "home" ? viewHome() : page === "new" ? viewNew() : page === "liked" ? viewLiked() : page === "search" ? viewSearch() : viewRow(page);
+  $("pages").innerHTML = page === "home" ? viewHome() : page === "new" ? viewNew() : page === "liked" ? viewLiked() : page === "live" ? viewLive() : page === "search" ? viewSearch() : viewRow(page);
 }
 function go(p) {
   if (p !== "search" && searchQ) { searchQ = ""; $("searchInput").value = ""; closeSearch(); }
