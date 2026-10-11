@@ -131,6 +131,9 @@
 
   /* ===== Home Screen app: GNS+ logo animation ===== */
   @font-face { font-family: "GNS Logo"; src: url(data:font/woff;base64,d09GRgABAAAAAAW4ABAAAAAABjwAAgBCAAAAAAAAAAAAAAAAAAAAAAAAAABHREVGAAAFEAAAABYAAAAWABEABEdQT1MAAAUoAAAAIAAAACBEdkx1R1NVQgAABUgAAAApAAAAKrj6uPRPUy8yAAAB3AAAAEYAAABgZW5wb1NUQVQAAAV0AAAARAAAAEzq78wgY21hcAAAAjgAAAA7AAAATADXAMxnYXNwAAAFCAAAAAgAAAAIAAAAEGdseWYAAAKIAAABkAAAAZARkySIaGVhZAAAAWwAAAA2AAAANiSPG2JoaGVhAAABpAAAAB4AAAAkDW8FWmhtdHgAAAIkAAAAFAAAABQcvgMXbG9jYQAAAnwAAAAMAAAADADlAShtYXhwAAABxAAAABcAAAAgAAcAMm5hbWUAAAQYAAAA2gAAAXYkSThNcG9zdAAABPQAAAATAAAAIP8PAG5wcmVwAAACdAAAAAcAAAAHaAaMhQABAAAAAgBCLd7KK18PPPUAAwfQAAAAANjIdu4AAAAA5vFZmQBZ//AFZAXeAAAABgACAAAAAAAAeJxjYGRgYN/w9x6Q1GCIZPBjTWEAiqAAVgBoLAPZAAB4nGNgZGBgYGUwZADRDFASCQAABbcAOgB4nGNgYfnLtIeBlYGBVYRlAwMDwzQIDRRrY5rDgAoYkTnBIc4MDAcYtBmC2Tf8vcfAwCXCNAWmhiWK9RyQUmDgAQB3eAyoAAAHKADhBaUAWQYLAKcEkQBuBVUAyHicY2BgYGJgYGAGYhEgyQimWRgsgDQXAwdQjolBm8GdwY8h+P9/oBic/f/m/13/t/zfANYBBQBB0A2aALgB/4WwBI0AAAAAAAA+AGAApwDIAAEAWf/wBTQF3gAmAABTNBI2JDMyFhYXAyYmIyIGBhUUFhYzMjY3ERclNSERDgMjIiQCWXLKAQyab45uPQpAvpuCvWhWrIBQgCct/ukCDCZXdKh63f7BrALgyAEiu1kUGwv+9CEwdt2cmvaPFRMBVisQ4v03ASAoHrkBUwABAKcAAAVkBc4ADwAAcxEhARMjAxEhESEBAzMTEacBIgItwkUtAR7+yv3s31Q0Bc78kf59AfMC//oyA1QBuP3j/REAAAEAbv/wBEMF3gAwAABFIiYmJzceAjMyNjU0JiYnLgI1ND4CMzIWFwcmJiMiBgYVFBYWFx4DFRQGBgI4Z7iGHC8leZJKd3RAiW1dpGZRjrtrmsYnNS+ma0dpOjd4YFeUcD5+6xAeKhH4FisdSlI6T0w0LXysc2iXYS46Ge4iNyJBLzhPSS8pWWqIWIa/ZAABAMgBAASNBOkAEwAAQTU3ByM1MxcnNTMVBzczFSMnFxUCNAef1NSfB+wHk+HhkwcBAMy8BuUHvM3NvAflBrzMAHicfY89bsJAFIS/xVEAC1FwAosqFOSvSzpIRYGECBISnSHIJiHZyMaKfL2chRNwAMSwtkvQyutv3s7beQvUWeBhbprAv76CDV2pgmu02RdsoMWhZI8Gx5KbtMxtyT6+6fCG5ZechA0RMTsCnnnkiRfRTJW1/mPtifP8iUK5YlcJmGi3fEqtXO+AzJ1a1VPpO3fnThkprzxoRbrl7MhYcq8uy7eq767jS2c/Ss3lX6t6KbcvfyhnSu/KbJVnKh0pbyudMJeq3jpU6pYPRuJQtNE8UzeROk8bKjq5AAB4nGNgZgCD/zwMeQxYAAAifwF9AAABAAH//wAPAAEAAAAMAAAAAAAAAAIAAQABAAMAAQAAAAEAAAAKABwAHgABREZMVAAIAAQAAAAA//8AAAAAAAB4nGNgZGBg4GJQY9BgYHJx8wlh4MtJLMljkGBgAYoz/P/PAAcAbZcFXQAAAHicY2BkYGTgYGBiYGAQAZMqDEzl6RkljEBmZkliDiMnUJ6FQQIsx8DIzLSHgYFJDYjfAbnMQDkmRi4GsBQDAwDufwXD) format("woff"); font-weight: 700; font-display: block; }
+  .li-wait, .li-wait * { animation-play-state: paused !important; }
+  .li-tap { position: absolute; left: 0; right: 0; bottom: calc(14% + env(safe-area-inset-bottom, 0px)); margin: 0; text-align: center; color: #d8b66c; font-family: var(--font-ui); font-weight: 600; font-size: 17px; letter-spacing: .06em; text-transform: uppercase; animation: liTapPulse 1.6s ease-in-out infinite alternate !important; animation-play-state: running !important; }
+  @keyframes liTapPulse { from { opacity: .45; } to { opacity: 1; } }
   .li { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; overflow: hidden; background: #05070b; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .li-bg { position: absolute; inset: 0; background: linear-gradient(180deg, #6e7387 0%, #4b4f5d 30%, #2b2f38 62%, #0a0e14 100%); opacity: 0; animation: liBg .8s ease .05s forwards; }
   .li-logo { position: relative; display: flex; align-items: center; font-family: "GNS Logo", "Merriweather Sans", sans-serif; font-weight: 700;
@@ -635,6 +638,7 @@
     <div class="li-stack"><div class="li-glow"><span class="li-l">G</span><span class="li-l">N</span><span class="li-l">S</span></div><div class="li-word"><span class="li-l">G</span><span class="li-l">N</span><span class="li-l">S</span></div></div>
     <span class="li-plus"><i class="li-v"></i><i class="li-h"></i><i class="li-shine"></i></span>
   </div>
+  <p class="li-tap" id="liTap" hidden>Tap to start</p>
 </div>
 
 <!-- ===== Home Screen app: Choose Your Profile ===== -->
@@ -2034,10 +2038,20 @@ function dropProfile(name) { writeProfiles(readProfiles().filter(p => !sameName(
 const logoIntro = $("logoIntro"), pf = $("profiles");
 let liTimer = 0, pfEditing = false, pfAdding = false;
 /* The GNS+ stinger: two low hits and a rising swell, made in the browser (plays when the browser allows sound) */
+let plusAC = null;
+function plusAudio() {
+  try { if (!plusAC) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) plusAC = new AC(); } } catch (e) {}
+  return plusAC;
+}
+const soundReady = () => !!plusAC && plusAC.state === "running";
+function unlockSound() {   // phones only allow sound after a tap, so open the audio on the first touch anywhere
+  const ac = plusAudio(); if (!ac) return;
+  if (ac.state !== "running") { ac.resume().catch(() => {}); try { const b = ac.createBuffer(1, 1, 22050), s = ac.createBufferSource(); s.buffer = b; s.connect(ac.destination); s.start(0); } catch (e) {} }
+}
+["pointerdown", "touchend", "keydown"].forEach(ev => document.addEventListener(ev, unlockSound, { capture: true, passive: true }));
 function plusStinger() {
   try {
-    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
-    const ac = new AC(); if (ac.state === "suspended") ac.resume().catch(() => {});
+    const ac = plusAudio(); if (!ac) return;
     const now = ac.currentTime + 0.05, out = ac.createGain(); out.gain.value = 0.9; out.connect(ac.destination);
     const thump = (t, f, len, vol) => {
       const o = ac.createOscillator(), g = ac.createGain(); o.type = "sine";
@@ -2062,9 +2076,23 @@ function plusStinger() {
 }
 function playLogoIntro(next) {
   const reduce = mqm("(prefers-reduced-motion: reduce)");
-  plusStinger();
   logoIntro.hidden = false; logoIntro.classList.remove("done");
-  logoIntro.querySelectorAll(".li-bg, .li-logo, .li-l, .li-glow, .li-v, .li-h, .li-shine").forEach(n => { n.style.animation = "none"; void n.offsetWidth; n.style.animation = ""; });
+  const restart = () => logoIntro.querySelectorAll(".li-bg, .li-logo, .li-l, .li-glow, .li-v, .li-h, .li-shine").forEach(n => { n.style.animation = "none"; void n.offsetWidth; n.style.animation = ""; });
+  restart();
+  if (!soundReady()) {
+    // Sound is still blocked (no tap yet): hold the opening until a tap, then play it with the stinger
+    clearTimeout(liTimer);
+    logoIntro.classList.add("li-wait"); $("liTap").hidden = false;
+    logoIntro.onclick = () => {
+      unlockSound(); logoIntro.classList.remove("li-wait"); $("liTap").hidden = true;
+      restart(); setTimeout(() => { plusStinger(); runLogoIntro(next, reduce); }, 60);
+    };
+    return;
+  }
+  plusStinger();
+  runLogoIntro(next, reduce);
+}
+function runLogoIntro(next, reduce) {
   let finished = false;
   const finish = () => {
     if (finished) return; finished = true; clearTimeout(liTimer);
