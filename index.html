@@ -5,6 +5,11 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GNS+">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#120c0d">
 <meta property="og:title" content="GNS+">
 <meta property="og:description" content="Every GNS broadcast, debate and original, in one place.">
@@ -49,10 +54,9 @@
   .logo { display: inline-flex; align-items: flex-start; font-family: "Merriweather Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 700; line-height: 1; letter-spacing: 0.01em; text-decoration: none; color: var(--ink); background: none; border: 0; padding: 0; }
   .logo-gns { font-size: var(--logo-size, 30px); }
   .logo-plus {
-    font-size: calc(var(--logo-size, 30px) * 0.92); margin-left: 0.04em; margin-top: -0.06em;
-    color: var(--gold);
-    background: linear-gradient(180deg, #f3dc98 0%, var(--gold) 45%, var(--gold-deep) 100%);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    flex: none; align-self: center; width: calc(var(--logo-size, 30px) * 0.483); height: calc(var(--logo-size, 30px) * 0.483);
+    margin-left: calc(var(--logo-size, 30px) * 0.134); transform: translateY(calc(var(--logo-size, 30px) * -0.016));
+    font-size: 0; color: transparent; overflow: hidden; background: linear-gradient(45deg, #9f8a57 0%, #b9a66f 50%, #d2be85 100%); clip-path: polygon(38.5% 0, 61.5% 0, 61.5% 38.5%, 100% 38.5%, 100% 61.5%, 61.5% 61.5%, 61.5% 100%, 38.5% 100%, 38.5% 61.5%, 0 61.5%, 0 38.5%, 38.5% 38.5%);
   }
 
   /* ===== Welcome (before sign-in) ===== */
@@ -124,6 +128,91 @@
     .wl-curve { margin-top: -28px; height: 60px; }
     .wl-body { margin-top: -24px; }
   }
+
+  /* ===== Home Screen app: GNS+ logo animation ===== */
+  @font-face { font-family: "GNS Logo"; src: url(data:font/woff;base64,d09GRgABAAAAAAW4ABAAAAAABjwAAgBCAAAAAAAAAAAAAAAAAAAAAAAAAABHREVGAAAFEAAAABYAAAAWABEABEdQT1MAAAUoAAAAIAAAACBEdkx1R1NVQgAABUgAAAApAAAAKrj6uPRPUy8yAAAB3AAAAEYAAABgZW5wb1NUQVQAAAV0AAAARAAAAEzq78wgY21hcAAAAjgAAAA7AAAATADXAMxnYXNwAAAFCAAAAAgAAAAIAAAAEGdseWYAAAKIAAABkAAAAZARkySIaGVhZAAAAWwAAAA2AAAANiSPG2JoaGVhAAABpAAAAB4AAAAkDW8FWmhtdHgAAAIkAAAAFAAAABQcvgMXbG9jYQAAAnwAAAAMAAAADADlAShtYXhwAAABxAAAABcAAAAgAAcAMm5hbWUAAAQYAAAA2gAAAXYkSThNcG9zdAAABPQAAAATAAAAIP8PAG5wcmVwAAACdAAAAAcAAAAHaAaMhQABAAAAAgBCLd7KK18PPPUAAwfQAAAAANjIdu4AAAAA5vFZmQBZ//AFZAXeAAAABgACAAAAAAAAeJxjYGRgYN/w9x6Q1GCIZPBjTWEAiqAAVgBoLAPZAAB4nGNgZGBgYGUwZADRDFASCQAABbcAOgB4nGNgYfnLtIeBlYGBVYRlAwMDwzQIDRRrY5rDgAoYkTnBIc4MDAcYtBmC2Tf8vcfAwCXCNAWmhiWK9RyQUmDgAQB3eAyoAAAHKADhBaUAWQYLAKcEkQBuBVUAyHicY2BgYGJgYGAGYhEgyQimWRgsgDQXAwdQjolBm8GdwY8h+P9/oBic/f/m/13/t/zfANYBBQBB0A2aALgB/4WwBI0AAAAAAAA+AGAApwDIAAEAWf/wBTQF3gAmAABTNBI2JDMyFhYXAyYmIyIGBhUUFhYzMjY3ERclNSERDgMjIiQCWXLKAQyab45uPQpAvpuCvWhWrIBQgCct/ukCDCZXdKh63f7BrALgyAEiu1kUGwv+9CEwdt2cmvaPFRMBVisQ4v03ASAoHrkBUwABAKcAAAVkBc4ADwAAcxEhARMjAxEhESEBAzMTEacBIgItwkUtAR7+yv3s31Q0Bc78kf59AfMC//oyA1QBuP3j/REAAAEAbv/wBEMF3gAwAABFIiYmJzceAjMyNjU0JiYnLgI1ND4CMzIWFwcmJiMiBgYVFBYWFx4DFRQGBgI4Z7iGHC8leZJKd3RAiW1dpGZRjrtrmsYnNS+ma0dpOjd4YFeUcD5+6xAeKhH4FisdSlI6T0w0LXysc2iXYS46Ge4iNyJBLzhPSS8pWWqIWIa/ZAABAMgBAASNBOkAEwAAQTU3ByM1MxcnNTMVBzczFSMnFxUCNAef1NSfB+wHk+HhkwcBAMy8BuUHvM3NvAflBrzMAHicfY89bsJAFIS/xVEAC1FwAosqFOSvSzpIRYGECBISnSHIJiHZyMaKfL2chRNwAMSwtkvQyutv3s7beQvUWeBhbprAv76CDV2pgmu02RdsoMWhZI8Gx5KbtMxtyT6+6fCG5ZechA0RMTsCnnnkiRfRTJW1/mPtifP8iUK5YlcJmGi3fEqtXO+AzJ1a1VPpO3fnThkprzxoRbrl7MhYcq8uy7eq767jS2c/Ss3lX6t6KbcvfyhnSu/KbJVnKh0pbyudMJeq3jpU6pYPRuJQtNE8UzeROk8bKjq5AAB4nGNgZgCD/zwMeQxYAAAifwF9AAABAAH//wAPAAEAAAAMAAAAAAAAAAIAAQABAAMAAQAAAAEAAAAKABwAHgABREZMVAAIAAQAAAAA//8AAAAAAAB4nGNgZGBg4GJQY9BgYHJx8wlh4MtJLMljkGBgAYoz/P/PAAcAbZcFXQAAAHicY2BkYGTgYGBiYGAQAZMqDEzl6RkljEBmZkliDiMnUJ6FQQIsx8DIzLSHgYFJDYjfAbnMQDkmRi4GsBQDAwDufwXD) format("woff"); font-weight: 700; font-display: block; }
+  .li { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; overflow: hidden; background: #05070b; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .li-bg { position: absolute; inset: 0; background: linear-gradient(180deg, #6e7387 0%, #4b4f5d 30%, #2b2f38 62%, #0a0e14 100%); opacity: 0; animation: liBg .8s ease .05s forwards; }
+  .li-logo { position: relative; display: flex; align-items: center; font-family: "GNS Logo", "Merriweather Sans", sans-serif; font-weight: 700;
+    font-size: min(21vw, 22vh); line-height: 1; color: #fff; animation: liOut .7s cubic-bezier(.55,0,.8,.2) 2.3s forwards; }
+  .li-stack { display: grid; }
+  .li-stack > * { grid-area: 1 / 1; display: flex; }
+  .li-glow { filter: blur(.07em); opacity: 0; animation: liGlow 1.3s ease 1s forwards; }
+  .li-l { display: inline-block; opacity: 0; transform: translateY(.14em) scale(.9); filter: blur(.06em); animation: liIn .8s cubic-bezier(.16,.84,.24,1) forwards; }
+  .li-l:nth-child(1) { animation-delay: .3s; } .li-l:nth-child(2) { animation-delay: .42s; } .li-l:nth-child(3) { animation-delay: .54s; }
+  .li-glow .li-l { filter: none; }
+  .li-plus { position: relative; flex: none; width: .483em; height: .483em; margin-left: .134em; transform: translateY(-.016em); clip-path: polygon(38.5% 0, 61.5% 0, 61.5% 38.5%, 100% 38.5%, 100% 61.5%, 61.5% 61.5%, 61.5% 100%, 38.5% 100%, 38.5% 61.5%, 0 61.5%, 0 38.5%, 38.5% 38.5%); }
+  .li-v, .li-h { position: absolute; background: linear-gradient(45deg, #9f8a57 0%, #b9a66f 50%, #d2be85 100%); }
+  .li-v { left: 38.5%; width: 23%; top: 0; bottom: 0; transform: scaleY(0); animation: liBar .45s cubic-bezier(.2,.8,.2,1) 1s forwards; }
+  .li-h { top: 38.5%; height: 23%; left: 0; right: 0; transform: scaleX(0); animation: liBar .45s cubic-bezier(.2,.8,.2,1) 1.15s forwards; }
+  .li-shine { position: absolute; inset: -30%; background: linear-gradient(115deg, transparent 38%, rgba(255,255,255,.9) 50%, transparent 62%); transform: translateX(-130%); animation: liShine .75s ease-in-out 1.7s forwards; }
+  @keyframes liBg { to { opacity: 1; } }
+  @keyframes liIn { to { opacity: 1; transform: none; filter: blur(0); } }
+  @keyframes liGlow { 0% { opacity: 0; } 55% { opacity: 1; } 100% { opacity: .8; } }
+  @keyframes liBar { to { transform: none; } }
+  @keyframes liShine { to { transform: translateX(130%); } }
+  @keyframes liOut { to { opacity: 0; transform: scale(1.14); filter: blur(4px); } }
+  .li.done { animation: liFade .55s ease forwards; pointer-events: none; }
+  @keyframes liFade { to { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .li-l, .li-glow, .li-v, .li-h, .li-bg { animation-duration: .01s !important; animation-delay: 0s !important; }
+    .li-shine { display: none; } .li-logo { animation: liFade .4s ease 1s forwards; }
+  }
+
+  /* ===== Home Screen app: Choose Your Profile ===== */
+  .pf { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; background: #15181d; color: var(--ink); }
+  .pf.entering { animation: pfIn .6s ease both; }
+  .pf.leaving { animation: pfOut .42s ease forwards; pointer-events: none; }
+  @keyframes pfIn { from { opacity: 0; } }
+  @keyframes pfOut { to { opacity: 0; transform: scale(1.04); } }
+  .pf-art { position: relative; flex: 1 0 auto; min-height: clamp(240px, 46vh, 560px); display: grid; place-items: center; overflow: hidden; isolation: isolate;
+    padding-top: env(safe-area-inset-top, 0px); }
+  .pf-blur { position: absolute; inset: -60px; z-index: -1; background: center / cover no-repeat; filter: blur(34px) brightness(.38) saturate(1.1); }
+  .pf-art img { display: block; height: min(58vh, 56.25vw); width: auto; max-width: 100%; aspect-ratio: 16 / 9; object-fit: cover;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%); }
+  @media (max-width: 700px) { .pf-art img { -webkit-mask-image: none; mask-image: none; } }
+  .pf-art::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(21,24,29,.6) 0%, rgba(21,24,29,0) 20%, rgba(21,24,29,0) 60%, #15181d 100%); }
+  .pf-promo { position: relative; z-index: 1; margin: 6px 0 0; padding: 0 20px; text-align: center; }
+  .pf-kicker { margin: 0 0 4px; color: var(--gold); font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .pf-title { margin: 0; font-size: clamp(18px, 2.4vw, 24px); font-weight: 700; text-wrap: balance; }
+  .pf-panel { position: relative; margin-top: 28px; padding: 22px 16px calc(env(safe-area-inset-bottom, 0px) + 34px); text-align: center; }
+  .pf-panel::before { content: ""; position: absolute; left: -30%; right: -30%; top: 96px; bottom: 0; background: #262a31; border-radius: 50% 50% 0 0 / 70px 70px 0 0; }
+  .pf-panel > * { position: relative; }
+  .pf-head { margin: 0 0 18px; font-size: 17px; font-weight: 500; color: #c9c3c4; }
+  .pf-grid { display: grid; grid-template-columns: repeat(auto-fit, 112px); justify-content: center; gap: 20px 34px; max-width: 760px; margin: 0 auto; }
+  .pf-cell { display: grid; justify-items: center; align-content: start; gap: 4px; }
+  .pf-item { display: grid; justify-items: center; gap: 10px; background: none; border: 0; padding: 0; color: var(--ink); font-size: 16px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .pf-face { position: relative; width: 112px; height: 112px; border-radius: 14px; overflow: hidden; display: grid; place-items: center; background: #3a3f47; color: #ece8e8;
+    transition: transform .2s ease, box-shadow .2s ease; }
+  .pf-pic, .pf-pic img, .pf-pic svg { width: 100%; height: 100%; display: block; object-fit: cover; }
+  .pf-pic { display: grid; place-items: center; font-size: 46px; font-weight: 700; background: linear-gradient(140deg, var(--crimson-hi), var(--crimson-deep)); color: var(--gold); }
+  .pf-item:hover .pf-face, .pf-item:focus-visible .pf-face { transform: scale(1.05); box-shadow: 0 0 0 3px var(--ink); }
+  .pf-item:focus-visible { outline: none; }
+  .pf-name { max-width: 132px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pf-tool .pf-face svg { width: 46px; height: 46px; }
+  .pf-badge { position: absolute; inset: 0; display: none; place-items: center; background: rgba(0,0,0,.5); }
+  .pf-badge svg { width: 40px; height: 40px; color: #fff; }
+  .pf.editing .pf-badge { display: grid; }
+  .pf-remove { display: none; background: none; border: 0; color: #ff9f9f; font-size: 14px; font-weight: 600; padding: 4px 8px; cursor: pointer; }
+  .pf.editing .pf-remove { display: inline-block; }
+  @media (min-width: 900px) {
+    .pf-grid { grid-template-columns: repeat(auto-fit, 148px); gap: 24px 40px; }
+    .pf-face { width: 148px; height: 148px; } .pf-name { font-size: 18px; max-width: 170px; } .pf-head { font-size: 20px; }
+    .pf-panel::before { top: 118px; }
+  }
+  .pf-back { justify-self: center; background: none; border: 0; color: var(--muted); font-size: 15px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; padding: 6px; cursor: pointer; }
+  .is-app .remember { display: none; }
+  #app.app-leaving { animation: signinOut .3s ease forwards; }
+
+  /* Welcome page: get the app */
+  .wl-app { display: grid; grid-template-columns: auto 1fr auto; gap: 18px 22px; align-items: center; margin: 0 var(--gutter); padding: 22px 24px; border-radius: 14px;
+    background: linear-gradient(120deg, #2a2e37 0%, #1b1d23 60%, #241a1d 100%); }
+  .wl-app img { width: 76px; height: 76px; border-radius: 18px; box-shadow: 0 6px 18px rgba(0,0,0,.45); }
+  .wl-app h2 { margin: 0 0 6px; font-size: clamp(20px, 2.2vw, 26px); font-weight: 700; }
+  .wl-app p { margin: 0; color: #c9bcb9; font-size: 15px; line-height: 1.45; }
+  .wl-app .wl-go { height: 48px; font-size: 17px; }
+  @media (max-width: 640px) { .wl-app { grid-template-columns: auto 1fr; } .wl-app .wl-go { grid-column: 1 / -1; width: 100%; } .wl-app img { width: 60px; height: 60px; border-radius: 14px; } }
 
   /* ===== Sign-in ===== */
   .signin {
@@ -226,7 +315,7 @@
   }
   .avatar img, .avatar svg { width: 100%; height: 100%; object-fit: cover; display: block; }
   /* Profile picture picker */
-  .picker { position: fixed; inset: 0; z-index: 35; background: rgba(0, 0, 0, 0.74); display: flex; overflow-y: auto; overscroll-behavior: contain;
+  .picker { position: fixed; inset: 0; z-index: 55; background: rgba(0, 0, 0, 0.74); display: flex; overflow-y: auto; overscroll-behavior: contain;
     padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px calc(env(safe-area-inset-bottom, 0px) + 16px); }
   .picker-card { position: relative; margin: auto; width: min(600px, 100%); background: var(--raise); border-radius: 8px; padding: 26px clamp(18px, 4vw, 32px) 30px; }
   .picker-card h2 { margin: 0 48px 6px 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(21px, 3vw, 26px); line-height: 1.2; }
@@ -539,6 +628,25 @@
   }
 </style>
 
+<!-- ===== Home Screen app: logo animation ===== -->
+<div id="logoIntro" class="li" role="img" aria-label="GNS+" hidden>
+  <div class="li-bg"></div>
+  <div class="li-logo" aria-hidden="true">
+    <div class="li-stack"><div class="li-glow"><span class="li-l">G</span><span class="li-l">N</span><span class="li-l">S</span></div><div class="li-word"><span class="li-l">G</span><span class="li-l">N</span><span class="li-l">S</span></div></div>
+    <span class="li-plus"><i class="li-v"></i><i class="li-h"></i><i class="li-shine"></i></span>
+  </div>
+</div>
+
+<!-- ===== Home Screen app: Choose Your Profile ===== -->
+<div id="profiles" class="pf" hidden>
+  <div class="pf-art"><div class="pf-blur" id="pfBlur"></div><img id="pfPoster" alt=""></div>
+  <div class="pf-promo"><p class="pf-kicker" id="pfKicker"></p><p class="pf-title" id="pfTitle"></p></div>
+  <section class="pf-panel" aria-labelledby="pfHead">
+    <h1 class="pf-head" id="pfHead">Choose Your Profile</h1>
+    <div class="pf-grid" id="pfGrid"></div>
+  </section>
+</div>
+
 <!-- ===== Welcome (main GNS+ page, before sign-in) ===== -->
 <div id="welcome" class="welcome" hidden>
   <section class="wl-hero" aria-labelledby="wlTitle">
@@ -575,6 +683,13 @@
           <article class="wl-card"><h3>GNS+ Originals</h3><p>Documentaries like Breaking Through, made by GNS and only on GNS+.</p><svg viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 4l5.9 12.6 13.6 1.6-10 9.4 2.6 13.5L24 34.3 11.9 41.1l2.6-13.5-10-9.4 13.6-1.6z"/></svg></article>
           <article class="wl-card"><h3>Watch anywhere</h3><p>Phone, tablet or computer. GNS+ remembers where you stopped on each device.</p><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="9" width="30" height="21" rx="3"/><path d="M12 38h14M19 30v8"/><rect x="31" y="18" width="13" height="23" rx="3"/><path d="M36 37h3"/></svg></article>
           <article class="wl-card"><h3>Make it yours</h3><p>Like the shows you love, find them again in one place, and pick a profile picture or upload your own.</p><svg viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 42S6 31 3.5 20.5C1.8 13.4 6.6 6.5 13.6 6.5c4.3 0 7.9 2.4 10.4 6.1 2.5-3.7 6.1-6.1 10.4-6.1 7 0 11.8 6.9 10.1 14C42 31 24 42 24 42z"/></svg></article>
+      </div>
+    </section>
+    <section class="wl-sec" aria-labelledby="wlAppH">
+      <div class="wl-app">
+        <img src="apple-touch-icon.png" alt="">
+        <div><h2 id="wlAppH">Get the GNS+ app</h2><p>Put GNS+ on your Home Screen. It opens full screen with its own icon, straight to your profile.</p></div>
+        <button type="button" class="btn-red wl-go" data-install-app>Add to Home Screen</button>
       </div>
     </section>
     <section class="wl-sec" aria-labelledby="wlFaqH">
@@ -616,6 +731,7 @@
       <p id="signinError" class="error" role="alert" hidden></p>
       <button type="submit" class="btn-red" id="signinBtn">Sign In</button>
       <label class="remember" for="remember"><input type="checkbox" id="remember" checked> Remember me</label>
+      <button type="button" class="pf-back" id="pfBack" hidden>Back to profiles</button>
       <p class="invite"><strong>GNS+ is invite-only.</strong> Accounts are set up by the GNS team. If you need one, ask them for your username and password.</p>
     </form>
   </main>
@@ -640,6 +756,8 @@
       <div class="menu" id="profileMenu" hidden>
         <div class="menu-who">Signed in as <strong id="whoName"></strong></div>
         <button type="button" id="avatarPickBtn">Change profile picture</button>
+        <button type="button" id="pfSwitchBtn" hidden>Switch profile</button>
+        <button type="button" id="getAppBtn" data-install-app>Get the GNS+ app</button>
         <button type="button" id="signOutBtn">Sign out of GNS+</button>
       </div>
     </div>
@@ -843,7 +961,7 @@ const AVATARS = [
   {"id": "flag", "name": "Old Glory", "svg": "<svg viewBox=\"0 0 64 64\" aria-hidden=\"true\"><rect width=\"64\" height=\"64\" fill=\"#b3192a\"/><rect y=\"9.14\" width=\"64\" height=\"9.14\" fill=\"#fff\"/><rect y=\"27.43\" width=\"64\" height=\"9.14\" fill=\"#fff\"/><rect y=\"45.71\" width=\"64\" height=\"9.14\" fill=\"#fff\"/><rect width=\"30\" height=\"36.57\" fill=\"#17264a\"/><circle cx=\"5\" cy=\"5.5\" r=\"1.9\" fill=\"#fff\"/><circle cx=\"14\" cy=\"5.5\" r=\"1.9\" fill=\"#fff\"/><circle cx=\"23\" cy=\"5.5\" r=\"1.9\" fill=\"#fff\"/><circle cx=\"5\" cy=\"15.0\" r=\"1.9\" fill=\"#fff\"/><circle cx=\"14\" cy=\"15.0\" r=\"1.9\" fill=\"#fff\"/><circle cx=\"23\" cy=\"15.0\" r=\"1.9\" fill=\"#fff\"/><circle cx=\"5\" cy=\"24.5\" r=\"1.9\" fill=\"#fff\"/><circle cx=\"14\" cy=\"24.5\" r=\"1.9\" fill=\"#fff\"/><circle cx=\"23\" cy=\"24.5\" r=\"1.9\" fill=\"#fff\"/></svg>"},
   {"id": "tv", "name": "Broadcast", "svg": "<svg viewBox=\"0 0 64 64\" aria-hidden=\"true\"><rect width=\"64\" height=\"64\" fill=\"#43245e\"/><path d=\"M24 12l8 9 8-9\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"10.5\" y=\"21.5\" width=\"43\" height=\"29\" rx=\"5\" fill=\"none\" stroke=\"#fff\" stroke-width=\"3\"/><rect x=\"16\" y=\"27\" width=\"25\" height=\"18\" rx=\"2.5\" fill=\"#fff\"/><circle cx=\"47\" cy=\"30.5\" r=\"2.3\" fill=\"#fff\"/><circle cx=\"47\" cy=\"38.5\" r=\"2.3\" fill=\"#fff\"/></svg>"},
   {"id": "podium", "name": "Podium", "svg": "<svg viewBox=\"0 0 64 64\" aria-hidden=\"true\"><rect width=\"64\" height=\"64\" fill=\"#1d4a85\"/><path d=\"M27.5 23l-2.5-10M36.5 23l2.5-10\" stroke=\"#fff\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M13 23h38l-4 7H17z\" fill=\"#fff\"/><path d=\"M19 32h26l-3.5 21h-19z\" fill=\"#fff\"/><circle cx=\"32\" cy=\"42\" r=\"5\" fill=\"#1d4a85\"/></svg>"},
-  {"id": "gnsplus", "name": "GNS+", "svg": "<svg viewBox=\"0 0 64 64\" aria-hidden=\"true\"><rect width=\"64\" height=\"64\" fill=\"#0d0909\"/><text x=\"31\" y=\"38.5\" text-anchor=\"middle\" font-family=\"Merriweather Sans, Segoe UI, Arial, sans-serif\" font-weight=\"700\" font-size=\"17\" fill=\"#f4ece9\">GNS<tspan fill=\"#d8b66c\" font-size=\"15\" dy=\"-3.5\" dx=\"0.6\">+</tspan></text></svg>"}
+  {"id": "gnsplus", "name": "GNS+", "svg": "<svg viewBox=\"0 0 64 64\" aria-hidden=\"true\"><rect width=\"64\" height=\"64\" fill=\"#0d0909\"/><text x=\"26.6\" y=\"38.5\" text-anchor=\"middle\" font-family=\"Merriweather Sans, Segoe UI, Arial, sans-serif\" font-weight=\"700\" font-size=\"17\" fill=\"#f4ece9\">GNS</text><path d=\"M50.9 28.1h1.9v8.2h-1.9zM47.75 31.25h8.2v1.9h-8.2z\" fill=\"#bfa86f\"/></svg>"}
 ];
 
 /* Use the MP4 where the browser plays it, otherwise the WebM copy when there is one */
@@ -945,8 +1063,9 @@ form.addEventListener("submit", async e => {
   signinBtn.disabled = false;
   if (ACCOUNTS.includes(hash)) {
     failures = 0; showError("");
-    writeSession({ name, hash }, $("remember").checked);
-    fadeIntoHome(name);
+    writeSession({ name, hash }, APP ? true : $("remember").checked);
+    saveProfile(name, hash);
+    if (APP) appSignedIn(name); else fadeIntoHome(name);
   } else {
     failures++;
     $("password").value = "";
@@ -1206,8 +1325,8 @@ function paintFace(el, id) {
   const a = id === "photo" && readPhoto() ? { img: photoUrl(readPhoto()) } : (AVATARS.find(x => x.id === id) || AVATARS[0]);
   el.textContent = "";
   if (a.svg) { el.innerHTML = a.svg; return; }
-  const pic = new Image(); pic.alt = "";
-  pic.onerror = () => { el.textContent = (currentName || "G").charAt(0).toUpperCase(); };   // fall back to the initial
+  const pic = new Image(), initial = (currentName || "G").charAt(0).toUpperCase(); pic.alt = "";
+  pic.onerror = () => { el.textContent = initial; };   // fall back to the initial
   pic.src = a.img; el.appendChild(pic);
 }
 function showApp(name) {
@@ -1391,9 +1510,11 @@ function setMenu(open) { menu.hidden = !open; avatarBtn.setAttribute("aria-expan
 avatarBtn.addEventListener("click", e => { e.stopPropagation(); setMenu(menu.hidden); });
 document.addEventListener("click", e => { if (!menu.hidden && !e.target.closest(".profile")) setMenu(false); });
 $("signOutBtn").addEventListener("click", () => {
+  const who = currentName;
   clearSession(); setMenu(false); closePlayer(); closeDetails();
   $("app").hidden = true;
   form.reset(); $("remember").checked = true; showError("");
+  if (APP) { dropProfile(who); if (readProfiles().length) showProfiles(); else showSigninApp(false); return; }
   if (!showWelcome()) { window.scrollTo(0, 0); $("username").focus(); }
 });
 
@@ -1763,6 +1884,7 @@ function closeAvatarPicker() {
   if (avPicker.hidden) return;
   avPicker.hidden = true;
   document.body.style.overflow = player.hidden && details.hidden ? "" : "hidden";
+  if (!$("profiles").hidden) { const s = readSession(); currentName = s && s.name ? s.name : ""; renderProfiles(); return; }
   avatarBtn.focus();
 }
 $("avatarPickBtn").addEventListener("click", e => { e.stopPropagation(); openAvatarPicker(); });
@@ -1772,9 +1894,9 @@ avPicker.addEventListener("click", e => {
   const b = e.target.closest("[data-av]");
   if (!b) return;
   writeAvatar(b.dataset.av);
-  paintFace($("avatar"), readAvatar());
+  if (!$("app").hidden) paintFace($("avatar"), readAvatar());
   closeAvatarPicker();
-  const y = window.scrollY; render(); window.scrollTo(0, y);   // links to the other GNS+ sites now carry the new picture
+  if (!$("app").hidden) { const y = window.scrollY; render(); window.scrollTo(0, y); }   // links to the other GNS+ sites now carry the new picture
 });
 
 /* Shrink a chosen photo to a 96px square (centre crop), small enough to travel in GNS+ links */
@@ -1809,9 +1931,9 @@ $("avFile").addEventListener("change", async () => {
   if (!validPhoto(b)) { $("avMsg").textContent = "That photo couldn't be opened. Try a JPG or PNG."; return; }
   if (!writePhoto(b)) { $("avMsg").textContent = "This browser couldn't save the photo. Try again, or pick one of the pictures."; return; }
   writeAvatar("photo");
-  paintFace($("avatar"), readAvatar());
+  if (!$("app").hidden) paintFace($("avatar"), readAvatar());
   closeAvatarPicker();
-  const y = window.scrollY; render(); window.scrollTo(0, y);
+  if (!$("app").hidden) { const y = window.scrollY; render(); window.scrollTo(0, y); }
 });
 
 /* ===== Welcome page (main GNS+ page, signed out) ===== */
@@ -1842,6 +1964,7 @@ function renderWelcome() {
   $("wlFaq").innerHTML = faq.map(([q, a]) => `<details><summary>${esc(q)}${PLUS_ICON}</summary><div class="wl-a">${a.map(p => `<p>${esc(p)}</p>`).join("")}</div></details>`).join("");
 }
 function showWelcome() {
+  if (APP) { showSigninApp(false); return false; }
   if (!isHub) { $("signin").hidden = false; return false; }
   renderWelcome();
   $("signin").hidden = true; welcome.hidden = false;
@@ -1881,10 +2004,126 @@ document.addEventListener("click", e => {
   if (tile) { wlModal._from = tile; openWlModal(tile.dataset.wl); return; }
   if (e.target === wlModal || e.target.closest("[data-wl-close]")) closeWlModal();
 });
-$("signinLogo").addEventListener("click", () => { if (isHub) { showError(""); showWelcome(); } });
+$("signinLogo").addEventListener("click", () => { if (APP) { if (readProfiles().length) showProfiles(); return; } if (isHub) { showError(""); showWelcome(); } });
+
+/* ===== Home Screen app: sign in -> GNS+ logo animation -> Choose Your Profile -> fade into GNS+ ===== */
+const mqm = q => !!(window.matchMedia && window.matchMedia(q).matches);
+const APP = mqm("(display-mode: standalone)") || mqm("(display-mode: fullscreen)") || navigator.standalone === true || /[?&]app=1(&|$)/.test(location.search);
+if (APP) { document.documentElement.classList.add("is-app"); window.GNS_INSTALL_PAUSED = true; }
+const PROFILES_KEY = "gnsplus-profiles";
+function readProfiles() { try { return (JSON.parse(localStorage.getItem(PROFILES_KEY)) || []).filter(p => p && p.name && ACCOUNTS.includes(p.hash)); } catch (e) { return []; } }
+function writeProfiles(list) { try { localStorage.setItem(PROFILES_KEY, JSON.stringify(list.slice(0, 12))); } catch (e) {} }
+const sameName = (a, b) => (a || "").trim().toLowerCase() === (b || "").trim().toLowerCase();
+function saveProfile(name, hash) { writeProfiles([{ name, hash, at: Date.now() }].concat(readProfiles().filter(p => !sameName(p.name, name)))); }
+function dropProfile(name) { writeProfiles(readProfiles().filter(p => !sameName(p.name, name))); }
+
+const logoIntro = $("logoIntro"), pf = $("profiles");
+let liTimer = 0, pfEditing = false, pfAdding = false;
+function playLogoIntro(next) {
+  const reduce = mqm("(prefers-reduced-motion: reduce)");
+  logoIntro.hidden = false; logoIntro.classList.remove("done");
+  logoIntro.querySelectorAll(".li-bg, .li-logo, .li-l, .li-glow, .li-v, .li-h, .li-shine").forEach(n => { n.style.animation = "none"; void n.offsetWidth; n.style.animation = ""; });
+  let finished = false;
+  const finish = () => {
+    if (finished) return; finished = true; clearTimeout(liTimer);
+    next();
+    logoIntro.classList.add("done");
+    setTimeout(() => { logoIntro.hidden = true; logoIntro.classList.remove("done"); }, 560);
+  };
+  logoIntro.onclick = finish;   // a tap skips it
+  liTimer = setTimeout(finish, reduce ? 1100 : 2950);
+}
+
+const PENCIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l4.2-1 10.5-10.5a2.1 2.1 0 0 0-3-3L5.2 16 4 20z"/><path d="M14.5 6.5l3 3"/></svg>';
+const PLUS_BIG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+function faceFor(el, name) { const keep = currentName; currentName = name; paintFace(el, readAvatar()); currentName = keep; }
+function renderProfiles() {
+  const list = readProfiles();
+  $("pfHead").textContent = pfEditing ? "Manage Profiles" : "Choose Your Profile";
+  pf.classList.toggle("editing", pfEditing);
+  $("pfGrid").innerHTML = list.map((p, i) => `<div class="pf-cell">
+      <button type="button" class="pf-item" data-pf="${i}" aria-label="${pfEditing ? "Change the picture for " : ""}${esc(p.name)}">
+        <span class="pf-face"><span class="pf-pic" data-face-for="${i}"></span><span class="pf-badge">${PENCIL}</span></span>
+        <span class="pf-name">${esc(p.name)}</span></button>
+      <button type="button" class="pf-remove" data-pf-remove="${i}">Remove</button></div>`).join("")
+    + `<div class="pf-cell"><button type="button" class="pf-item pf-tool" data-pf-add><span class="pf-face">${PLUS_BIG}</span><span class="pf-name">Add</span></button></div>`
+    + `<div class="pf-cell"><button type="button" class="pf-item pf-tool" data-pf-edit aria-pressed="${pfEditing}"><span class="pf-face">${pfEditing ? CHECK_ICON : PENCIL}</span><span class="pf-name">${pfEditing ? "Done" : "Edit"}</span></button></div>`;
+  $("pfGrid").querySelectorAll("[data-face-for]").forEach(el => faceFor(el, list[+el.dataset.faceFor].name));
+}
+function promoTitle() { return TITLES.slice().sort((a, b) => (b.added || "").localeCompare(a.added || ""))[0]; }
+function showProfiles() {
+  if (!readProfiles().length) { showSigninApp(false); return; }
+  pfEditing = false; pfAdding = false;
+  renderProfiles();
+  const t = promoTitle();
+  if (t) { $("pfPoster").src = t.poster; $("pfBlur").style.backgroundImage = `url("${t.poster}")`; $("pfKicker").textContent = "New on GNS+"; $("pfTitle").textContent = t.title; }
+  $("signin").hidden = true; welcome.hidden = true; $("app").hidden = true; setMenu(false);
+  pf.hidden = false; pf.classList.remove("leaving", "entering"); void pf.offsetWidth; pf.classList.add("entering");
+  pf.scrollTop = 0;
+}
+function showSigninApp(adding) {
+  pf.hidden = true; welcome.hidden = true; $("app").hidden = true;
+  $("signin").hidden = false; showError("");
+  form.reset(); $("remember").checked = true;
+  pfAdding = !!adding;
+  $("pfBack").hidden = !(adding && readProfiles().length);
+  window.scrollTo(0, 0); $("username").focus();
+}
+function appSignedIn(name) {
+  currentName = name;
+  const si = $("signin");
+  if (pfAdding) { pfAdding = false; showProfiles(); return; }
+  si.classList.add("leaving");
+  setTimeout(() => { si.classList.remove("leaving"); si.hidden = true; playLogoIntro(showProfiles); }, 380);
+}
+function enterFromProfiles(name) {
+  pf.classList.remove("entering"); pf.classList.add("leaving");
+  setTimeout(() => {
+    pf.hidden = true; pf.classList.remove("leaving");
+    const veil = $("fadeVeil");
+    veil.hidden = false; veil.style.animation = "none"; void veil.offsetWidth; veil.style.animation = "";
+    showApp(name);
+    const app = $("app");
+    app.classList.remove("entering"); void app.offsetWidth; app.classList.add("entering");
+    setTimeout(() => { veil.hidden = true; app.classList.remove("entering"); }, 1300);
+  }, 400);
+}
+pf.addEventListener("click", e => {
+  if (e.target.closest("[data-pf-add]")) { showSigninApp(true); return; }
+  if (e.target.closest("[data-pf-edit]")) { pfEditing = !pfEditing; renderProfiles(); return; }
+  const rm = e.target.closest("[data-pf-remove]");
+  if (rm) {
+    const p = readProfiles()[+rm.dataset.pfRemove];
+    if (p) { dropProfile(p.name); const s = readSession(); if (s && sameName(s.name, p.name)) clearSession(); }
+    if (!readProfiles().length) { pfEditing = false; showSigninApp(false); } else renderProfiles();
+    return;
+  }
+  const it = e.target.closest("[data-pf]"); if (!it) return;
+  const p = readProfiles()[+it.dataset.pf]; if (!p) return;
+  if (pfEditing) { currentName = p.name; openAvatarPicker(); return; }
+  writeSession({ name: p.name, hash: p.hash }, true);
+  saveProfile(p.name, p.hash);
+  enterFromProfiles(p.name);
+});
+$("pfBack").addEventListener("click", () => showProfiles());
+$("pfSwitchBtn").addEventListener("click", () => {
+  setMenu(false); closePlayer(); closeDetails();
+  const app = $("app"); app.classList.add("app-leaving");
+  setTimeout(() => { app.classList.remove("app-leaving"); showProfiles(); }, 300);
+});
+$("getAppBtn").addEventListener("click", () => setMenu(false));
+function startApp() {
+  $("pfSwitchBtn").hidden = false; $("getAppBtn").hidden = true;
+  const s = readSession();
+  if (s && s.name && ACCOUNTS.includes(s.hash)) { saveProfile(s.name, s.hash); currentName = s.name; }
+  else if (s) clearSession();
+  if (readProfiles().length) playLogoIntro(showProfiles);
+  else showSigninApp(false);
+}
 
 /* ===== Start ===== */
 (function start() {
+  if (APP) { startApp(); return; }
   const ho = readHandoff();
   if (ho && ho.name && ACCOUNTS.includes(ho.hash)) {
     writeSession({ name: ho.name, hash: ho.hash }, true);
@@ -1908,4 +2147,5 @@ $("signinLogo").addEventListener("click", () => { if (isHub) { showError(""); sh
 })();
 </script>
 
+<script src="install.js" data-name="GNS+" data-icon="apple-touch-icon.png" data-accent="#b5161f" data-theme="dark" data-tagline="Watch GNS+ from your Home Screen" defer></script>
 </body></html>
