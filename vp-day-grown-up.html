@@ -13,6 +13,7 @@
   color-scheme:light;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{background:var(--paper);color:var(--ink)}
 body{font-family:var(--body);font-size:16px;line-height:1.5}
 .wrap{max-width:900px;margin:0 auto;padding-inline:16px;padding-block:14px 40px;display:grid;gap:14px}
@@ -43,7 +44,11 @@ body{font-family:var(--body);font-size:16px;line-height:1.5}
 .phone-pose .mini-phone{opacity:1}
 .buckle .hand-l{transform:translate(40px,-6px)}
 .buckle .hand-r{transform:translate(-40px,-6px)}
-.belt-off{display:none}
+.belt-off,.pd{display:none}
+.pantsdown .pd{display:inline}
+.pantsdown .pu{display:none}
+.pullup .hand-l{transform:translate(22px,34px)}
+.pullup .hand-r{transform:translate(-22px,34px)}
 .unbuckled .belt-off{display:inline}
 .unbuckled .belt-on{display:none}
 .suv{animation:drive 5s linear forwards}
@@ -85,6 +90,35 @@ body{font-family:var(--body);font-size:16px;line-height:1.5}
 .foot{color:var(--muted);font-size:.85rem;margin:0}
 @media (prefers-reduced-motion:reduce){.walking .leg,.walking .g-bob,.idle .g-bob{animation:none}.hand,.fade,.meter .bar i{transition:none}}
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;600;700;800&family=Fira+Sans+Condensed:wght@700;800&family=Merriweather+Sans:wght@700&display=swap">
+<style>
+:root{--red:#8a0f1a;--red2:#b5161f;--ink:#f6f1ec;--paper:#120c0d;--card:#1e1617;--line:rgba(255,255,255,.16);--muted:#b6a8a5;
+ --good:#9be3b0;--goodbg:rgba(46,140,80,.22);--ok:#f3d58e;--okbg:rgba(216,182,108,.18);--bad:#ffb4ad;--badbg:rgba(181,22,31,.26);
+ --display:"Fira Sans Condensed","Fira Sans","Arial Narrow",Arial,sans-serif;--body:"Fira Sans","Segoe UI",Roboto,Arial,sans-serif;color-scheme:dark}
+</style>
+<style>
+.wrap{max-width:1040px}
+.mast{gap:16px}
+.logo{display:inline-flex;align-items:flex-start;font-family:"Merriweather Sans","Segoe UI",Roboto,Arial,sans-serif;font-weight:700;line-height:1;color:#f6f1ec;--logo-size:30px}
+.logo-gns{font-size:var(--logo-size)}
+.logo-plus{flex:none;align-self:center;width:calc(var(--logo-size)*.483);height:calc(var(--logo-size)*.483);margin-left:calc(var(--logo-size)*.134);background:linear-gradient(45deg,#9f8a57,#b9a66f 50%,#d2be85);clip-path:polygon(38.5% 0,61.5% 0,61.5% 38.5%,100% 38.5%,100% 61.5%,61.5% 61.5%,61.5% 100%,38.5% 100%,38.5% 61.5%,0 61.5%,0 38.5%,38.5% 38.5%)}
+.mast h1{font-weight:800;font-size:clamp(1.6rem,4.4vw,2.8rem);letter-spacing:-.01em}
+.tag{border-color:#d8b66c;color:#d8b66c}
+.rating{font-family:var(--display);font-weight:800;border:1.5px solid rgba(255,255,255,.5);padding:1px 7px;border-radius:3px;font-size:.85rem}
+.chip{background:rgba(255,255,255,.06)}
+.stage{border:0;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.stage::after{content:"";position:absolute;inset:auto 0 0 0;height:18%;background:linear-gradient(180deg,transparent,rgba(18,12,13,.55));pointer-events:none}
+.panel{border:0;border-radius:8px}
+.btn{border-radius:6px;background:#f6f1ec;color:#120c0d;font-weight:700}
+.btn.ghost{background:rgba(255,255,255,.18);color:#f6f1ec}
+.choice{border-radius:8px;border-color:var(--line);background:rgba(255,255,255,.05)}
+.choice:hover{border-color:#d8b66c}
+.panel .eyebrow{color:#d8b66c}
+.gate{background:rgba(10,6,7,.92)}
+.gate .box{border-radius:10px}
+.ph .n .msg{display:block;margin:0 8px;padding:6px 8px;border-radius:10px;background:rgba(255,255,255,.22);color:#fff;opacity:1;text-align:left;line-height:1.3}
+.ph .n{opacity:1}
+</style>
 
 <div class="gate" id="gate" hidden>
   <div class="box" role="dialog" aria-labelledby="gateH">
@@ -99,9 +133,9 @@ body{font-family:var(--body);font-size:16px;line-height:1.5}
 
 <div class="wrap">
   <header class="mast">
-    <span class="badge">GNS+</span>
+    <span class="logo" aria-label="GNS+"><span class="logo-gns">GNS</span><span class="logo-plus"></span></span>
     <h1>The Day in the Life of Glenn Bourbon</h1>
-    <span class="tag" id="edTag" hidden>Grown-Up Edition</span>
+    <span class="tag" id="edTag" hidden>Grown-Up Edition</span><span class="rating" id="rating" hidden>18+</span>
   </header>
   <div class="hud">
     <span class="chip" id="where">The Vice President's Office</span>
@@ -116,7 +150,7 @@ body{font-family:var(--body);font-size:16px;line-height:1.5}
     </svg>
     <div class="fade" id="fade"></div>
     <div class="card-ov" id="card" hidden><p id="cardText"></p></div>
-    <div class="phone" id="phone" hidden><div class="ph"><span class="d">GNS</span><span class="t" id="phTime">9:47</span><span class="d">Vice President's phone</span><span class="n">No notifications</span></div></div>
+    <div class="phone" id="phone" hidden><div class="ph"><span class="d">GNS</span><span class="t" id="phTime">9:47</span><span class="d">Vice President's phone</span><span class="n" id="phNote">No notifications</span></div></div>
   </div>
   <section class="panel" id="panel" aria-live="polite"></section>
   <p class="foot">There are 100 different problems in this game. Each day you play, Glenn gets a new mix of them.</p>
@@ -256,16 +290,23 @@ var GLENN_BODY = '<defs><pattern id="gtie" width="5" height="5" patternUnits="us
   '<path d="M40 112l13 22M80 112l-13 22" stroke="#3a4b72" stroke-width="1.2"/>' +
   '<circle cx="60" cy="144" r="2.4" fill="#0f1830"/><circle cx="60" cy="153" r="2.4" fill="#0f1830"/>';
 function leg(x){
-  return '<g class="leg ' + (x < 50 ? 'leg-l' : 'leg-r') + '"><rect x="' + x + '" y="182" width="25" height="54" fill="#1d2a4a"/>' +
-    '<path d="M' + (x + 8) + ' 184v50" stroke="#3a4b72" stroke-width="1.2"/>' +
+  return '<g class="leg ' + (x < 50 ? 'leg-l' : 'leg-r') + '">' +
+    '<g class="pu"><rect x="' + x + '" y="182" width="25" height="54" fill="#1d2a4a"/><path d="M' + (x + 8) + ' 184v50" stroke="#3a4b72" stroke-width="1.2"/></g>' +
+    '<g class="pd"><rect x="' + x + '" y="184" width="25" height="22" fill="#cfe0f2"/><path d="M' + (x + 6) + ' 184v22M' + (x + 14) + ' 184v22M' + (x + 21) + ' 184v22" stroke="#7fa3c9" stroke-width="2"/>' +
+    '<rect x="' + (x + 4) + '" y="206" width="17" height="18" fill="#5b3b26"/>' +
+    '<path d="M' + (x - 3) + ' 222h31l-2 14h-27z" fill="#1d2a4a"/><path d="M' + (x - 1) + ' 227h27M' + (x) + ' 232h25" stroke="#3a4b72" stroke-width="1.6"/></g>' +
     '<ellipse cx="' + (x + 12) + '" cy="238" rx="15" ry="6.5" fill="#141414"/></g>';
 }
-var GLENN = leg(31) + leg(64) +
-  '<path d="M4 158L14 189H106L116 158Z" fill="#1d2a4a"/>' +
+var SUIT_KIDS = '<path d="M4 158L14 189H106L116 158Z" fill="#1d2a4a"/>' +
   '<path d="M20 160v28M32 160v28M88 160v28M100 160v28" stroke="#3a4b72" stroke-width="1.4"/>' +
-  '<path d="M51 162L60 157L69 162L73 189H47Z" fill="#f6f6f6"/>' +
-  '<g class="belt-on"><rect x="47" y="178" width="26" height="7" fill="#3a2414"/><rect x="55.5" y="177" width="9" height="9" rx="1.5" fill="none" stroke="#d9b04a" stroke-width="2.2"/></g>' +
-  '<g class="belt-off"><path d="M47 178H53L57 200L52 201Z" fill="#3a2414"/><path d="M73 178H67L64 197L69 198Z" fill="#3a2414"/><rect x="50" y="199" width="8" height="8" rx="1.5" fill="none" stroke="#d9b04a" stroke-width="2.2"/></g>' +
+  '<path d="M51 162L60 157L69 162L73 189H47Z" fill="#f6f6f6"/>';
+var SUIT_GROWN = '<path d="M4 156L12 196H108L116 156Z" fill="#1d2a4a"/>' +
+  '<path d="M16 160v34M27 160v34M38 160v34M82 160v34M93 160v34M104 160v34" stroke="#3a4b72" stroke-width="1.4"/>' +
+  '<path d="M60 156v40" stroke="#0f1830" stroke-width="2"/><path d="M60 186l-10 10M60 186l10 10" stroke="#0f1830" stroke-width="1.6"/>' +
+  '<rect x="22" y="172" width="24" height="5" rx="1.5" fill="#253559"/><rect x="74" y="172" width="24" height="5" rx="1.5" fill="#253559"/>' +
+  '<circle cx="60" cy="166" r="2.4" fill="#0f1830"/>' +
+  '<path d="M4 156c2 14 4 26 8 40h8l-6-40zM116 156c-2 14-4 26-8 40h-8l6-40z" fill="#253559"/>';
+var GLENN = leg(31) + leg(64) + SUIT_GROWN +
   GLENN_BODY + GLENN_HEAD +
   '<g class="hand hand-l"><circle cx="10" cy="191" r="7.5" fill="#5b3b26"/></g>' +
   '<g class="hand hand-r"><rect class="mini-phone" x="101" y="173" width="12" height="20" rx="2.5" fill="#111"/><rect class="mini-phone" x="103" y="175" width="8" height="14" rx="1" fill="#c43a3a"/><circle cx="110" cy="191" r="7.5" fill="#5b3b26"/></g>';
@@ -505,7 +546,7 @@ async function play(){
 
   // Night: the phone
   setPhase('night'); setHud(null, '9:47 PM');
-  narrate('9:47 PM', 'Nighttime', 'Glenn checks his phone.');
+  narrate('9:47 PM', 'Nighttime', GROWN ? 'Glenn\'s phone buzzes.' : 'Glenn checks his phone.');
   await sleep(1200);
   setPose('phone-pose', true); await sleep(700);
   $('phone').hidden = false; await sleep(2600); $('phone').hidden = true;
@@ -536,13 +577,13 @@ async function alleyEnding(){
   await sleep(500);
   await fade(true);
   await card('40 Minutes Later', 2600);
-  gl.classList.add('unbuckled');
+  gl.classList.add('pantsdown');
   await place(373, 255, .45, 0, .15); await fade(false);
   await walkTo(340, 236, 1.0, 2600, 1);
   await sleep(1400);
-  setPose('buckle', true); await sleep(900);
-  gl.classList.remove('unbuckled'); await sleep(500);
-  setPose('buckle', false); await sleep(1200);
+  setPose('pullup', true); await sleep(800);
+  gl.classList.remove('pantsdown'); await sleep(400);
+  setPose('pullup', false); await sleep(1200);
   await fade(true);
 }
 
@@ -576,7 +617,8 @@ function startScreen(){
 }
 
 if (GROWN){
-  $('edTag').hidden = false;
+  $('phNote').innerHTML = '<span class="msg"><b>Messages</b> now<br>Meet me in the alleyway at 10:00.</span>';
+  $("edTag").hidden = false; $("rating").hidden = false;
   $('gate').hidden = false;
   $('gateGo').onclick = function(){ $('gate').hidden = true; };
 }
