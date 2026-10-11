@@ -638,7 +638,6 @@
     <div class="li-stack"><div class="li-glow"><span class="li-l">G</span><span class="li-l">N</span><span class="li-l">S</span></div><div class="li-word"><span class="li-l">G</span><span class="li-l">N</span><span class="li-l">S</span></div></div>
     <span class="li-plus"><i class="li-v"></i><i class="li-h"></i><i class="li-shine"></i></span>
   </div>
-  <p class="li-tap" id="liTap" hidden>Tap to start</p>
 </div>
 
 <!-- ===== Home Screen app: Choose Your Profile ===== -->
@@ -1076,6 +1075,7 @@ form.addEventListener("submit", async e => {
   if (Date.now() < lockedUntil) return;
   const name = $("username").value.trim(), pw = $("password").value;
   if (!name || !pw) { showError("Enter your username and password."); return; }
+  primeSound();
   signinBtn.disabled = true;
   const hash = await accountHash(name, pw);
   signinBtn.disabled = false;
@@ -1083,7 +1083,7 @@ form.addEventListener("submit", async e => {
     failures = 0; showError("");
     writeSession({ name, hash }, APP ? true : $("remember").checked);
     saveProfile(name, hash);
-    if (APP) appSignedIn(name); else fadeIntoHome(name);
+    if (APP) appSignedIn(name); else playLogoIntro(() => fadeIntoHome(name));
   } else {
     failures++;
     $("password").value = "";
@@ -2038,41 +2038,28 @@ function dropProfile(name) { writeProfiles(readProfiles().filter(p => !sameName(
 const logoIntro = $("logoIntro"), pf = $("profiles");
 let liTimer = 0, pfEditing = false, pfAdding = false;
 /* The GNS+ stinger: two low hits and a rising swell, made in the browser (plays when the browser allows sound) */
-let soundUnlocked = false;
 const stingerEl = new Audio("media/gns-open3.mp3");   // played as media so the iPhone silent switch doesn't mute it
 stingerEl.preload = "auto"; stingerEl.setAttribute("playsinline", "");
 try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
-const soundReady = () => soundUnlocked;
-function unlockSound() {   // phones only allow sound after a tap, so open it on the first touch anywhere
-  if (soundUnlocked) return;
-  stingerEl.muted = true;
-  const pr = stingerEl.play();
-  if (pr && pr.then) pr.then(() => { if (stingerEl.muted) { stingerEl.pause(); stingerEl.currentTime = 0; stingerEl.muted = false; } soundUnlocked = true; }).catch(() => { stingerEl.muted = false; });
-}
-["pointerdown", "touchend", "keydown"].forEach(ev => document.addEventListener(ev, unlockSound, { capture: true, passive: true }));
-function plusStinger() {
-  try {
-    stingerEl.muted = false; stingerEl.currentTime = 0;
-    const pr = stingerEl.play(); if (pr && pr.then) pr.then(() => { soundUnlocked = true; }).catch(() => {});
-  } catch (e) {}
+/* Phones only allow sound that starts from a tap. Called inside the Sign In / profile tap, before anything async,
+   so the intro can play its sound a moment later. play()+pause() in the same instant makes no sound. */
+function primeSound() {
+  try { const pr = stingerEl.play(); stingerEl.pause(); stingerEl.currentTime = 0; if (pr && pr.catch) pr.catch(() => {}); } catch (e) {}
 }
 function playLogoIntro(next) {
   const reduce = mqm("(prefers-reduced-motion: reduce)");
   logoIntro.hidden = false; logoIntro.classList.remove("done");
+  clearTimeout(liTimer); logoIntro.onclick = null;
   const restart = () => logoIntro.querySelectorAll(".li-bg, .li-logo, .li-l, .li-glow, .li-v, .li-h, .li-shine").forEach(n => { n.style.animation = "none"; void n.offsetWidth; n.style.animation = ""; });
-  restart();
-  if (!soundReady()) {
-    // Sound is still blocked (no tap yet): hold the opening until a tap, then play it with the stinger
-    clearTimeout(liTimer);
-    logoIntro.classList.add("li-wait"); $("liTap").hidden = false;
-    logoIntro.onclick = () => {
-      plusStinger(); logoIntro.classList.remove("li-wait"); $("liTap").hidden = true;
-      restart(); runLogoIntro(next, reduce);
-    };
-    return;
-  }
-  plusStinger();
-  runLogoIntro(next, reduce);
+  restart(); logoIntro.classList.add("li-wait");          // hold on the first frame until the sound is actually playing
+  let started = false;
+  const go = () => { if (started) return; started = true; logoIntro.classList.remove("li-wait"); restart(); runLogoIntro(next, reduce); };
+  try {
+    stingerEl.currentTime = 0;
+    stingerEl.addEventListener("playing", go, { once: true });
+    const pr = stingerEl.play(); if (pr && pr.catch) pr.catch(go);   // blocked: run the intro anyway
+  } catch (e) { go(); }
+  setTimeout(go, 700);                                     // never wait long on a slow connection
 }
 function runLogoIntro(next, reduce) {
   let finished = false;
@@ -2126,7 +2113,7 @@ function appSignedIn(name) {
   const si = $("signin");
   if (pfAdding) { pfAdding = false; showProfiles(); return; }
   si.classList.add("leaving");
-  setTimeout(() => { si.classList.remove("leaving"); si.hidden = true; playLogoIntro(showProfiles); }, 380);
+  setTimeout(() => { si.classList.remove("leaving"); si.hidden = true; showProfiles(); }, 380);
 }
 function enterFromProfiles(name) {
   pf.classList.remove("entering"); pf.classList.add("leaving");
@@ -2153,9 +2140,10 @@ pf.addEventListener("click", e => {
   const it = e.target.closest("[data-pf]"); if (!it) return;
   const p = readProfiles()[+it.dataset.pf]; if (!p) return;
   if (pfEditing) { currentName = p.name; openAvatarPicker(); return; }
+  primeSound();
   writeSession({ name: p.name, hash: p.hash }, true);
   saveProfile(p.name, p.hash);
-  enterFromProfiles(p.name);
+  playLogoIntro(() => enterFromProfiles(p.name));
 });
 $("pfBack").addEventListener("click", () => showProfiles());
 $("pfSwitchBtn").addEventListener("click", () => {
@@ -2169,7 +2157,7 @@ function startApp() {
   const s = readSession();
   if (s && s.name && ACCOUNTS.includes(s.hash)) { saveProfile(s.name, s.hash); currentName = s.name; }
   else if (s) clearSession();
-  if (readProfiles().length) playLogoIntro(showProfiles);
+  if (readProfiles().length) showProfiles();
   else showSigninApp(false);
 }
 
