@@ -2039,7 +2039,7 @@ const logoIntro = $("logoIntro"), pf = $("profiles");
 let liTimer = 0, pfEditing = false, pfAdding = false;
 /* The GNS+ stinger: two low hits and a rising swell, made in the browser (plays when the browser allows sound) */
 let soundUnlocked = false;
-const stingerEl = new Audio("media/gns-stinger.mp3");   // played as media so the iPhone silent switch doesn't mute it
+const stingerEl = new Audio("media/gns-hum.mp3");   // played as media so the iPhone silent switch doesn't mute it
 stingerEl.preload = "auto"; stingerEl.setAttribute("playsinline", "");
 try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
 const soundReady = () => soundUnlocked;
