@@ -1217,11 +1217,13 @@ function fadeIntoHome(name) {
 /* ===== App ===== */
 let page = "home";
 /* ===== Plans, free trial and ads =====
-   Everyone starts with a 2-week free trial (with ads). After their plan meeting with a GNS representative,
-   set each subscriber's plan below by username, e.g. "glenn bourbon": "premium". Plans: "regular" | "gold" | "premium".
-   Anyone not listed is on the free trial. */
+   Every account starts with a 2-week free trial (with ads). The subscriber log below is kept in step with SUBSCRIBERS.md:
+   username (lowercase) -> { created, circleBack, rep, plan }. The trial runs from "created"; after the plan meeting,
+   set "plan" to "regular" | "gold" | "premium" ("trial" until then). */
 const TRIAL_DAYS = 14;
-const ACCOUNT_PLANS = {};
+const GNS_REPS = ["Grace Langley", "Glenn Bourbon", "Henry Reyes", "Peyton Manning", "Joseph Reyes-McCollum"];
+const SUBSCRIBERS = {
+};
 const PLANS = [
   { id: "regular", name: "GNS+ Regular", tag: "With ads", ads: true,
     perks: ["Every GNS broadcast, debate and original", "GNS Live streams", "Short ad breaks during shows"] },
@@ -1418,11 +1420,13 @@ function viewNew() {
     </div>`;
 }
 const sessHash = () => { const s = readSession(); return (s && s.hash) || ""; };
-const currentPlan = () => { const s = readSession(), n = ((s && s.name) || "").trim().toLowerCase(); return ACCOUNT_PLANS[n] || ACCOUNT_PLANS[sessHash()] || "trial"; };
+const subOf = () => { const s = readSession(); return SUBSCRIBERS[((s && s.name) || "").trim().toLowerCase()] || null; };
+const currentPlan = () => { const sub = subOf(); return (sub && sub.plan) || "trial"; };
 const adsOn = () => { const pl = currentPlan(); return pl === "trial" || pl === "regular"; };
 function trialInfo() {
-  const h = sessHash(); let start = Date.now();
-  if (h) { try { const k = "gnsp-trial-" + h; start = +localStorage.getItem(k) || 0; if (!start) { start = Date.now(); localStorage.setItem(k, String(start)); } } catch (e) {} }
+  const h = sessHash(), sub = subOf(); let start = Date.now();
+  if (sub && sub.created) start = new Date(sub.created + "T00:00:00").getTime();
+  else if (h) { try { const k = "gnsp-trial-" + h; start = +localStorage.getItem(k) || 0; if (!start) { start = Date.now(); localStorage.setItem(k, String(start)); } } catch (e) {} }
   const left = Math.ceil((start + TRIAL_DAYS * 864e5 - Date.now()) / 864e5);
   return { left: Math.max(0, left), ended: left <= 0 };
 }
