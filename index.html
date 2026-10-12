@@ -442,6 +442,7 @@
     position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 12px 10px; font-weight: 700; font-size: 15px;
     background: linear-gradient(0deg, rgba(0,0,0,0.85), rgba(0,0,0,0));
   }
+  .tile-baked .tile-title { background: none; }
   .tile:hover { transform: scale(1.04); }
   .tile.placeholder {
     cursor: default; border: 1px solid rgba(255,255,255,0.07);
@@ -886,6 +887,19 @@ const ROWS = [
 ];
 const TITLES = [
   {
+    id: "gns-keynote",
+    row: "broadcasts",
+    title: "GNS Keynote: Innovation Starts Now",
+    kind: "Keynote",
+    featured: true,
+    poster: "media/gns-keynote.jpg",
+    thumb: "media/gns-keynote-sm.jpg",
+    bakedGradient: true,
+    added: "2026-10-11",
+    description: "Executive Chairman Richard Powers unveils the new GNS, GNS Kids and GNS+ websites and apps, names Grace Langley CEO of GNS+, and lays out ad-supported and ad-free membership.",
+    episodes: [{ title: "Full keynote", desc: "Richard Powers' complete keynote address, livestreamed on GNS.", url: "https://www.youtube.com/watch?v=0XdEGUKMmMo" }]
+  },
+  {
     id: "vp-day-game",
     row: "games",
     title: "The Day in the Life of Glenn Bourbon",
@@ -951,7 +965,6 @@ const TITLES = [
     row: "originals",
     title: "Breaking Through",
     kind: "Documentary",
-    featured: true,
     poster: "media/breaking-through.jpg",
     thumb: "media/breaking-through-sm.jpg",
     posterHasTitle: true,
@@ -1158,12 +1171,7 @@ const LIVE = {
   // Upcoming broadcasts shown under the player: { when: "Tonight 8 PM", title: "...", desc: "..." }
   schedule: [],
   // A specific stream to feature on the Live page (shown instead of the channel feed). Set to null to go back to the channel feed.
-  featured: {
-    videoId: "0XdEGUKMmMo",
-    title: "GNS Keynote: Innovation Starts Now",
-    desc: "Executive Chairman Richard Powers unveils the new GNS, GNS Kids and GNS+ websites and apps, and names Grace Langley CEO of GNS+.",
-    thumb: "media/innovation-keynote.jpg"
-  }
+  featured: null
 };
 const PAGES = [{ id: "home", name: "Home" }, { id: "live", name: "Live" }, { id: "new", name: "New & Popular" }, ...ROWS.map(r => ({ id: r.id, name: r.name })), { id: "liked", name: "Liked" }];
 
@@ -1251,7 +1259,7 @@ function tile(t) {
   const lw = lastWatched(t);
   let prog = "";
   if (lw && !lw.done && lw.t > 30 && lw.ep.parts) prog = `<span class="tile-prog" aria-hidden="true"><i style="width:${Math.min(100, lw.t / epLen(lw.ep) * 100).toFixed(1)}%"></i></span>`;
-  return `<button type="button" class="tile" data-details="${esc(t.id)}" data-hover="${esc(t.id)}" aria-label="${esc(t.title)}, more info">
+  return `<button type="button" class="tile${t.bakedGradient ? " tile-baked" : ""}" data-details="${esc(t.id)}" data-hover="${esc(t.id)}" aria-label="${esc(t.title)}, more info">
     ${art ? `<img src="${esc(art)}" alt="" loading="lazy">` : ""}${name}${prog}</button>`;
 }
 const placeholders = n => Array.from({ length: n }, () => `<div class="tile placeholder" aria-hidden="true"></div>`).join("");
