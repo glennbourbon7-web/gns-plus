@@ -467,6 +467,11 @@
   .lv-stage { max-width: 1100px; margin: 0 auto; }
   .lv-frame { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: #000; border-radius: 8px; overflow: hidden;
     box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 0 60px rgba(181,22,31,.35), 0 30px 80px rgba(0,0,0,.7); }
+  .lv-poster { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: #000; cursor: pointer; }
+  .lv-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .lv-play { position: absolute; left: clamp(12px, 3%, 28px); bottom: clamp(12px, 4%, 28px); width: clamp(52px, 8vw, 76px); height: clamp(52px, 8vw, 76px); border-radius: 50%; background: var(--crimson-hi); box-shadow: 0 8px 30px rgba(0,0,0,.5); transition: transform .15s; }
+  .lv-play::after { content: ""; position: absolute; left: 54%; top: 50%; transform: translate(-50%, -50%); border-style: solid; border-width: 13px 0 13px 21px; border-color: transparent transparent transparent #fff; }
+  .lv-poster:hover .lv-play, .lv-poster:focus-visible .lv-play { transform: scale(1.08); }
   .lv-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .lv-slate { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 6px; text-align: center;
     background: radial-gradient(ellipse at 50% 40%, #2a1214, #0b0607 75%); }
@@ -1151,7 +1156,14 @@ const LIVE = {
   title: "GNS Live",
   description: "Breaking news, press conferences and special coverage from the GNS newsroom, as it happens.",
   // Upcoming broadcasts shown under the player: { when: "Tonight 8 PM", title: "...", desc: "..." }
-  schedule: []
+  schedule: [],
+  // A specific stream to feature on the Live page (shown instead of the channel feed). Set to null to go back to the channel feed.
+  featured: {
+    videoId: "0XdEGUKMmMo",
+    title: "GNS Keynote: Innovation Starts Now",
+    desc: "Executive Chairman Richard Powers unveils the new GNS, GNS Kids and GNS+ websites and apps, and names Grace Langley CEO of GNS+.",
+    thumb: "media/innovation-keynote.jpg"
+  }
 };
 const PAGES = [{ id: "home", name: "Home" }, { id: "live", name: "Live" }, { id: "new", name: "New & Popular" }, ...ROWS.map(r => ({ id: r.id, name: r.name })), { id: "liked", name: "Liked" }];
 
@@ -1321,8 +1333,11 @@ function viewNew() {
 }
 function viewLive() {
   const id = (LIVE.channelId || "").trim();
+  const f = LIVE.featured && LIVE.featured.videoId ? LIVE.featured : null;
   const src = id ? `https://www.youtube.com/embed/live_stream?channel=${encodeURIComponent(id)}&autoplay=1&playsinline=1&rel=0&modestbranding=1` : "";
-  const player = id
+  const player = f
+    ? `<button type="button" class="lv-poster" data-yt="${esc(f.videoId)}" aria-label="Play ${esc(f.title)}"><img src="${esc(f.thumb)}" alt=""><span class="lv-play" aria-hidden="true"></span></button>`
+    : id
     ? `<iframe src="${esc(src)}" title="${esc(LIVE.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`
     : `<div class="lv-slate"><span class="logo lv-logo" aria-label="GNS+"><span class="logo-gns">GNS</span><span class="logo-plus">+</span></span><p class="lv-off">Off Air</p><p class="lv-soon">We'll be live soon. Stay tuned.</p></div>`;
   const sched = (LIVE.schedule || []).length
@@ -1332,14 +1347,20 @@ function viewLive() {
     <div class="lv-glow" aria-hidden="true"></div>
     <div class="lv-head">
       <p class="lv-kicker">${id ? `<span class="lv-pill"><i></i>LIVE</span>` : `<span class="lv-pill lv-pill-off">OFF AIR</span>`}<span>Only on GNS+</span></p>
-      <h1>${esc(LIVE.title)}</h1>
-      <p class="lv-desc">${esc(LIVE.description)}</p>
+      <h1>${esc(f ? f.title : LIVE.title)}</h1>
+      <p class="lv-desc">${esc(f ? f.desc : LIVE.description)}</p>
     </div>
     <div class="lv-stage"><div class="lv-frame">${player}</div></div>
-    ${id ? `<p class="lv-note">If the player says the stream is offline, nobody is live right now. <a href="https://www.youtube.com/channel/${encodeURIComponent(id)}/live" target="_blank" rel="noopener">Open on YouTube</a></p>` : ""}
+    ${f ? `<p class="lv-note">Watching on a phone and the player won't load? <a href="https://www.youtube.com/watch?v=${encodeURIComponent(f.videoId)}" target="_blank" rel="noopener">Open on YouTube</a></p>` : id ? `<p class="lv-note">If the player says the stream is offline, nobody is live right now. <a href="https://www.youtube.com/channel/${encodeURIComponent(id)}/live" target="_blank" rel="noopener">Open on YouTube</a></p>` : ""}
     <div class="lv-up"><h2>Up next on GNS Live</h2><ul class="lv-list">${sched}</ul></div>
   </section>`;
 }
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest(".lv-poster");
+  if (!b) return;
+  const v = encodeURIComponent(b.dataset.yt);
+  b.outerHTML = `<iframe src="https://www.youtube.com/embed/${v}?autoplay=1&playsinline=1&rel=0&modestbranding=1" title="GNS Live" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+});
 function viewLiked() {
   const liked = Object.entries(readLikes()).sort((a, b) => b[1] - a[1]).map(([id]) => TITLES.find(t => t.id === id)).filter(Boolean);
   return `<div class="page-head"><h1>Your liked media</h1></div>
