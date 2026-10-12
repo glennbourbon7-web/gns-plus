@@ -1260,7 +1260,7 @@ const originalLabel = item => item.row === "originals" ? `<p class="label-gold">
 
 function tile(t) {
   const art = t.thumb || t.poster;
-  const name = t.card ? `<span class="tile-card" aria-hidden="true">${t.card.kicker ? `<small>${esc(t.card.kicker)}</small>` : ""}<b>${esc(t.card.main)}</b><span class="logo"><span class="logo-gns">GNS</span><span class="logo-plus">+</span></span></span>`
+  const name = t.card ? `<span class="tile-card" aria-hidden="true">${t.card.kicker ? `<small>${esc(t.card.kicker)}</small>` : ""}<b>${esc(t.card.main)}</b></span>`
     : art && t.posterHasTitle ? "" : `<span class="tile-title">${esc(t.title)}</span>`;
   const lw = lastWatched(t);
   let prog = "";
