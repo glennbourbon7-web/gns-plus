@@ -458,6 +458,42 @@
 
   /* Section pages */
   .page-head { padding: 112px var(--gutter) 6px; text-align: center; }
+  .wl-trial { margin: 0 0 12px; display: inline-block; font-weight: 800; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: #120c0d; background: linear-gradient(45deg, #9f8a57, #d2be85); padding: 6px 12px; border-radius: 4px; }
+  .wl-plans-wrap { padding: 0 var(--gutter); display: grid; gap: 18px; }
+  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .plan { position: relative; padding: 24px 20px 22px; border-radius: 14px; background: linear-gradient(160deg, #23161a, #170f11); border: 1px solid var(--line); min-width: 0; }
+  .plan h3 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 26px; }
+  .plan-tag { margin: 4px 0 14px; color: var(--gold); font-weight: 700; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
+  .plan ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+  .plan li { display: flex; gap: 9px; align-items: flex-start; color: #ddd2cf; font-size: 15px; }
+  .plan li svg { flex: none; width: 18px; height: 18px; margin-top: 2px; color: var(--gold); }
+  .plan-best { border-color: rgba(216,182,108,.6); background: linear-gradient(160deg, #3a1a14, #1d1210 60%, #2a2112); box-shadow: 0 0 40px rgba(216,182,108,.12); }
+  .plan-mine { border-color: var(--crimson-hi); }
+  .plan-flag { position: absolute; top: -11px; left: 18px; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: linear-gradient(45deg, #9f8a57, #d2be85); color: #120c0d; padding: 4px 9px; border-radius: 4px; }
+  .plan-flag-mine { left: auto; right: 18px; background: var(--crimson-hi); color: #fff; }
+  .how { list-style: none; counter-reset: how; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .how li { counter-increment: how; display: grid; gap: 4px; padding: 16px 18px 16px 58px; position: relative; background: var(--raise); border-radius: 12px; min-width: 0; }
+  .how li::before { content: counter(how); position: absolute; left: 16px; top: 14px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--crimson-hi); font-weight: 800; }
+  .how li span { color: var(--muted); font-size: 14px; }
+  .plans-page { padding-bottom: 64px; }
+  .plans-page .how, .plans-page .plans, .plan-foot { max-width: 1100px; margin-left: auto; margin-right: auto; padding: 0 var(--gutter); }
+  .plans-page .how { margin-bottom: 30px; }
+  .plans-head { display: grid; gap: 12px; justify-items: center; }
+  .plan-status { margin: 0; display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; color: #d9cfcb; max-width: 62ch; }
+  .plan-foot { margin-top: 18px; color: var(--muted); font-size: 14px; }
+  .trial-bar { margin: 0 var(--gutter) 22px; display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 14px 18px; border-radius: 10px; background: linear-gradient(90deg, rgba(181,22,31,.35), rgba(216,182,108,.14)); border: 1px solid rgba(216,182,108,.35); }
+  .trial-bar p { margin: 0; min-width: 0; flex: 1 1 280px; }
+  @media (max-width: 860px) { .plans, .how { grid-template-columns: minmax(0, 1fr); } .plans { gap: 22px; } }
+  /* Ad breaks */
+  .adbreak { position: absolute; inset: 0; z-index: 3; background: #000; display: grid; place-items: center; }
+  .adbreak video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+  .ad-hud { position: absolute; left: var(--gutter); right: var(--gutter); bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; pointer-events: none; }
+  .ad-hud > span { display: inline-flex; gap: 8px; align-items: center; background: rgba(0,0,0,.65); padding: 7px 12px; border-radius: 6px; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .ad-tag { font-style: normal; background: var(--gold); color: #120c0d; font-weight: 800; font-size: 12px; letter-spacing: .08em; padding: 2px 7px; border-radius: 3px; }
+  .ad-up b { color: var(--gold); }
+  .ad-tap { position: absolute; padding: 14px 24px; border-radius: 999px; border: 0; background: #f6f1ec; color: #120c0d; font-weight: 800; font-size: 16px; }
+  .player.in-ad .controls, .player.in-ad .bigplay, .player.in-ad .ptoast, .player.in-ad .spinner, .player.in-ad .pload { display: none !important; }
+  .player.in-ad .player-bar { opacity: 1 !important; pointer-events: auto !important; }
   .lv { position: relative; isolation: isolate; padding: 96px var(--gutter) 72px; overflow: hidden; }
   .lv-glow { position: absolute; inset: 0; z-index: -1; pointer-events: none;
     background: radial-gradient(ellipse 60% 45% at 50% 38%, rgba(181,22,31,.35), transparent 70%), radial-gradient(ellipse 90% 60% at 50% 0%, rgba(58,6,11,.9), transparent 75%), linear-gradient(180deg, #1a0b0d 0%, var(--ground) 70%); }
@@ -704,8 +740,9 @@
       <button type="button" class="btn-red" data-goto-signin>Sign In</button>
     </header>
     <div class="wl-hero-copy">
+      <p class="wl-trial">Try it free for 2 weeks</p>
       <h1 id="wlTitle">Every GNS broadcast, debate and original, in one place.</h1>
-      <p class="wl-lead">Full coverage, uncut. Watch it all right here.</p>
+      <p class="wl-lead">Start with a 2-week free trial. Then pick the plan that fits you.</p>
       <form class="wl-start" data-start novalidate>
         <p>Ready to watch? Enter your GNS+ username to sign in.</p>
         <div class="wl-start-row">
@@ -731,6 +768,13 @@
           <article class="wl-card"><h3>GNS+ Originals</h3><p>Documentaries like Breaking Through, made by GNS and only on GNS+.</p><svg viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 4l5.9 12.6 13.6 1.6-10 9.4 2.6 13.5L24 34.3 11.9 41.1l2.6-13.5-10-9.4 13.6-1.6z"/></svg></article>
           <article class="wl-card"><h3>Watch anywhere</h3><p>Phone, tablet or computer. GNS+ remembers where you stopped on each device.</p><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="9" width="30" height="21" rx="3"/><path d="M12 38h14M19 30v8"/><rect x="31" y="18" width="13" height="23" rx="3"/><path d="M36 37h3"/></svg></article>
           <article class="wl-card"><h3>Make it yours</h3><p>Like the shows you love, find them again in one place, and pick a profile picture or upload your own.</p><svg viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 42S6 31 3.5 20.5C1.8 13.4 6.6 6.5 13.6 6.5c4.3 0 7.9 2.4 10.4 6.1 2.5-3.7 6.1-6.1 10.4-6.1 7 0 11.8 6.9 10.1 14C42 31 24 42 24 42z"/></svg></article>
+      </div>
+    </section>
+    <section class="wl-sec" aria-labelledby="wlPlansH">
+      <h2 id="wlPlansH">Start free for 2 weeks, then pick your plan</h2>
+      <div class="wl-plans-wrap">
+        <div id="wlHow"></div>
+        <div id="wlPlans"></div>
       </div>
     </section>
     <section class="wl-sec" aria-labelledby="wlAppH">
@@ -804,6 +848,7 @@
       <div class="menu" id="profileMenu" hidden>
         <div class="menu-who">Signed in as <strong id="whoName"></strong></div>
         <button type="button" id="avatarPickBtn">Change profile picture</button>
+        <button type="button" id="plansBtn" data-goto-plans>Plans &amp; free trial</button>
         <button type="button" id="pfSwitchBtn" hidden>Switch profile</button>
         <button type="button" id="getAppBtn" data-install-app>Get the GNS+ app</button>
         <button type="button" id="signOutBtn">Sign out of GNS+</button>
@@ -845,6 +890,11 @@
   <div class="stage" id="stage">
     <video id="vA" class="on" playsinline preload="auto"></video>
     <video id="vB" playsinline preload="auto"></video>
+  </div>
+  <div class="adbreak" id="adBreak" hidden>
+    <video id="vAd" playsinline preload="auto" disablepictureinpicture></video>
+    <div class="ad-hud"><span><i class="ad-tag">AD</i><span id="adCount">Your show will resume shortly</span></span><span class="ad-up">No ads with <b>GNS+ Gold</b> or <b>Premium</b></span></div>
+    <button type="button" class="ad-tap" id="adTap" hidden>Tap to play</button>
   </div>
   <div class="spinner" id="pSpin" hidden></div>
   <p class="pload" id="pLoad" role="status" hidden></p>
@@ -1166,6 +1216,27 @@ function fadeIntoHome(name) {
 
 /* ===== App ===== */
 let page = "home";
+/* ===== Plans, free trial and ads =====
+   Everyone starts with a 2-week free trial (with ads). After their plan meeting with a GNS representative,
+   set each subscriber's plan below: account hash -> "regular" | "gold" | "premium". Anyone not listed is on the free trial. */
+const TRIAL_DAYS = 14;
+const ACCOUNT_PLANS = {};
+const PLANS = [
+  { id: "regular", name: "GNS+ Regular", tag: "With ads", ads: true,
+    perks: ["Every GNS broadcast, debate and original", "GNS Live streams", "Short ad breaks during shows"] },
+  { id: "gold", name: "GNS+ Gold", tag: "No ads", ads: false,
+    perks: ["Every GNS broadcast, debate and original", "GNS Live streams", "No ad breaks, ever"] },
+  { id: "premium", name: "GNS+ Premium", tag: "No ads + exclusives", ads: false, best: true,
+    perks: ["Everything in Gold, with no ads", "GNS+ exclusives", "Backstage content, like tours of the GNS studios", "Fan perks like blooper reels"] }
+];
+/* Ad breaks on regular GNS+ shows (not on GNS Live): one unskippable ad before the show starts and one every ADS.every seconds.
+   The ads take turns, one per break. */
+const ADS = { every: 420, list: [
+  { src: "media/ads/ciccerone.mp4", poster: "media/ads/ciccerone.jpg" },
+  { src: "media/ads/powers.mp4", poster: "media/ads/powers.jpg" },
+  { src: "media/ads/ozempic.mp4", poster: "media/ads/ozempic.jpg" }
+] };
+
 /* ===== GNS Live =====
    Paste the GNS YouTube channel ID here (it starts with "UC"). The Live page then shows
    whatever that channel is streaming right now; when nobody is live, YouTube shows its offline card. */
@@ -1317,7 +1388,7 @@ function viewHome() {
   }).join("");
   const featured = TITLES.find(t => t.featured);
   return `${featured ? heroFeatured(featured) : heroWelcome()}
-    <div class="rows">${extraTop}${rows}${extraBottom}</div>`;
+    <div class="rows">${trialBanner()}${extraTop}${rows}${extraBottom}</div>`;
 }
 function listRow(item, i, rank, extra) {
   const ep = episodesOf(item)[i];
@@ -1344,6 +1415,48 @@ function viewNew() {
       <section aria-labelledby="np-new"><h2 id="np-new" class="np-h">New on GNS+</h2>
         <ol class="list">${fresh.map(t => listRow(t, 0, 0, addedOn(t.added))).join("")}</ol></section>
     </div>`;
+}
+const sessHash = () => { const s = readSession(); return (s && s.hash) || ""; };
+const currentPlan = () => ACCOUNT_PLANS[sessHash()] || "trial";
+const adsOn = () => { const pl = currentPlan(); return pl === "trial" || pl === "regular"; };
+function trialInfo() {
+  const h = sessHash(); let start = Date.now();
+  if (h) { try { const k = "gnsp-trial-" + h; start = +localStorage.getItem(k) || 0; if (!start) { start = Date.now(); localStorage.setItem(k, String(start)); } } catch (e) {} }
+  const left = Math.ceil((start + TRIAL_DAYS * 864e5 - Date.now()) / 864e5);
+  return { left: Math.max(0, left), ended: left <= 0 };
+}
+const CHECK_SM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+function planCards(current) {
+  return `<div class="plans">${PLANS.map(pl => `<article class="plan${pl.best ? " plan-best" : ""}${current === pl.id ? " plan-mine" : ""}">
+      ${pl.best ? `<span class="plan-flag">The full experience</span>` : ""}${current === pl.id ? `<span class="plan-flag plan-flag-mine">Your plan</span>` : ""}
+      <h3>${esc(pl.name)}</h3><p class="plan-tag">${esc(pl.tag)}</p>
+      <ul>${pl.perks.map(x => `<li>${CHECK_SM}<span>${esc(x)}</span></li>`).join("")}</ul></article>`).join("")}</div>`;
+}
+const HOW_STEPS = `<ol class="how">
+    <li><b>Watch free for ${TRIAL_DAYS / 7} weeks.</b><span>Every show and GNS Live stream, with short ad breaks.</span></li>
+    <li><b>Meet with your GNS representative.</b><span>When your trial ends, a GNS team member sits down with you to go over your contract.</span></li>
+    <li><b>Pick your plan.</b><span>Regular, Gold or Premium. You choose what fits.</span></li>
+  </ol>`;
+function trialBanner() {
+  if (currentPlan() !== "trial") return "";
+  const ti = trialInfo();
+  const msg = ti.ended
+    ? `<b>Your free trial has ended.</b> It's time to meet with your GNS representative to choose your plan.`
+    : `<b>Free trial: ${ti.left} day${ti.left === 1 ? "" : "s"} left.</b> When it ends, you'll meet with a GNS representative to choose your plan.`;
+  return `<div class="trial-bar"><p>${msg}</p><button type="button" class="btn-more" data-goto-plans>See plans</button></div>`;
+}
+function viewPlans() {
+  const pl = currentPlan(), ti = pl === "trial" ? trialInfo() : null;
+  const status = pl === "trial"
+    ? (ti.ended ? `<p class="plan-status"><span class="lv-pill lv-pill-off">TRIAL ENDED</span> Your 2-week free trial is over. Meet with your GNS representative to go over your contract and pick a plan.</p>`
+               : `<p class="plan-status"><span class="lv-pill">FREE TRIAL</span> ${ti.left} day${ti.left === 1 ? "" : "s"} left. You're watching with ads until you choose a plan.</p>`)
+    : `<p class="plan-status"><span class="lv-pill">${esc((PLANS.find(x => x.id === pl) || {}).name || "")}</span> Thanks for being a subscriber.</p>`;
+  return `<section class="plans-page">
+    <div class="page-head plans-head"><h1>Choose your GNS+ plan</h1>${status}</div>
+    ${HOW_STEPS}
+    ${planCards(pl)}
+    <p class="plan-foot">Plans and contract terms are set up in person with a GNS representative. Ask the GNS team if you have questions.</p>
+  </section>`;
 }
 function viewLive() {
   const id = (LIVE.channelId || "").trim();
@@ -1433,7 +1546,7 @@ function render() {
   $("navLinks").innerHTML = PAGES.map(p =>
     `<button type="button" data-page="${p.id}"${p.id === page ? ' aria-current="page"' : ""}>${esc(p.name)}</button>`).join("");
   hideHover(true);
-  $("pages").innerHTML = page === "home" ? viewHome() : page === "new" ? viewNew() : page === "liked" ? viewLiked() : page === "live" ? viewLive() : page === "search" ? viewSearch() : viewRow(page);
+  $("pages").innerHTML = page === "home" ? viewHome() : page === "new" ? viewNew() : page === "liked" ? viewLiked() : page === "live" ? viewLive() : page === "plans" ? viewPlans() : page === "search" ? viewSearch() : viewRow(page);
 }
 function go(p) {
   if (p !== "search" && searchQ) { searchQ = ""; $("searchInput").value = ""; closeSearch(); }
@@ -1807,6 +1920,11 @@ function seekTo(t, play = P.playing) {
 function onTime(e) {
   const v = e.target;
   if (v !== act()) return;
+  if (P.inAd) { if (!v.paused) v.pause(); return; }
+  if (P.adMarks.length) {
+    const now = gTime(), due = P.adMarks.filter(m => m <= now && !P.adDone.has(m));
+    if (due.length) { due.forEach(m => P.adDone.add(m)); startAd(resumeMain); return; }   // one ad per break, even after a skip ahead
+  }
   updateUI();
   const left = P.parts[P.idx].dur - v.currentTime;
   if (left < 45 && P.idx + 1 < P.parts.length && sby()._part !== P.idx + 1) cue(sby(), P.idx + 1, 0, false);
@@ -1865,10 +1983,51 @@ function unlockPlayers() {
   });
 }
 
+/* ---- Ad breaks: unskippable, one ad per break, ads take turns ---- */
+const vAd = $("vAd"), adBox = $("adBreak");
+let adNext = 0; try { adNext = (+localStorage.getItem("gnsp-ad-next") || 0) % ADS.list.length; } catch (e) {}
+P.inAd = false; P.adCb = null; P.adMarks = []; P.adDone = new Set();
+function startAd(after) {
+  const ad = ADS.list[adNext % ADS.list.length];
+  adNext = (adNext + 1) % ADS.list.length; try { localStorage.setItem("gnsp-ad-next", String(adNext)); } catch (e) {}
+  P.inAd = true; P.adCb = after; player.classList.add("in-ad");
+  vids.forEach(v => { if (!v.paused) v.pause(); });
+  adBox.hidden = false; $("adTap").hidden = true; $("adCount").textContent = "Your show will resume shortly";
+  vAd.muted = P.muted; vAd.poster = ad.poster; vAd.src = ad.src; vAd._t = 0;
+  const pr = vAd.play(); if (pr && pr.catch) pr.catch(() => { $("adTap").hidden = false; });
+}
+function stopAd() {
+  P.inAd = false; adBox.hidden = true; player.classList.remove("in-ad"); $("adTap").hidden = true;
+  vAd.pause(); vAd.removeAttribute("src"); vAd.load();
+}
+function endAd() { if (!P.inAd) return; const cb = P.adCb; P.adCb = null; stopAd(); if (cb) cb(); }
+function resumeMain() {
+  const v = act();
+  if (v._loaded) v.play().catch(() => setPlayingUI(false)); else v._play = true;
+  setPlayingUI(true);
+}
+vAd.addEventListener("timeupdate", () => {
+  if (!vAd.seeking) vAd._t = Math.max(vAd._t || 0, vAd.currentTime);
+  if (vAd.duration) $("adCount").textContent = `Your show resumes in ${fmtT(Math.ceil(Math.max(0, vAd.duration - vAd.currentTime)))}`;
+});
+vAd.addEventListener("seeking", () => { if (P.inAd && vAd.currentTime > (vAd._t || 0) + 0.5) vAd.currentTime = vAd._t || 0; });   // no skipping ahead
+vAd.addEventListener("ratechange", () => { if (vAd.playbackRate !== 1) vAd.playbackRate = 1; });
+vAd.addEventListener("ended", endAd);
+vAd.addEventListener("pause", () => { if (P.inAd && !vAd.ended && !player.hidden) $("adTap").hidden = false; });
+vAd.addEventListener("play", () => { $("adTap").hidden = true; });
+vAd.addEventListener("error", () => { if (P.inAd) endAd(); });   // if an ad can't load, go straight to the show
+$("adTap").addEventListener("click", () => { vAd.muted = P.muted; vAd.play().catch(() => {}); });
+vids.forEach(v => v.addEventListener("play", () => { if (P.inAd) v.pause(); }));
+document.addEventListener("keydown", e => {   // shortcuts can't skip or seek during an ad (Esc still closes)
+  if (!P.inAd || player.hidden || e.key === "Escape" || e.key === "Tab") return;
+  e.stopImmediatePropagation(); if (e.key === " " || e.key.startsWith("Arrow")) e.preventDefault();
+}, true);
+
 function openPlayer(item) {
   P.parts = item.parts; P.starts = []; let acc = 0;
   item.parts.forEach(p => { P.starts.push(acc); acc += p.dur; });
   P.total = acc; P.key = item.key || ""; P.next = item.next || null; P.yt = item.yt || ""; P.a = 0; P.lastSave = 0;
+  if (P.inAd) stopAd();
   freeAllBlobs();
   $("playerTitle").textContent = item.title;
   P.dragging = false; $("pBubble").hidden = true; $("pEnd").hidden = true; $("pToast").hidden = true;
@@ -1888,6 +2047,11 @@ function openPlayer(item) {
     $("pOver").onclick = () => { $("pToast").hidden = true; seekTo(0, true); };
   }
   updateUI(); setPlayingUI(true);
+  P.adDone = new Set(); P.adMarks = [];
+  if (adsOn() && ADS.list.length) {
+    for (let m = ADS.every; m < P.total - 60; m += ADS.every) { P.adMarks.push(m); if (m <= resume) P.adDone.add(m); }
+    startAd(resumeMain);                                             // the ad before the show, started inside the tap so it plays with sound
+  }
   $("playerBack").focus({ preventScroll: true });
 }
 function playEpisode(item, i) {
@@ -1899,6 +2063,7 @@ function playEpisode(item, i) {
 }
 function closePlayer() {
   if (player.hidden) return;
+  if (P.inAd) { P.adCb = null; stopAd(); }
   if (P.key && $("pEnd").hidden && act()._loaded) writeProg(P.key, gTime());
   vids.forEach(v => { v._tok = (v._tok || 0) + 1; v._part = -1; v._loaded = false; v.pause(); v.removeAttribute("src"); v.load(); });
   freeAllBlobs(); hideLoading();
@@ -1909,7 +2074,7 @@ function closePlayer() {
   if (!details.hidden && $("detailsTitle")) { const t = TITLES.find(x => x.title === $("detailsTitle").textContent); if (t) openDetails(t.id); }
 }
 function togglePlay() {
-  if (!$("pEnd").hidden) return;
+  if (!$("pEnd").hidden || P.inAd) return;
   const v = act();
   if (!v._loaded) { v._play = !v._play; setPlayingUI(v._play); return; }
   if (v.paused) v.play().catch(() => setPlayingUI(false)); else v.pause();
@@ -2076,10 +2241,13 @@ function renderWelcome() {
   const nameList = names.length > 1 ? names.slice(0, -1).join(", ") + " and " + names[names.length - 1] : names[0] || "";
   const faq = [
     ["What is GNS+?", ["GNS+ is the streaming home of the Global News Service. It carries full GNS broadcasts, from debates and town halls to addresses and sessions of Congress, plus GNS+ Originals like Breaking Through.", "Everything plays right here, start to finish."]],
+    ["How does the free trial work?", [`Every new GNS+ account starts with a ${TRIAL_DAYS / 7}-week free trial. You can watch everything, including GNS Live, with short ad breaks during shows.`, "When the trial ends, you'll meet with a GNS representative to go over your contract and choose a plan."]],
+    ["What plans are there?", ["GNS+ Regular: every show and GNS Live, with ads.", "GNS+ Gold: every show and GNS Live, with no ads.", "GNS+ Premium: no ads, plus GNS+ exclusives, backstage content like tours of the GNS studios, and fan perks like blooper reels."]],
     ["How do I get an account?", ["GNS+ is invite-only. Accounts are set up by the GNS team, so ask them for your username and password, then tap Sign In."]],
     ["What can I watch on GNS+?", [`Right now: ${nameList}.`, "New broadcasts show up under New & Popular as soon as GNS adds them."]],
     ["Where can I watch?", ["Anywhere with a web browser: iPhone, Android, iPad, Mac or PC. GNS+ saves your place on each device, so you can pick up where you left off."]]
   ];
+  $("wlHow").innerHTML = HOW_STEPS; $("wlPlans").innerHTML = planCards("");
   $("wlFaq").innerHTML = faq.map(([q, a]) => `<details><summary>${esc(q)}${PLUS_ICON}</summary><div class="wl-a">${a.map(p => `<p>${esc(p)}</p>`).join("")}</div></details>`).join("");
 }
 function showWelcome() {
@@ -2253,6 +2421,7 @@ $("pfSwitchBtn").addEventListener("click", () => {
   setTimeout(() => { app.classList.remove("app-leaving"); showProfiles(); }, 300);
 });
 $("getAppBtn").addEventListener("click", () => setMenu(false));
+document.addEventListener("click", e => { if (e.target.closest && e.target.closest("[data-goto-plans]")) { setMenu(false); go("plans"); } });
 function startApp() {
   $("pfSwitchBtn").hidden = false; $("getAppBtn").hidden = true;
   const s = readSession();
