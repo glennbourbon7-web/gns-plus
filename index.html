@@ -442,7 +442,11 @@
     position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 12px 10px; font-weight: 700; font-size: 15px;
     background: linear-gradient(0deg, rgba(0,0,0,0.85), rgba(0,0,0,0));
   }
-  .tile-baked .tile-title { background: none; }
+  .tile-baked { container-type: inline-size; }
+  .tile-card { position: absolute; left: 0; right: 0; bottom: 0; display: grid; justify-items: center; padding: 0 6% 4%; text-align: center; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.55); }
+  .tile-card small { font-family: var(--font-display); font-weight: 700; font-size: 4.2cqw; color: #d9dbe3; line-height: 1.1; }
+  .tile-card b { font-family: var(--font-display); font-weight: 800; font-size: 10.5cqw; line-height: .95; letter-spacing: -.01em; white-space: nowrap; text-shadow: 0 3px 16px rgba(0,0,0,.6); }
+  .tile-card .logo { --logo-size: 3cqw; margin-top: 1.4cqw; opacity: .9; }
   .tile:hover { transform: scale(1.04); }
   .tile.placeholder {
     cursor: default; border: 1px solid rgba(255,255,255,0.07);
@@ -895,6 +899,7 @@ const TITLES = [
     poster: "media/gns-keynote.jpg",
     thumb: "media/gns-keynote-sm.jpg",
     bakedGradient: true,
+    card: { main: "GNS Keynote" },
     added: "2026-10-11",
     description: "Executive Chairman Richard Powers unveils the new GNS, GNS Kids and GNS+ websites and apps, names Grace Langley CEO of GNS+, and lays out ad-supported and ad-free membership.",
     episodes: [{ title: "Full keynote", desc: "Richard Powers' complete keynote address, livestreamed on GNS.", url: "https://www.youtube.com/watch?v=0XdEGUKMmMo" }]
@@ -1255,7 +1260,8 @@ const originalLabel = item => item.row === "originals" ? `<p class="label-gold">
 
 function tile(t) {
   const art = t.thumb || t.poster;
-  const name = art && t.posterHasTitle ? "" : `<span class="tile-title">${esc(t.title)}</span>`;
+  const name = t.card ? `<span class="tile-card" aria-hidden="true">${t.card.kicker ? `<small>${esc(t.card.kicker)}</small>` : ""}<b>${esc(t.card.main)}</b><span class="logo"><span class="logo-gns">GNS</span><span class="logo-plus">+</span></span></span>`
+    : art && t.posterHasTitle ? "" : `<span class="tile-title">${esc(t.title)}</span>`;
   const lw = lastWatched(t);
   let prog = "";
   if (lw && !lw.done && lw.t > 30 && lw.ep.parts) prog = `<span class="tile-prog" aria-hidden="true"><i style="width:${Math.min(100, lw.t / epLen(lw.ep) * 100).toFixed(1)}%"></i></span>`;
