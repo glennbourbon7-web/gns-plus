@@ -1218,7 +1218,8 @@ function fadeIntoHome(name) {
 let page = "home";
 /* ===== Plans, free trial and ads =====
    Everyone starts with a 2-week free trial (with ads). After their plan meeting with a GNS representative,
-   set each subscriber's plan below: account hash -> "regular" | "gold" | "premium". Anyone not listed is on the free trial. */
+   set each subscriber's plan below by username, e.g. "glenn bourbon": "premium". Plans: "regular" | "gold" | "premium".
+   Anyone not listed is on the free trial. */
 const TRIAL_DAYS = 14;
 const ACCOUNT_PLANS = {};
 const PLANS = [
@@ -1417,7 +1418,7 @@ function viewNew() {
     </div>`;
 }
 const sessHash = () => { const s = readSession(); return (s && s.hash) || ""; };
-const currentPlan = () => ACCOUNT_PLANS[sessHash()] || "trial";
+const currentPlan = () => { const s = readSession(), n = ((s && s.name) || "").trim().toLowerCase(); return ACCOUNT_PLANS[n] || ACCOUNT_PLANS[sessHash()] || "trial"; };
 const adsOn = () => { const pl = currentPlan(); return pl === "trial" || pl === "regular"; };
 function trialInfo() {
   const h = sessHash(); let start = Date.now();
