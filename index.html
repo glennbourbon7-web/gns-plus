@@ -513,6 +513,15 @@
   .lv-play { position: absolute; left: clamp(12px, 3%, 28px); bottom: clamp(12px, 4%, 28px); width: clamp(52px, 8vw, 76px); height: clamp(52px, 8vw, 76px); border-radius: 50%; background: var(--crimson-hi); box-shadow: 0 8px 30px rgba(0,0,0,.5); transition: transform .15s; }
   .lv-play::after { content: ""; position: absolute; left: 54%; top: 50%; transform: translate(-50%, -50%); border-style: solid; border-width: 13px 0 13px 21px; border-color: transparent transparent transparent #fff; }
   .lv-poster:hover .lv-play, .lv-poster:focus-visible .lv-play { transform: scale(1.08); }
+  .lv-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+  .lv-bug { position: absolute; top: 14px; right: 16px; display: flex; align-items: center; gap: 8px; --logo-size: 20px; opacity: .85; pointer-events: none; }
+  .lv-bug b { font-size: 11px; letter-spacing: .12em; background: var(--crimson-hi); padding: 2px 6px; border-radius: 3px; }
+  .lv-adhud { position: absolute; left: 14px; bottom: 14px; display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,.65); padding: 7px 12px; border-radius: 6px; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .lv-tap { white-space: nowrap; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 14px 24px; border-radius: 999px; border: 0; background: #f6f1ec; color: #120c0d; font-weight: 800; font-size: 16px; }
+  .lv-ctl { position: absolute; right: 12px; bottom: 12px; display: flex; gap: 8px; }
+  .lv-btn { width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: rgba(0,0,0,.6); color: #fff; padding: 0; }
+  .lv-btn svg { width: 22px; height: 22px; }
+  .lv-ev img { width: 96px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 4px; flex: none; }
   .lv-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .lv-slate { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 6px; text-align: center;
     background: radial-gradient(ellipse at 50% 40%, #2a1214, #0b0607 75%); }
@@ -1235,22 +1244,20 @@ const PLANS = [
 /* Ad breaks on regular GNS+ shows (not on GNS Live): one unskippable ad before the show starts and one every ADS.every seconds.
    The ads take turns, one per break. */
 const ADS = { every: 420, list: [
-  { src: "media/ads/ciccerone.mp4", poster: "media/ads/ciccerone.jpg" },
-  { src: "media/ads/powers.mp4", poster: "media/ads/powers.jpg" },
-  { src: "media/ads/ozempic.mp4", poster: "media/ads/ozempic.jpg" }
+  { src: "media/ads/ciccerone.mp4", poster: "media/ads/ciccerone.jpg", dur: 40.4 },
+  { src: "media/ads/powers.mp4", poster: "media/ads/powers.jpg", dur: 23.6 },
+  { src: "media/ads/ozempic.mp4", poster: "media/ads/ozempic.jpg", dur: 43.97 }
 ] };
 
 /* ===== GNS Live =====
    Paste the GNS YouTube channel ID here (it starts with "UC"). The Live page then shows
    whatever that channel is streaming right now; when nobody is live, YouTube shows its offline card. */
+/* GNS 24/7: every show plays back to back on a shared clock, so everyone watching sees the same moment.
+   On plans with ads, one ad airs between programs (the ads take turns). New titles join the rotation automatically. */
 const LIVE = {
-  channelId: "UCmC2aO9wljfvD_f3wLuRKHg",   // GNS (@GNS_BP)
-  title: "GNS Live",
-  description: "Breaking news, press conferences and special coverage from the GNS newsroom, as it happens.",
-  // Upcoming broadcasts shown under the player: { when: "Tonight 8 PM", title: "...", desc: "..." }
-  schedule: [],
-  // A specific stream to feature on the Live page (shown instead of the channel feed). Set to null to go back to the channel feed.
-  featured: null
+  title: "GNS 24/7",
+  description: "Every GNS broadcast, debate and original, back to back, around the clock.",
+  epoch: Date.UTC(2026, 9, 12, 4, 0, 0)   // the rotation started at midnight Eastern on Oct 12, 2026
 };
 const PAGES = [{ id: "home", name: "Home" }, { id: "live", name: "Live" }, { id: "new", name: "New & Popular" }, ...ROWS.map(r => ({ id: r.id, name: r.name })), { id: "liked", name: "Liked" }];
 
@@ -1463,36 +1470,121 @@ function viewPlans() {
     <p class="plan-foot">Plans and contract terms are set up in person with a GNS representative. Ask the GNS team if you have questions.</p>
   </section>`;
 }
+function liveLineup() {
+  const segs = [], ads = adsOn() && ADS.list.length; let n = 0;
+  TITLES.forEach(item => episodesOf(item).forEach((ep, i) => {
+    if (!ep.parts || !ep.parts.length) return;
+    if (ads) { const ad = ADS.list[n % ADS.list.length]; segs.push({ ad: true, src: ad.src, dur: ad.dur, title: "Commercial break" }); }
+    n++;
+    const name = episodesOf(item).length > 1 ? `${item.title}: ${ep.title}` : item.title;
+    ep.parts.forEach((pt, k) => segs.push({ src: pt.src, dur: pt.dur, title: name, kind: item.kind || "", poster: item.thumb || item.poster || "", first: k === 0 }));
+  }));
+  return segs;
+}
 function viewLive() {
-  const id = (LIVE.channelId || "").trim();
-  const f = LIVE.featured && LIVE.featured.videoId ? LIVE.featured : null;
-  const src = id ? `https://www.youtube.com/embed/live_stream?channel=${encodeURIComponent(id)}&autoplay=1&playsinline=1&rel=0&modestbranding=1` : "";
-  const player = f
-    ? `<button type="button" class="lv-poster" data-yt="${esc(f.videoId)}" aria-label="Play ${esc(f.title)}"><img src="${esc(f.thumb)}" alt=""><span class="lv-play" aria-hidden="true"></span></button>`
-    : id
-    ? `<iframe src="${esc(src)}" title="${esc(LIVE.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-    : `<div class="lv-slate"><span class="logo lv-logo" aria-label="GNS+"><span class="logo-gns">GNS</span><span class="logo-plus">+</span></span><p class="lv-off">Off Air</p><p class="lv-soon">We'll be live soon. Stay tuned.</p></div>`;
-  const sched = (LIVE.schedule || []).length
-    ? LIVE.schedule.map(s => `<li class="lv-ev"><span class="lv-when">${esc(s.when)}</span><div><h3>${esc(s.title)}</h3>${s.desc ? `<p>${esc(s.desc)}</p>` : ""}</div></li>`).join("")
-    : `<li class="lv-ev lv-none"><span class="lv-when">TBA</span><div><h3>No broadcasts scheduled yet</h3><p>Upcoming GNS live coverage will be listed here.</p></div></li>`;
   return `<section class="lv">
     <div class="lv-glow" aria-hidden="true"></div>
     <div class="lv-head">
-      <p class="lv-kicker">${id ? `<span class="lv-pill"><i></i>LIVE</span>` : `<span class="lv-pill lv-pill-off">OFF AIR</span>`}<span>Only on GNS+</span></p>
-      <h1>${esc(f ? f.title : LIVE.title)}</h1>
-      <p class="lv-desc">${esc(f ? f.desc : LIVE.description)}</p>
+      <p class="lv-kicker"><span class="lv-pill"><i></i>LIVE</span><span>${esc(LIVE.title)} · Only on GNS+</span></p>
+      <h1 id="lvNow">${esc(LIVE.title)}</h1>
+      <p class="lv-desc" id="lvSub">${esc(LIVE.description)}</p>
     </div>
-    <div class="lv-stage"><div class="lv-frame">${player}</div></div>
-    ${f ? `<p class="lv-note">Watching on a phone and the player won't load? <a href="https://www.youtube.com/watch?v=${encodeURIComponent(f.videoId)}" target="_blank" rel="noopener">Open on YouTube</a></p>` : id ? `<p class="lv-note">If the player says the stream is offline, nobody is live right now. <a href="https://www.youtube.com/channel/${encodeURIComponent(id)}/live" target="_blank" rel="noopener">Open on YouTube</a></p>` : ""}
-    <div class="lv-up"><h2>Up next on GNS Live</h2><ul class="lv-list">${sched}</ul></div>
+    <div class="lv-stage"><div class="lv-frame" id="lvFrame">
+      <video id="lvVid" playsinline preload="auto" disablepictureinpicture></video>
+      <div class="lv-bug" aria-hidden="true"><span class="logo"><span class="logo-gns">GNS</span><span class="logo-plus">+</span></span><b>LIVE</b></div>
+      <div class="lv-adhud" id="lvAd" hidden><i class="ad-tag">AD</i><span id="lvAdLeft">We'll be right back</span></div>
+      <button type="button" class="lv-tap" id="lvTap" hidden>Tap to watch live</button>
+      <div class="lv-ctl">
+        <button type="button" class="lv-btn" id="lvMute" aria-label="Mute"></button>
+        <button type="button" class="lv-btn" id="lvFull" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg></button>
+      </div>
+    </div></div>
+    <div class="lv-up"><h2>Coming up on ${esc(LIVE.title)}</h2><ul class="lv-list" id="lvNext"></ul></div>
   </section>`;
 }
-document.addEventListener("click", e => {
-  const b = e.target.closest && e.target.closest(".lv-poster");
-  if (!b) return;
-  const v = encodeURIComponent(b.dataset.yt);
-  b.outerHTML = `<iframe src="https://www.youtube.com/embed/${v}?autoplay=1&playsinline=1&rel=0&modestbranding=1" title="GNS Live" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-});
+const LV = { v: null, segs: [], total: 0, cur: -1, timer: 0 };
+function liveAt(ms) {
+  const t = (((ms - LIVE.epoch) / 1000) % LV.total + LV.total) % LV.total;
+  let acc = 0;
+  for (let i = 0; i < LV.segs.length; i++) { if (t < acc + LV.segs[i].dur) return { i, off: t - acc }; acc += LV.segs[i].dur; }
+  return { i: 0, off: 0 };
+}
+const clockAt = ms => new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+function stopLive() {
+  clearInterval(LV.timer);
+  if (LV.v) { LV.v.pause(); LV.v.removeAttribute("src"); LV.v.load(); }
+  LV.v = null; LV.cur = -1;
+}
+function paintLiveMute() {
+  const b = $("lvMute"); if (!b || !LV.v) return;
+  b.innerHTML = LV.v.muted ? ICON_MUTED : ICON_VOL; b.setAttribute("aria-label", LV.v.muted ? "Unmute" : "Mute");
+}
+function paintLiveInfo() {
+  if (!LV.v || LV.cur < 0) return;
+  const s = LV.segs[LV.cur];
+  $("lvAd").hidden = !s.ad;
+  if (s.ad) {
+    let left = Math.max(0, s.dur - (LV.v.currentTime || 0));
+    $("lvAdLeft").textContent = `${LIVE.title} resumes in ${fmtT(Math.ceil(left))}`;
+  }
+}
+function paintLiveProgram() {
+  const s = LV.segs[LV.cur];
+  let prog = s;
+  if (s.ad) prog = LV.segs[(LV.cur + 1) % LV.segs.length];
+  $("lvNow").textContent = s.ad ? `Up next: ${prog.title}` : s.title;
+  $("lvSub").textContent = s.ad ? "Commercial break" : (s.kind ? `${s.kind} · Now playing on ${LIVE.title}` : `Now playing on ${LIVE.title}`);
+  // the next programs and when they start
+  const now = Date.now(), pos = liveAt(now), items = [];
+  let ms = now + (LV.segs[pos.i].dur - pos.off) * 1000, i = (pos.i + 1) % LV.segs.length, guard = 0;
+  while (items.length < 4 && guard++ < LV.segs.length * 2) {
+    const g = LV.segs[i];
+    if (!g.ad && g.first && !(i === pos.i)) items.push({ at: ms, g });
+    ms += g.dur * 1000; i = (i + 1) % LV.segs.length;
+  }
+  $("lvNext").innerHTML = items.map(x => `<li class="lv-ev"><span class="lv-when">${esc(clockAt(x.at))}</span>${x.g.poster ? `<img src="${esc(x.g.poster)}" alt="" loading="lazy">` : ""}<div><h3>${esc(x.g.title)}</h3>${x.g.kind ? `<p>${esc(x.g.kind)}</p>` : ""}</div></li>`).join("");
+}
+function tuneLive(next) {
+  if (!LV.v) return;
+  let pos = liveAt(Date.now());
+  if (next && pos.i === LV.cur) pos = { i: (LV.cur + 1) % LV.segs.length, off: 0 };   // the clock hasn't quite reached the next program
+  const s = LV.segs[pos.i], v = LV.v;
+  const changed = pos.i !== LV.cur; LV.cur = pos.i;
+  if (v._src !== s.src) { v._src = s.src; v.poster = s.ad ? "" : s.poster; v.src = s.src; }
+  const seek = () => { try { if (Math.abs((v.currentTime || 0) - pos.off) > 2) v.currentTime = pos.off; } catch (e) {} };
+  if (v.readyState >= 1) seek(); else v.addEventListener("loadedmetadata", seek, { once: true });
+  const pr = v.play();
+  if (pr && pr.catch) pr.catch(() => { v.muted = true; paintLiveMute(); v.play().catch(() => { $("lvTap").hidden = false; }); });
+  if (changed) paintLiveProgram();
+  paintLiveInfo();
+}
+function startLive() {
+  stopLive();
+  const v = $("lvVid"); if (!v) return;
+  LV.segs = liveLineup(); LV.total = LV.segs.reduce((a, s) => a + s.dur, 0);
+  if (!LV.total) { $("lvNow").textContent = "Off Air"; return; }
+  LV.v = v; v.muted = false;
+  v.addEventListener("ended", () => tuneLive(true));
+  v.addEventListener("error", () => setTimeout(() => tuneLive(true), 1500));   // skip anything that won't load
+  v.addEventListener("play", () => { $("lvTap").hidden = true; });
+  v.addEventListener("ratechange", () => { if (v.playbackRate !== 1) v.playbackRate = 1; });
+  $("lvMute").onclick = () => { v.muted = !v.muted; paintLiveMute(); if (v.paused) v.play().catch(() => {}); };
+  $("lvTap").onclick = () => { v.muted = false; paintLiveMute(); tuneLive(false); };
+  $("lvFull").onclick = () => {
+    const f = $("lvFrame"), req = f.requestFullscreen || f.webkitRequestFullscreen;
+    if (document.fullscreenElement || document.webkitFullscreenElement) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+    if (req) { const r = req.call(f); if (r && r.catch) r.catch(() => {}); } else if (v.webkitEnterFullscreen) v.webkitEnterFullscreen();
+  };
+  paintLiveMute();
+  tuneLive(false);
+  LV.timer = setInterval(() => {
+    paintLiveInfo();
+    if (!LV.v || LV.v.paused) return;
+    const pos = liveAt(Date.now());   // stay with the clock: catch up after buffering or a sleeping phone
+    if (pos.i !== LV.cur && LV.v.currentTime < LV.segs[LV.cur].dur - 1) tuneLive(false);
+  }, 1000);
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden && LV.v) tuneLive(false); });
 function viewLiked() {
   const liked = Object.entries(readLikes()).sort((a, b) => b[1] - a[1]).map(([id]) => TITLES.find(t => t.id === id)).filter(Boolean);
   return `<div class="page-head"><h1>Your liked media</h1></div>
@@ -1543,6 +1635,7 @@ function viewShow() {
     <p class="show-more show-tail"><a class="btn-more" href="${esc(hubUrl("home"))}" data-hub="home" target="_blank" rel="noopener">More on GNS+</a></p>`;
 }
 function render() {
+  stopLive();
   if (!isHub) {
     $("navLinks").innerHTML = PAGES.map(p => `<a href="${esc(hubUrl(p.id))}" data-hub="${p.id}" target="_blank" rel="noopener">${esc(p.name)}</a>`).join("");
     $("pages").innerHTML = viewShow();
@@ -1552,6 +1645,7 @@ function render() {
     `<button type="button" data-page="${p.id}"${p.id === page ? ' aria-current="page"' : ""}>${esc(p.name)}</button>`).join("");
   hideHover(true);
   $("pages").innerHTML = page === "home" ? viewHome() : page === "new" ? viewNew() : page === "liked" ? viewLiked() : page === "live" ? viewLive() : page === "plans" ? viewPlans() : page === "search" ? viewSearch() : viewRow(page);
+  if (page === "live") startLive();
 }
 function go(p) {
   if (p !== "search" && searchQ) { searchQ = ""; $("searchInput").value = ""; closeSearch(); }
@@ -2029,6 +2123,7 @@ document.addEventListener("keydown", e => {   // shortcuts can't skip or seek du
 }, true);
 
 function openPlayer(item) {
+  stopLive();
   P.parts = item.parts; P.starts = []; let acc = 0;
   item.parts.forEach(p => { P.starts.push(acc); acc += p.dur; });
   P.total = acc; P.key = item.key || ""; P.next = item.next || null; P.yt = item.yt || ""; P.a = 0; P.lastSave = 0;
