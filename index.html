@@ -937,7 +937,8 @@ const ACCOUNTS = [
   "2ef5fa324514dff179cd9a8feac527392504e49ab8d49d753da8fdd51579cd87",
   "ffbb7fd2c02d06ad64cda0406b7b811853404b708ac6e329cdddf69bf85b9fc4",
   "fbb97e531bdbdf45dcb61c266b13adf715350796a2d7f18c6b6c27c8c5e4bb53",
-  "dc9edaf3491d9370d4fe33b85407984036744c20205d8190ca1fa1bc7f3d38e2"
+  "dc9edaf3491d9370d4fe33b85407984036744c20205d8190ca1fa1bc7f3d38e2",
+  "89e35a1d569a5bcbb25a0c33a840e4fbbfeb4b9cd8e5b01f759a58997f6d571b"   // JosephRM (employee), added 2026-10-12
 ];
 
 /* ===== Catalog =====
@@ -1233,6 +1234,13 @@ const TRIAL_DAYS = 14;
 const GNS_REPS = ["Grace Langley", "Glenn Bourbon", "Henry Reyes", "Peyton Manning", "Joseph Reyes-McCollum"];
 const SUBSCRIBERS = {
 };
+/* Employee Accounts (kept in step with EMPLOYEES.md): permanently ad-free, no free trial, no plan meeting.
+   username (lowercase) -> { added } */
+const EMPLOYEE_ACCOUNTS = {
+  "josephrm": { added: "2026-10-12" },
+  "hdrvacation22": { added: "2026-10-12" },
+  "glennbourbonvp": { added: "2026-10-12" }
+};
 const PLANS = [
   { id: "regular", name: "GNS+ Regular", tag: "With ads", ads: true,
     perks: ["Every GNS broadcast, debate and original", "GNS Live streams", "Short ad breaks during shows"] },
@@ -1428,7 +1436,9 @@ function viewNew() {
 }
 const sessHash = () => { const s = readSession(); return (s && s.hash) || ""; };
 const subOf = () => { const s = readSession(); return SUBSCRIBERS[((s && s.name) || "").trim().toLowerCase()] || null; };
-const currentPlan = () => { const sub = subOf(); return (sub && sub.plan) || "trial"; };
+const sessName = () => { const s = readSession(); return ((s && s.name) || "").trim().toLowerCase(); };
+const isEmployee = () => !!EMPLOYEE_ACCOUNTS[sessName()];
+const currentPlan = () => { if (isEmployee()) return "employee"; const sub = subOf(); return (sub && sub.plan) || "trial"; };
 const adsOn = () => { const pl = currentPlan(); return pl === "trial" || pl === "regular"; };
 function trialInfo() {
   const h = sessHash(), sub = subOf(); let start = Date.now();
@@ -1462,6 +1472,8 @@ function viewPlans() {
   const status = pl === "trial"
     ? (ti.ended ? `<p class="plan-status"><span class="lv-pill lv-pill-off">TRIAL ENDED</span> Your 2-week free trial is over. Meet with your GNS representative to go over your contract and pick a plan.</p>`
                : `<p class="plan-status"><span class="lv-pill">FREE TRIAL</span> ${ti.left} day${ti.left === 1 ? "" : "s"} left. You're watching with ads until you choose a plan.</p>`)
+    : pl === "employee"
+    ? `<p class="plan-status"><span class="lv-pill">EMPLOYEE ACCOUNT</span> Ad-free for good, with everything on GNS+. Thanks for being part of the GNS team.</p>`
     : `<p class="plan-status"><span class="lv-pill">${esc((PLANS.find(x => x.id === pl) || {}).name || "")}</span> Thanks for being a subscriber.</p>`;
   return `<section class="plans-page">
     <div class="page-head plans-head"><h1>Choose your GNS+ plan</h1>${status}</div>
@@ -1664,6 +1676,7 @@ function showApp(name) {
   currentName = name;
   paintFace($("avatar"), readAvatar());
   $("whoName").textContent = name;
+  $("plansBtn").textContent = isEmployee() ? "Employee Account" : "Plans & free trial";
   $("signin").hidden = true;
   $("app").hidden = false;
   page = "home"; render(); window.scrollTo(0, 0);
