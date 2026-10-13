@@ -514,6 +514,8 @@
   .lv-play::after { content: ""; position: absolute; left: 54%; top: 50%; transform: translate(-50%, -50%); border-style: solid; border-width: 13px 0 13px 21px; border-color: transparent transparent transparent #fff; }
   .lv-poster:hover .lv-play, .lv-poster:focus-visible .lv-play { transform: scale(1.08); }
   .lv-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+  .lv-warning { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .8s ease; }
+  .lv-warning[hidden] { display: none !important; }
   .lv-bug { position: absolute; top: 14px; right: 16px; display: flex; align-items: center; gap: 8px; --logo-size: 20px; opacity: .85; pointer-events: none; }
   .lv-bug b { font-size: 11px; letter-spacing: .12em; background: var(--crimson-hi); padding: 2px 6px; border-radius: 3px; }
   .lv-adhud { position: absolute; left: 14px; bottom: 14px; display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,.65); padding: 7px 12px; border-radius: 6px; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -1514,7 +1516,8 @@ function liveLineup() {
     if (ads) { const ad = ADS.list[n % ADS.list.length]; segs.push({ ad: true, src: ad.src, dur: ad.dur, title: "Commercial break" }); }
     n++;
     const name = episodesOf(item).length > 1 ? `${item.title}: ${ep.title}` : item.title;
-    ep.parts.forEach((pt, k) => segs.push({ src: pt.src, dur: pt.dur, title: name, kind: item.kind || "", poster: item.thumb || item.poster || "", first: k === 0 }));
+    if (item.id === "desperate-living-1977") segs.push({ warning: true, src: "GNS.jpeg", dur: 5, title: "Viewer Discretion Advised", kind: "Content advisory", first: true });
+    ep.parts.forEach((pt, k) => segs.push({ src: pt.src, dur: pt.dur, title: name, kind: item.kind || "", poster: item.thumb || item.poster || "", first: k === 0 && item.id !== "desperate-living-1977" }));
   }));
   return segs;
 }
@@ -1527,6 +1530,7 @@ function viewLive() {
       <p class="lv-desc" id="lvSub">${esc(LIVE.description)}</p>
     </div>
     <div class="lv-stage"><div class="lv-frame" id="lvFrame">
+      <img id="lvWarning" class="lv-warning" src="GNS.jpeg" alt="Viewer discretion advised" hidden>
       <video id="lvVid" playsinline preload="auto" disablepictureinpicture></video>
       <div class="lv-bug" aria-hidden="true"><span class="logo"><span class="logo-gns">GNS</span><span class="logo-plus">+</span></span><b>LIVE</b></div>
       <div class="lv-adhud" id="lvAd" hidden><i class="ad-tag">AD</i><span id="lvAdLeft">We'll be right back</span></div>
@@ -1550,6 +1554,7 @@ const clockAt = ms => new Date(ms).toLocaleTimeString([], { hour: "numeric", min
 function stopLive() {
   clearInterval(LV.timer);
   if (LV.v) { LV.v.pause(); LV.v.removeAttribute("src"); LV.v.load(); }
+  const warning = $("lvWarning"); if (warning) { warning.hidden = true; warning.style.opacity = "0"; }
   LV.v = null; LV.cur = -1;
 }
 function paintLiveMute() {
@@ -1587,6 +1592,15 @@ function tuneLive(next) {
   if (next && pos.i === LV.cur) pos = { i: (LV.cur + 1) % LV.segs.length, off: 0 };   // the clock hasn't quite reached the next program
   const s = LV.segs[pos.i], v = LV.v;
   const changed = pos.i !== LV.cur; LV.cur = pos.i;
+  const warning = $("lvWarning");
+  if (s.warning) {
+    v.pause(); v.removeAttribute("src"); v._src = null;
+    warning.hidden = false;
+    warning.style.opacity = pos.off < .8 ? String(pos.off / .8) : pos.off > 4.2 ? String(Math.max(0, (5 - pos.off) / .8)) : "1";
+    if (changed) paintLiveProgram();
+    return;
+  }
+  warning.hidden = true; warning.style.opacity = "0";
   if (v._src !== s.src) { v._src = s.src; v.poster = s.ad ? "" : s.poster; v.src = s.src; }
   const seek = () => { try { if (Math.abs((v.currentTime || 0) - pos.off) > 2) v.currentTime = pos.off; } catch (e) {} };
   if (v.readyState >= 1) seek(); else v.addEventListener("loadedmetadata", seek, { once: true });
@@ -1616,6 +1630,7 @@ function startLive() {
   tuneLive(false);
   LV.timer = setInterval(() => {
     paintLiveInfo();
+    if (LV.cur >= 0 && LV.segs[LV.cur].warning) { tuneLive(false); return; }
     if (!LV.v || LV.v.paused) return;
     const pos = liveAt(Date.now());   // stay with the clock: catch up after buffering or a sleeping phone
     if (pos.i !== LV.cur && LV.v.currentTime < LV.segs[LV.cur].dur - 1) tuneLive(false);
