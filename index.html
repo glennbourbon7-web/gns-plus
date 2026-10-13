@@ -957,17 +957,6 @@ const ROWS = [
 ];
 const TITLES = [
   {
-    id: "desperate-living-1977",
-    row: "originals",
-    title: "Desperate Living (1977)",
-    kind: "Film",
-    poster: "IMG_4156.jpeg",
-    thumb: "IMG_4156.jpeg",
-    added: "2026-10-13",
-    description: "A dark comedy by John Waters about a runaway housewife who escapes into a bizarre shantytown ruled by a tyrannical queen. Viewer discretion advised: mature themes, strong language, violence, and sexual content.",
-    episodes: [{ title: "Full film", desc: "Viewer discretion advised. Mature audiences only.", parts: [{ src: "DL1.mp4", dur: 300 }, { src: "DL2.mp4", dur: 300 }, { src: "DL3.mp4", dur: 300 }, { src: "DL4.mp4", dur: 300 }, { src: "DL5.mp4", dur: 300 }, { src: "DL6.mp4", dur: 300 }, { src: "DL7.mp4", dur: 300 }, { src: "DL8.mp4", dur: 300 }, { src: "DL9.mp4", dur: 300 }, { src: "DL10.mp4", dur: 300 }, { src: "DL11.mp4", dur: 300 }, { src: "DL12.mp4", dur: 300 }, { src: "DL13.mp4", dur: 300 }, { src: "DL14.mp4", dur: 300 }, { src: "DL15.mp4", dur: 300 }, { src: "DL16.mp4", dur: 300 }, { src: "DL17.mp4", dur: 300 }, { src: "DL18.mp4", dur: 300 }, { src: "DL19.mp4", dur: 171 }] }]
-  },
-  {
     id: "gns-keynote",
     row: "broadcasts",
     title: "GNS Keynote: Innovation Starts Now",
@@ -1518,8 +1507,7 @@ function liveLineup() {
     if (ads) { const ad = ADS.list[n % ADS.list.length]; segs.push({ ad: true, src: ad.src, dur: ad.dur, title: "Commercial break" }); }
     n++;
     const name = episodesOf(item).length > 1 ? `${item.title}: ${ep.title}` : item.title;
-    if (item.id === "desperate-living-1977") segs.push({ warning: true, src: "GNS.jpeg", dur: 5, title: "Viewer Discretion Advised", kind: "Content advisory", first: true });
-    ep.parts.forEach((pt, k) => segs.push({ src: pt.src, dur: pt.dur, title: name, kind: item.kind || "", poster: item.thumb || item.poster || "", first: k === 0 && item.id !== "desperate-living-1977" }));
+    ep.parts.forEach((pt, k) => segs.push({ src: pt.src, dur: pt.dur, title: name, kind: item.kind || "", poster: item.thumb || item.poster || "", first: k === 0 }));
   }));
   return segs;
 }
