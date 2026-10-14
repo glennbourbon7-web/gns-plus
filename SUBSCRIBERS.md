@@ -14,3 +14,4 @@ This log is mirrored in `SUBSCRIBERS` in `index.html`, which the site uses for e
 | ricksing (Rick Singer) | 2026-10-12 | 2026-10-26 | Joseph Reyes-McCollum | Free trial |
 | Disappointedbozo (Joseph Lowe) | 2026-10-12 | 2026-10-26 | Peyton Manning | Free trial |
 | TestAccount (test account) | 2026-10-12 | 2026-10-26 | Glenn Bourbon | Free trial |
+| DHayes | 2026-10-14 | 2026-10-28 | Glenn Bourbon | Free trial |
