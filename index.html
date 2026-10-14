@@ -1024,6 +1024,7 @@ const NORTH_PARK = {
   posterHasTitle: true,
   added: "2026-10-14",
   description: "Four kids, one bus stop, and a whole lot of Kansas. Seth, Matt, Sam and Tim are just trying to get through the day in North Park, Kansas, a small prairie town where the sky is construction paper, the weather is always out to get you, and Sam's dad Hector Castillo has a steel-vault bunker in the backyard for every emergency.",
+  trailer: { src: "media/v/north-park-trailer.mp4", dur: 58.2 },
   episodes: [{ title: "Episode 1: The Storm Warning", desc: "A tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in. Subtitles available.", subs: "media/north-park-01.vtt", breaks: [141.323], parts: NP_PARTS }]
 };
 const TITLES = [
@@ -1132,6 +1133,7 @@ const COMING = [
     at: Date.UTC(2026, 9, 15, 0, 30, 0),
     label: "Premieres tonight \u00b7 8:30 PM ET",
     titleId: "north-park",
+    trailer: true,
     poster: "media/north-park.jpg",
     thumb: "media/north-park-sm.jpg",
     description: "Four kids, one bus stop, and a whole lot of Kansas. Seth, Matt, Sam and Tim are just trying to get through the day in North Park, Kansas, a small prairie town where the sky is construction paper, the weather is always out to get you, and Sam's dad Hector Castillo has a steel-vault bunker in the backyard for every emergency. Episode 1, \u201cThe Storm Warning\u201d: a tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in."
@@ -1162,7 +1164,7 @@ function comingCard(c) {
       <p class="cs-kind">${esc(c.kind)}</p>
       <h3 id="cs-${esc(c.id)}">${esc(c.title)}</h3>
       <p class="cs-desc">${esc(c.description)}</p>
-      <div class="cs-actions">${out && c.titleId && TITLES.some(t => t.id === c.titleId) ? `<button type="button" class="btn-play" data-play="${esc(c.titleId)}" data-ep="0">${PLAY_ICON}Play</button>` : out && c.titleId ? `<button type="button" class="btn-play" data-page-go="live" data-live-tab="premiere">${PLAY_ICON}Watch the premiere</button>` : ""}<button type="button" class="like-btn big" data-like="${esc(c.id)}" aria-pressed="${on}">${HEART}<span>${on ? "Liked" : "Like"}</span></button>
+      <div class="cs-actions">${out && c.titleId && TITLES.some(t => t.id === c.titleId) ? `<button type="button" class="btn-play" data-play="${esc(c.titleId)}" data-ep="0">${PLAY_ICON}Play</button>` : out && c.titleId ? `<button type="button" class="btn-play" data-page-go="live" data-live-tab="premiere">${PLAY_ICON}Watch the premiere</button>` : ""}${c.trailer ? `<button type="button" class="btn-more" data-trailer="${esc(c.titleId)}">${PLAY_ICON}Watch trailer</button>` : ""}<button type="button" class="like-btn big" data-like="${esc(c.id)}" aria-pressed="${on}">${HEART}<span>${on ? "Liked" : "Like"}</span></button>
       <p class="cs-note">${on ? (out ? "It\u2019s out. It\u2019s on your Home page under Recommended for you." : `We\u2019ll recommend it to you when it comes out.`) : "Like it to get it recommended to you when it comes out."}</p></div>
     </div>
   </article>`;
@@ -1513,7 +1515,7 @@ function heroFeatured(f) {
         <h1>${esc(f.title)}</h1>
         ${chips(f)}
         ${f.description ? `<p>${esc(f.description)}</p>` : ""}
-        <div class="actions">${playControl(f, 0)}<button type="button" class="btn-more" data-details="${esc(f.id)}">${INFO_ICON}More info</button></div>
+        <div class="actions">${playControl(f, 0)}${f.trailer ? `<button type="button" class="btn-more" data-trailer="${esc(f.id)}">${PLAY_ICON}Trailer</button>` : ""}<button type="button" class="btn-more" data-details="${esc(f.id)}">${INFO_ICON}More info</button></div>
         ${playNote(f)}
       </div>
     </section>`;
@@ -1530,7 +1532,7 @@ function heroPremiere() {
         <p class="prem-when"><span class="lv-pill${live ? "" : " lv-pill-soon"}"><i></i>${live ? "PREMIERING NOW" : "PREMIERES TONIGHT"}</span><b>${esc(PREMIERE.when)}</b></p>
         <p>${esc(NORTH_PARK.description)} Episode 1, \u201cThe Storm Warning,\u201d premieres on GNS 24/7.</p>
         <p class="prem-count" data-prem-count>${esc(premCountText())}</p>
-        <div class="actions"><button type="button" class="btn-play" data-page-go="live" data-live-tab="premiere">${PLAY_ICON}${live ? "Watch the premiere" : "Go to the premiere"}</button><button type="button" class="like-btn big" data-like="cs-north-park" aria-pressed="${isLiked("cs-north-park")}">${HEART}<span>${isLiked("cs-north-park") ? "Liked" : "Like"}</span></button></div>
+        <div class="actions"><button type="button" class="btn-play" data-page-go="live" data-live-tab="premiere">${PLAY_ICON}${live ? "Watch the premiere" : "Go to the premiere"}</button><button type="button" class="btn-more" data-trailer="north-park">${PLAY_ICON}Watch trailer</button><button type="button" class="like-btn big" data-like="cs-north-park" aria-pressed="${isLiked("cs-north-park")}">${HEART}<span>${isLiked("cs-north-park") ? "Liked" : "Like"}</span></button></div>
       </div>
     </section>`;
 }
@@ -1695,7 +1697,7 @@ function viewPremiere() {
     </div>
     <div class="lv-stage">${frame}</div>
     <div class="lv-up prem-meta">
-      <div class="cs-actions"><button type="button" class="like-btn big" data-like="cs-north-park" aria-pressed="${isLiked("cs-north-park")}">${HEART}<span>${isLiked("cs-north-park") ? "Liked" : "Like"}</span></button>
+      <div class="cs-actions"><button type="button" class="btn-more" data-trailer="north-park">${PLAY_ICON}Watch trailer</button><button type="button" class="like-btn big" data-like="cs-north-park" aria-pressed="${isLiked("cs-north-park")}">${HEART}<span>${isLiked("cs-north-park") ? "Liked" : "Like"}</span></button>
       <p class="cs-note">${st === "soon" ? "Like it to get it recommended to you when it premieres." : "Liked shows are saved to your profile."}</p></div>
       <p class="prem-about">${esc(NORTH_PARK.description)}</p>
     </div>
@@ -2033,7 +2035,7 @@ function openDetails(id) {
       <h2 id="detailsTitle">${esc(item.title)}</h2>
       ${chips(item)}
       ${item.description ? `<p class="details-desc">${esc(item.description)}</p>` : ""}
-      <div class="actions">${playControl(item, (lastWatched(item) && !lastWatched(item).done && lastWatched(item).ep.parts) ? lastWatched(item).i : 0)}${likeBtn(item.id, true)}</div>
+      <div class="actions">${playControl(item, (lastWatched(item) && !lastWatched(item).done && lastWatched(item).ep.parts) ? lastWatched(item).i : 0)}${item.trailer ? `<button type="button" class="btn-more" data-trailer="${esc(item.id)}">${PLAY_ICON}Trailer</button>` : ""}${likeBtn(item.id, true)}</div>
       ${playNote(item)}
       <p class="last-line">${esc(lastLine(item))}</p>
       ${eps.length <= 1 && episodesOf(item)[0].desc ? `<p class="details-desc">${esc(episodesOf(item)[0].desc)}</p>` : ""}
@@ -2076,6 +2078,8 @@ document.addEventListener("click", e => {
     if (page === "liked" || page === "home" || page === "new") { const y = window.scrollY; render(); window.scrollTo(0, y); }
     return;
   }
+  const tr = e.target.closest("[data-trailer]");
+  if (tr) { stopLive(); playTrailer(tr.dataset.trailer); return; }
   const lt = e.target.closest("[data-live-tab]");
   if (lt) { liveTab = lt.dataset.liveTab; if (page !== "live") go("live"); else { render(); } return; }
   const d = e.target.closest("[data-details]");
@@ -2492,7 +2496,7 @@ function openPlayer(item) {
   }
   updateUI(); setPlayingUI(true);
   P.adDone = new Set(); P.adMarks = [];
-  if (adsOn() && ADS.list.length) {
+  if (adsOn() && ADS.list.length && !item.noAds) {
     const marks = item.breaks || []; if (!item.breaks) for (let m = ADS.every; m < P.total - 60; m += ADS.every) marks.push(m);
     marks.forEach(m => { P.adMarks.push(m); if (m <= resume) P.adDone.add(m); });
     startAd(resumeMain);                                             // the ad before the show, started inside the tap so it plays with sound
@@ -2507,6 +2511,11 @@ function playEpisode(item, i) {
   openPlayer({ title: multi ? `${item.title}: ${ep.title}` : item.title, parts: ep.parts, poster: item.poster, key: item.id + ":" + i, next, yt: ep.yt || "", subs: ep.subs || "", breaks: ep.breaks || null });
 }
 $("pCC").addEventListener("click", () => { setSubsOn(!subsOn()); $("pCC").setAttribute("aria-pressed", String(subsOn())); updateUI(); });
+function playTrailer(id) {
+  const item = id === "north-park" ? NORTH_PARK : TITLES.find(t => t.id === id);
+  if (!item || !item.trailer) return;
+  openPlayer({ title: `${item.title}: Official Trailer`, parts: [item.trailer], poster: item.poster, key: "", noAds: true });
+}
 function closePlayer() {
   if (player.hidden) return;
   if (P.inAd) { P.adCb = null; stopAd(); }
