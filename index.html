@@ -456,6 +456,35 @@
   }
   .tile.placeholder:hover { transform: none; }
 
+  /* Subtitles */
+  .subs { position: absolute; left: 50%; bottom: 9%; transform: translateX(-50%); z-index: 3; max-width: min(88%, 900px); width: max-content; padding: .3em .7em; border-radius: 6px;
+    background: rgba(0,0,0,.72); color: #fff; font-weight: 600; font-size: clamp(15px, 2.4vw, 30px); line-height: 1.3; text-align: center; pointer-events: none; text-wrap: balance; white-space: pre-line; }
+  .player .subs { bottom: 120px; }
+  .player.idle .subs { bottom: 7%; }
+  .lv-frame .subs { font-size: clamp(13px, 2.2vw, 24px); bottom: 8%; }
+  .ctl-cc, .lv-cc { font-weight: 800; font-size: 13px; letter-spacing: .04em; }
+  .ctl-cc[aria-pressed="false"], .lv-cc[aria-pressed="false"] { opacity: .45; text-decoration: line-through; }
+  /* Premiere */
+  .lv-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  .lv-tabs button { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--ink); font: inherit; font-weight: 700; font-size: 15px; }
+  .lv-tabs button[aria-selected="true"] { background: #f6f1ec; color: #120c0d; border-color: #f6f1ec; }
+  .lv-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--crimson-hi); box-shadow: 0 0 10px var(--crimson-hi); }
+  .lv-pill-soon { background: #2a1a10; color: var(--gold); box-shadow: none; border: 1px solid rgba(216,182,108,.5); }
+  .prem-banner { display: flex; align-items: center; gap: 12px; width: fit-content; max-width: 100%; padding: 8px 16px 8px 8px; border-radius: 10px; border: 1px solid rgba(216,182,108,.45); background: linear-gradient(90deg, #2a1410, #170f11); color: var(--ink); text-align: left; font: inherit; }
+  .prem-banner img { width: 96px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 6px; flex: none; }
+  .prem-banner span { display: grid; gap: 2px; min-width: 0; }
+  .prem-banner b { font-size: 15px; } .prem-banner small { color: var(--gold); font-weight: 600; font-size: 13px; }
+  .prem-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .prem-over { position: absolute; inset: 0; display: grid; align-content: end; justify-items: start; gap: 6px; padding: clamp(16px, 4%, 36px); background: linear-gradient(0deg, rgba(0,0,0,.86), rgba(0,0,0,.25) 55%, transparent); }
+  .prem-k { margin: 0; color: var(--gold); font-weight: 800; font-size: clamp(12px, 1.6vw, 15px); letter-spacing: .14em; text-transform: uppercase; }
+  .prem-big { margin: 0 0 6px; font-family: var(--font-display); font-weight: 800; font-size: clamp(30px, 6vw, 64px); line-height: 1; font-variant-numeric: tabular-nums; }
+  .prem-meta { display: grid; gap: 10px; }
+  .prem-about { margin: 0; color: #d8cdca; max-width: 70ch; }
+  .prem-when { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 12px; }
+  .prem-when b { font-size: 17px; }
+  .prem-count { margin: 0 0 16px; font-family: var(--font-display); font-weight: 800; font-size: clamp(22px, 2.6vw, 32px); color: var(--gold); font-variant-numeric: tabular-nums; }
+  .prem-hero .hero-copy > p:not(.label-gold):not(.prem-when):not(.prem-count) { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+
   /* Coming soon */
   .cs-track { grid-auto-columns: clamp(300px, 34vw, 440px); gap: 14px; }
   @media (max-width: 719px) { .cs-track { grid-auto-columns: 84vw; } }
@@ -922,6 +951,7 @@
     <div class="ad-hud"><span><i class="ad-tag">AD</i><span id="adCount">Your show will resume shortly</span></span><span class="ad-up">No ads with <b>GNS+ Gold</b> or <b>Premium</b></span></div>
     <button type="button" class="ad-tap" id="adTap" hidden>Tap to play</button>
   </div>
+  <div class="subs" id="pSubs" hidden></div>
   <div class="spinner" id="pSpin" hidden></div>
   <p class="pload" id="pLoad" role="status" hidden></p>
   <button type="button" class="bigplay" id="pBig" aria-label="Play" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></svg></button>
@@ -939,6 +969,7 @@
       <button type="button" class="ctl" id="pMute" aria-label="Mute"></button>
       <span class="time" id="pTime">0:00 / 0:00</span>
       <span class="ctl-spacer"></span>
+      <button type="button" class="ctl ctl-cc" id="pCC" aria-label="Subtitles" aria-pressed="true" hidden>CC</button>
       <button type="button" class="ctl" id="pFull" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     </div>
   </div>
@@ -970,7 +1001,33 @@ const ROWS = [
   { id: "originals", name: "GNS+ Originals", empty: "No GNS+ Originals yet", emptyNote: "Original shows will show up here as soon as they're added." },
   { id: "games", name: "Games", empty: "No games yet", emptyNote: "Games will show up here as soon as they're added." }
 ];
+/* ===== North Park world premiere =====
+   Plays on the Live page's Premiering tab on a shared clock: the GNS+ premiere intro, then the episode,
+   with one ad at the break (plans with ads only). It joins the catalog once the premiere is over. */
+const PREMIERE = {
+  id: "north-park",
+  at: Date.UTC(2026, 9, 15, 0, 30, 0),          // Wednesday, October 14, 2026, 8:30 PM Eastern
+  when: "Tonight at 8:30 PM ET",
+  intro: { src: "media/v/premiere-intro.mp4", dur: 9 }
+};
+const NP_PARTS = [{ src: "media/v/north-park-01a.mp4", dur: 141.323 }, { src: "media/v/north-park-01b.mp4", dur: 162.767 }];
+const premiereEnd = () => PREMIERE.at + (PREMIERE.intro.dur + NP_PARTS.reduce((a, x) => a + x.dur, 0) + 60) * 1000;   // 60 s covers the longest ad
+const premiereState = () => Date.now() < PREMIERE.at ? "soon" : Date.now() < premiereEnd() ? "live" : "done";
+const NORTH_PARK = {
+  id: "north-park",
+  row: "originals",
+  title: "North Park",
+  kind: "Animated comedy",
+  featured: true,
+  poster: "media/north-park.jpg",
+  thumb: "media/north-park-sm.jpg",
+  posterHasTitle: true,
+  added: "2026-10-14",
+  description: "Four kids, one bus stop, and a whole lot of Kansas. Seth, Matt, Sam and Tim are just trying to get through the day in North Park, Kansas, a small prairie town where the sky is construction paper, the weather is always out to get you, and Sam's dad Hector Castillo has a steel-vault bunker in the backyard for every emergency.",
+  episodes: [{ title: "Episode 1: The Storm Warning", desc: "A tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in. Subtitles available.", subs: "media/north-park-01.vtt", breaks: [141.323], parts: NP_PARTS }]
+};
 const TITLES = [
+  ...(Date.now() >= premiereEnd() ? [NORTH_PARK] : []),
   {
     id: "gns-keynote",
     row: "broadcasts",
@@ -1071,7 +1128,10 @@ const COMING = [
     id: "cs-north-park",
     title: "North Park",
     kind: "Animated comedy",
-    release: "2026-10-15",
+    release: "2026-10-14",
+    at: Date.UTC(2026, 9, 15, 0, 30, 0),
+    label: "Premieres tonight \u00b7 8:30 PM ET",
+    titleId: "north-park",
     poster: "media/north-park.jpg",
     thumb: "media/north-park-sm.jpg",
     description: "Four kids, one bus stop, and a whole lot of Kansas. Seth, Matt, Sam and Tim are just trying to get through the day in North Park, Kansas, a small prairie town where the sky is construction paper, the weather is always out to get you, and Sam's dad Hector Castillo has a steel-vault bunker in the backyard for every emergency. Episode 1, \u201cThe Storm Warning\u201d: a tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in."
@@ -1087,7 +1147,7 @@ const COMING = [
   }
 ];
 const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
-const isOut = c => todayStr() >= c.release;
+const isOut = c => c.at ? Date.now() >= c.at : todayStr() >= c.release;
 function releaseLabel(c) {
   const d = new Date(c.release + "T12:00:00"), t = new Date(todayStr() + "T12:00:00");
   const days = Math.round((d - t) / 864e5);
@@ -1097,12 +1157,12 @@ function releaseLabel(c) {
 function comingCard(c) {
   const on = isLiked(c.id), out = isOut(c);
   return `<article class="cs-card" aria-labelledby="cs-${esc(c.id)}">
-    <div class="cs-art"><img src="${esc(c.thumb || c.poster)}" alt="${esc(c.title)} title card" loading="lazy"><span class="cs-date">${out ? "Out now" : "Coming " + esc(releaseLabel(c))}</span></div>
+    <div class="cs-art"><img src="${esc(c.thumb || c.poster)}" alt="${esc(c.title)} title card" loading="lazy"><span class="cs-date">${out ? "Out now" : c.label ? esc(c.label) : "Coming " + esc(releaseLabel(c))}</span></div>
     <div class="cs-body">
       <p class="cs-kind">${esc(c.kind)}</p>
       <h3 id="cs-${esc(c.id)}">${esc(c.title)}</h3>
       <p class="cs-desc">${esc(c.description)}</p>
-      <div class="cs-actions"><button type="button" class="like-btn big" data-like="${esc(c.id)}" aria-pressed="${on}">${HEART}<span>${on ? "Liked" : "Like"}</span></button>
+      <div class="cs-actions">${out && c.titleId && TITLES.some(t => t.id === c.titleId) ? `<button type="button" class="btn-play" data-play="${esc(c.titleId)}" data-ep="0">${PLAY_ICON}Play</button>` : out && c.titleId ? `<button type="button" class="btn-play" data-page-go="live" data-live-tab="premiere">${PLAY_ICON}Watch the premiere</button>` : ""}<button type="button" class="like-btn big" data-like="${esc(c.id)}" aria-pressed="${on}">${HEART}<span>${on ? "Liked" : "Like"}</span></button>
       <p class="cs-note">${on ? (out ? "It\u2019s out. It\u2019s on your Home page under Recommended for you." : `We\u2019ll recommend it to you when it comes out.`) : "Like it to get it recommended to you when it comes out."}</p></div>
     </div>
   </article>`;
@@ -1458,6 +1518,22 @@ function heroFeatured(f) {
       </div>
     </section>`;
 }
+const fmtCount = ms => { const s = Math.max(0, Math.floor(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : String(m)) + ":" + String(x).padStart(2, "0"); };
+const premCountText = () => premiereState() === "soon" ? `Starts in ${fmtCount(PREMIERE.at - Date.now())}` : premiereState() === "live" ? "Premiering now" : "Now streaming";
+function heroPremiere() {
+  const live = premiereState() === "live";
+  return `<section class="hero featured prem-hero">
+      <div class="hero-art" style="background-image:url('media/north-park.jpg')" role="img" aria-label="North Park title card"></div>
+      <div class="hero-copy">
+        <p class="label-gold">GNS+ Original \u00b7 World Premiere</p>
+        <h1>North Park</h1>
+        <p class="prem-when"><span class="lv-pill${live ? "" : " lv-pill-soon"}"><i></i>${live ? "PREMIERING NOW" : "PREMIERES TONIGHT"}</span><b>${esc(PREMIERE.when)}</b></p>
+        <p>${esc(NORTH_PARK.description)} Episode 1, \u201cThe Storm Warning,\u201d premieres on GNS 24/7.</p>
+        <p class="prem-count" data-prem-count>${esc(premCountText())}</p>
+        <div class="actions"><button type="button" class="btn-play" data-page-go="live" data-live-tab="premiere">${PLAY_ICON}${live ? "Watch the premiere" : "Go to the premiere"}</button><button type="button" class="like-btn big" data-like="cs-north-park" aria-pressed="${isLiked("cs-north-park")}">${HEART}<span>${isLiked("cs-north-park") ? "Liked" : "Like"}</span></button></div>
+      </div>
+    </section>`;
+}
 function heroWelcome() {
   return `<section class="hero">
       <div class="hero-art" role="img" aria-label="GNS Gold title card"></div>
@@ -1492,7 +1568,7 @@ function viewHome() {
     </section>`;
   }).join("");
   const featured = TITLES.find(t => t.featured);
-  return `${featured ? heroFeatured(featured) : heroWelcome()}
+  return `${premiereState() !== "done" ? heroPremiere() : featured ? heroFeatured(featured) : heroWelcome()}
     <div class="rows">${trialBanner()}${recommendedRow()}${extraTop}${rows}${extraBottom}</div>`;
 }
 function listRow(item, i, rank, extra) {
@@ -1581,10 +1657,59 @@ function liveLineup() {
   }));
   return segs;
 }
-function viewLive() {
+let liveTab = "";
+const liveTabs = () => {
+  const st = premiereState();
+  return `<div class="lv-tabs" role="tablist" aria-label="Live channels">
+    <button type="button" role="tab" data-live-tab="247" aria-selected="${liveTab === "247"}">GNS 24/7</button>
+    <button type="button" role="tab" data-live-tab="premiere" aria-selected="${liveTab === "premiere"}">${st === "live" ? '<i class="lv-dot"></i>' : ""}Premiering${st === "soon" ? " \u00b7 8:30 PM ET" : ""}</button>
+  </div>`;
+};
+function viewPremiere() {
+  const st = premiereState();
+  const desc = "Episode 1, \u201cThe Storm Warning\u201d: a tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in.";
+  let frame;
+  if (st === "live") frame = `<div class="lv-frame" id="prFrame">
+      <video id="prVid" playsinline preload="auto" disablepictureinpicture></video>
+      <div class="subs" id="prSubs" hidden></div>
+      <div class="lv-bug" aria-hidden="true"><span class="logo"><span class="logo-gns">GNS</span><span class="logo-plus">+</span></span><b>PREMIERE</b></div>
+      <div class="lv-adhud" id="prAd" hidden><i class="ad-tag">AD</i><span id="prAdLeft">North Park continues shortly</span></div>
+      <button type="button" class="lv-tap" id="prTap" hidden>Tap to watch the premiere</button>
+      <div class="lv-ctl">
+        <button type="button" class="lv-btn lv-cc" id="prCC" aria-pressed="${subsOn()}" aria-label="Subtitles">CC</button>
+        <button type="button" class="lv-btn" id="prMute" aria-label="Mute"></button>
+        <button type="button" class="lv-btn" id="prFull" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg></button>
+      </div></div>`;
+  else frame = `<div class="lv-frame prem-card">
+      <img src="media/north-park.jpg" alt="North Park title card">
+      <div class="prem-over">${st === "soon"
+        ? `<p class="prem-k">World premiere \u00b7 ${esc(PREMIERE.when)}</p><p class="prem-big" data-prem-count>${esc(premCountText())}</p>`
+        : `<p class="prem-k">The premiere has ended</p><p class="prem-big">Now streaming on GNS+</p>${TITLES.some(t => t.id === "north-park") ? `<button type="button" class="btn-play" data-play="north-park" data-ep="0">${PLAY_ICON}Play Episode 1</button>` : `<button type="button" class="btn-play" onclick="location.reload()">${PLAY_ICON}Watch now</button>`}`}</div></div>`;
   return `<section class="lv">
     <div class="lv-glow" aria-hidden="true"></div>
     <div class="lv-head">
+      ${liveTabs()}
+      <p class="lv-kicker"><span class="lv-pill${st === "live" ? "" : " lv-pill-soon"}"><i></i>${st === "live" ? "PREMIERING NOW" : st === "soon" ? "PREMIERE" : "ENDED"}</span><span>GNS+ Original \u00b7 Only on GNS 24/7</span></p>
+      <h1>North Park</h1>
+      <p class="lv-desc">${esc(desc)}</p>
+    </div>
+    <div class="lv-stage">${frame}</div>
+    <div class="lv-up prem-meta">
+      <div class="cs-actions"><button type="button" class="like-btn big" data-like="cs-north-park" aria-pressed="${isLiked("cs-north-park")}">${HEART}<span>${isLiked("cs-north-park") ? "Liked" : "Like"}</span></button>
+      <p class="cs-note">${st === "soon" ? "Like it to get it recommended to you when it premieres." : "Liked shows are saved to your profile."}</p></div>
+      <p class="prem-about">${esc(NORTH_PARK.description)}</p>
+    </div>
+  </section>`;
+}
+function viewLive() {
+  if (!liveTab) liveTab = premiereState() === "live" ? "premiere" : "247";
+  if (liveTab === "premiere") return viewPremiere();
+  const st = premiereState();
+  return `<section class="lv">
+    <div class="lv-glow" aria-hidden="true"></div>
+    <div class="lv-head">
+      ${liveTabs()}
+      ${st !== "done" ? `<button type="button" class="prem-banner" data-live-tab="premiere"><img src="media/north-park-sm.jpg" alt=""><span><b>${st === "live" ? "North Park is premiering now" : "North Park premieres tonight at 8:30 PM ET"}</b><small>${st === "live" ? "Watch the world premiere" : "Go to the Premiering tab"}</small></span></button>` : ""}
       <p class="lv-kicker"><span class="lv-pill"><i></i>LIVE</span><span>${esc(LIVE.title)} · Only on GNS+</span></p>
       <h1 id="lvNow">${esc(LIVE.title)}</h1>
       <p class="lv-desc" id="lvSub">${esc(LIVE.description)}</p>
@@ -1612,6 +1737,7 @@ function liveAt(ms) {
 }
 const clockAt = ms => new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 function stopLive() {
+  stopPremiere();
   clearInterval(LV.timer);
   if (LV.v) { LV.v.pause(); LV.v.removeAttribute("src"); LV.v.load(); }
   const warning = $("lvWarning"); if (warning) { warning.hidden = true; warning.style.opacity = "0"; }
@@ -1696,7 +1822,107 @@ function startLive() {
     if (pos.i !== LV.cur && LV.v.currentTime < LV.segs[LV.cur].dur - 1) tuneLive(false);
   }, 1000);
 }
-document.addEventListener("visibilitychange", () => { if (!document.hidden && LV.v) tuneLive(false); });
+document.addEventListener("visibilitychange", () => { if (!document.hidden && LV.v) tuneLive(false); if (!document.hidden && PR.v) tunePremiere(); });
+
+/* ---- subtitles (WebVTT files, shown in our own overlay) ---- */
+const SUBS = new Map();
+const subsOn = () => { try { return localStorage.getItem("gnsplus-cc") !== "off"; } catch (e) { return true; } };
+const setSubsOn = on => { try { localStorage.setItem("gnsplus-cc", on ? "on" : "off"); } catch (e) {} };
+function loadSubs(url) {
+  if (!url) return Promise.resolve([]);
+  if (!SUBS.has(url)) SUBS.set(url, fetch(url).then(r => r.ok ? r.text() : "").then(txt => {
+    const sec = h => { const p = h.trim().split(":").map(Number); return p.length === 3 ? p[0] * 3600 + p[1] * 60 + p[2] : p[0] * 60 + p[1]; };
+    return txt.replace(/\r/g, "").split(/\n\n+/).map(b => b.split("\n")).filter(l => l.some(x => x.includes("-->"))).map(l => {
+      const i = l.findIndex(x => x.includes("-->")), [a, z] = l[i].split("-->");
+      return { a: sec(a), z: sec(z.trim().split(" ")[0]), t: l.slice(i + 1).join("\n") };
+    });
+  }).catch(() => []));
+  return SUBS.get(url);
+}
+const cueAt = (cues, t) => { for (const c of cues || []) if (t >= c.a && t < c.z) return c.t; return ""; };
+function paintSub(el, text) { if (!el) return; const on = subsOn() && !!text; if (el._t !== text) { el._t = text; el.textContent = text; } el.hidden = !on; }
+
+/* ---- the premiere: everyone watches the same moment, timed from PREMIERE.at ---- */
+const PR = { v: null, segs: [], cur: -1, timer: 0, cues: [] };
+function premiereSegs() {
+  const segs = [{ src: PREMIERE.intro.src, dur: PREMIERE.intro.dur, intro: true }];
+  segs.push({ src: NP_PARTS[0].src, dur: NP_PARTS[0].dur, ep: 0 });
+  if (adsOn() && ADS.list.length) { const ad = ADS.list[0]; segs.push({ ad: true, src: ad.src, dur: ad.dur }); }
+  segs.push({ src: NP_PARTS[1].src, dur: NP_PARTS[1].dur, ep: NP_PARTS[0].dur });
+  return segs;
+}
+function premiereAt(ms) {
+  let t = (ms - PREMIERE.at) / 1000, acc = 0;
+  for (let i = 0; i < PR.segs.length; i++) { if (t < acc + PR.segs[i].dur) return { i, off: Math.max(0, t - acc) }; acc += PR.segs[i].dur; }
+  return null;
+}
+function stopPremiere() {
+  clearInterval(PR.timer);
+  if (PR.v) { PR.v.pause(); PR.v.removeAttribute("src"); PR.v.load(); }
+  PR.v = null; PR.cur = -1;
+}
+function tunePremiere() {
+  if (!PR.v) return;
+  const pos = premiereAt(Date.now());
+  if (!pos) { stopPremiere(); render(); return; }
+  const s = PR.segs[pos.i], v = PR.v;
+  PR.cur = pos.i;
+  if (v._src !== s.src) { v._src = s.src; v.src = s.src; }
+  const seek = () => { try { if (Math.abs((v.currentTime || 0) - pos.off) > 2) v.currentTime = pos.off; } catch (e) {} };
+  if (v.readyState >= 1) seek(); else v.addEventListener("loadedmetadata", seek, { once: true });
+  const pr = v.play();
+  if (pr && pr.catch) pr.catch(() => { v.muted = true; paintPremMute(); v.play().catch(() => { $("prTap").hidden = false; }); });
+  paintPremiere();
+}
+function paintPremMute() { const b = $("prMute"); if (!b || !PR.v) return; b.innerHTML = PR.v.muted ? ICON_MUTED : ICON_VOL; b.setAttribute("aria-label", PR.v.muted ? "Unmute" : "Mute"); }
+function paintPremiere() {
+  if (!PR.v || PR.cur < 0) return;
+  const s = PR.segs[PR.cur];
+  $("prAd").hidden = !s.ad;
+  if (s.ad) $("prAdLeft").textContent = `North Park continues in ${fmtT(Math.ceil(Math.max(0, s.dur - (PR.v.currentTime || 0))))}`;
+  paintSub($("prSubs"), s.ep != null ? cueAt(PR.cues, s.ep + (PR.v.currentTime || 0)) : "");
+}
+function startPremiere() {
+  stopPremiere();
+  const v = $("prVid"); if (!v) { clearInterval(PR.timer); PR.timer = setInterval(premiereTick, 1000); return; }
+  PR.segs = premiereSegs(); PR.v = v; v.muted = false;
+  loadSubs(NORTH_PARK.episodes[0].subs).then(c => { PR.cues = c; });
+  v.addEventListener("ended", () => setTimeout(tunePremiere, 50));
+  v.addEventListener("error", () => setTimeout(tunePremiere, 1500));
+  v.addEventListener("play", () => { $("prTap").hidden = true; });
+  v.addEventListener("timeupdate", paintPremiere);
+  v.addEventListener("ratechange", () => { if (v.playbackRate !== 1) v.playbackRate = 1; });
+  $("prMute").onclick = () => { v.muted = !v.muted; paintPremMute(); if (v.paused) v.play().catch(() => {}); };
+  $("prTap").onclick = () => { v.muted = false; paintPremMute(); tunePremiere(); };
+  $("prCC").onclick = () => { setSubsOn(!subsOn()); $("prCC").setAttribute("aria-pressed", String(subsOn())); paintPremiere(); };
+  $("prFull").onclick = () => {
+    const f = $("prFrame"), req = f.requestFullscreen || f.webkitRequestFullscreen;
+    if (document.fullscreenElement || document.webkitFullscreenElement) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+    if (req) { const r = req.call(f); if (r && r.catch) r.catch(() => {}); } else if (v.webkitEnterFullscreen) v.webkitEnterFullscreen();
+  };
+  paintPremMute();
+  tunePremiere();
+  PR.timer = setInterval(() => {
+    paintPremiere();
+    if (!PR.v || PR.v.paused) return;
+    const pos = premiereAt(Date.now());
+    if (!pos) { tunePremiere(); return; }
+    if (pos.i !== PR.cur || Math.abs((PR.v.currentTime || 0) - pos.off) > 3) tunePremiere();
+  }, 1000);
+}
+/* countdowns tick everywhere; when the premiere starts or ends, the page redraws itself */
+let premLast = premiereState();
+function premiereTick() {
+  document.querySelectorAll("[data-prem-count]").forEach(el => { el.textContent = premCountText(); });
+  const st = premiereState();
+  if (st !== premLast) {
+    premLast = st;
+    if (st === "live" && page === "live") liveTab = "premiere";
+    if (st === "done" && !TITLES.some(t => t.id === "north-park")) TITLES.unshift(NORTH_PARK);
+    if (player.hidden && (page === "home" || page === "live" || page === "new")) { const y = window.scrollY; render(); window.scrollTo(0, y); }
+  }
+}
+setInterval(premiereTick, 1000);
 function viewLiked() {
   const liked = Object.entries(readLikes()).sort((a, b) => b[1] - a[1]).map(([id]) => TITLES.find(t => t.id === id)).filter(Boolean);
   return `<div class="page-head"><h1>Your liked media</h1></div>
@@ -1757,7 +1983,7 @@ function render() {
     `<button type="button" data-page="${p.id}"${p.id === page ? ' aria-current="page"' : ""}>${esc(p.name)}</button>`).join("");
   hideHover(true);
   $("pages").innerHTML = page === "home" ? viewHome() : page === "new" ? viewNew() : page === "liked" ? viewLiked() : page === "live" ? viewLive() : page === "plans" ? viewPlans() : page === "search" ? viewSearch() : viewRow(page);
-  if (page === "live") startLive();
+  if (page === "live") { if (liveTab === "premiere") startPremiere(); else startLive(); }
 }
 function go(p) {
   if (p !== "search" && searchQ) { searchQ = ""; $("searchInput").value = ""; closeSearch(); }
@@ -1850,6 +2076,8 @@ document.addEventListener("click", e => {
     if (page === "liked" || page === "home" || page === "new") { const y = window.scrollY; render(); window.scrollTo(0, y); }
     return;
   }
+  const lt = e.target.closest("[data-live-tab]");
+  if (lt) { liveTab = lt.dataset.liveTab; if (page !== "live") go("live"); else { render(); } return; }
   const d = e.target.closest("[data-details]");
   if (d) { openDetails(d.dataset.details); return; }
   const p = e.target.closest("[data-play]");
@@ -2109,6 +2337,7 @@ function updateUI() {
   const t = P.dragging ? P.dragT : gTime();
   if (!P.dragging) paintSeek(t);
   $("pTime").textContent = `${fmtT(t)} / ${fmtT(P.total)}`;
+  paintSub($("pSubs"), P.cues && P.cues.length && !P.inAd ? cueAt(P.cues, t) : "");
 }
 function toast(html, ms = 7000) {
   const el = $("pToast"); el.innerHTML = html; el.hidden = false;
@@ -2240,6 +2469,8 @@ function openPlayer(item) {
   P.parts = item.parts; P.starts = []; let acc = 0;
   item.parts.forEach(p => { P.starts.push(acc); acc += p.dur; });
   P.total = acc; P.key = item.key || ""; P.next = item.next || null; P.yt = item.yt || ""; P.a = 0; P.lastSave = 0;
+  P.cues = []; paintSub($("pSubs"), ""); $("pCC").hidden = !item.subs; $("pCC").setAttribute("aria-pressed", String(subsOn()));
+  if (item.subs) loadSubs(item.subs).then(c => { P.cues = c; updateUI(); });
   if (P.inAd) stopAd();
   freeAllBlobs();
   $("playerTitle").textContent = item.title;
@@ -2262,7 +2493,8 @@ function openPlayer(item) {
   updateUI(); setPlayingUI(true);
   P.adDone = new Set(); P.adMarks = [];
   if (adsOn() && ADS.list.length) {
-    for (let m = ADS.every; m < P.total - 60; m += ADS.every) { P.adMarks.push(m); if (m <= resume) P.adDone.add(m); }
+    const marks = item.breaks || []; if (!item.breaks) for (let m = ADS.every; m < P.total - 60; m += ADS.every) marks.push(m);
+    marks.forEach(m => { P.adMarks.push(m); if (m <= resume) P.adDone.add(m); });
     startAd(resumeMain);                                             // the ad before the show, started inside the tap so it plays with sound
   }
   $("playerBack").focus({ preventScroll: true });
@@ -2272,8 +2504,9 @@ function playEpisode(item, i) {
   if (!ep || !ep.parts) return;
   const multi = eps.length > 1;
   const next = i + 1 < eps.length && eps[i + 1].parts ? { label: eps[i + 1].title, go: () => playEpisode(item, i + 1) } : null;
-  openPlayer({ title: multi ? `${item.title}: ${ep.title}` : item.title, parts: ep.parts, poster: item.poster, key: item.id + ":" + i, next, yt: ep.yt || "" });
+  openPlayer({ title: multi ? `${item.title}: ${ep.title}` : item.title, parts: ep.parts, poster: item.poster, key: item.id + ":" + i, next, yt: ep.yt || "", subs: ep.subs || "", breaks: ep.breaks || null });
 }
+$("pCC").addEventListener("click", () => { setSubsOn(!subsOn()); $("pCC").setAttribute("aria-pressed", String(subsOn())); updateUI(); });
 function closePlayer() {
   if (player.hidden) return;
   if (P.inAd) { P.adCb = null; stopAd(); }
