@@ -1040,21 +1040,26 @@ const READING_RAINBOW = {
 };
 const etTime = ms => new Date(ms).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York" }) + " ET";
 const premEndOf = p => p.at + (PREMIERE_INTRO.dur + p.parts.reduce((a, x) => a + x.dur, 0) + 60) * 1000;   // 60 s covers the longest ad
+/* Test Account gets North Park early: its premiere runs at 2:53 PM ET today, with Reading Rainbow right after. */
+const testEarly = () => { try { return (currentName || "").trim().toLowerCase() === "testaccount"; } catch (e) { return false; } };
 const PREMIERES = [{
   item: NORTH_PARK, csId: "cs-north-park", parts: NP_PARTS, subs: "media/north-park-01.vtt",
-  at: Date.UTC(2026, 9, 15, 0, 30, 0),          // Wednesday, October 14, 2026, 8:30 PM Eastern
+  get at() { return testEarly() ? Date.UTC(2026, 9, 14, 18, 53, 0) : Date.UTC(2026, 9, 15, 0, 30, 0); },   // 8:30 PM ET tonight (2:53 PM ET for Test Account)
   kicker: "GNS+ Original \u00b7 World Premiere", ep: "Episode 1, \u201cThe Storm Warning,\u201d",
   epDesc: "Episode 1, \u201cThe Storm Warning\u201d: a tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in.",
   ad: () => ADS.list[0]
 }];
 PREMIERES.push({
   item: READING_RAINBOW, csId: "cs-reading-rainbow", parts: RR_PARTS, subs: "",
-  at: Math.ceil(premEndOf(PREMIERES[0]) / 60000) * 60000,   // the next full minute after North Park's premiere ends
+  get at() { return Math.ceil(premEndOf(PREMIERES[0]) / 60000) * 60000; },   // the next full minute after North Park's premiere ends
   kicker: "GNS Kids \u00b7 Premiere", ep: "Episode 1, \u201cThe Lighthouse Cat,\u201d", after: "right after North Park",
   epDesc: READING_RAINBOW.episodes[0].desc,
   ad: () => NP_TRAILER_AD
 });
-PREMIERES.forEach(p => { p.time = etTime(p.at); p.when = "Tonight at " + p.time + (p.after ? ", " + p.after : ""); });
+PREMIERES.forEach(p => Object.defineProperties(p, {
+  time: { get() { return etTime(p.at); } },
+  when: { get() { return (testEarly() ? "Today at " : "Tonight at ") + p.time + (p.after ? ", " + p.after : ""); } }
+}));
 const premiereEnd = () => premEndOf(PREMIERES[PREMIERES.length - 1]);
 const curPrem = () => PREMIERES.find(p => Date.now() < premEndOf(p)) || PREMIERES[PREMIERES.length - 1];
 const premiereState = () => { const p = curPrem(); return Date.now() < p.at ? "soon" : Date.now() < premEndOf(p) ? "live" : "done"; };
@@ -1162,8 +1167,8 @@ const COMING = [
     title: "North Park",
     kind: "Animated comedy",
     release: "2026-10-14",
-    at: Date.UTC(2026, 9, 15, 0, 30, 0),
-    label: "Premieres tonight \u00b7 8:30 PM ET",
+    get at() { return PREMIERES[0].at; },
+    get label() { return "Premieres " + (testEarly() ? "today" : "tonight") + " \u00b7 " + PREMIERES[0].time; },
     titleId: "north-park",
     trailer: true,
     poster: "media/north-park.jpg",
@@ -1175,8 +1180,8 @@ const COMING = [
     title: "Reading Rainbow",
     kind: "Kids storytime \u00b7 Hosted by Grace Langley",
     release: "2026-10-14",
-    at: PREMIERES[1].at,
-    label: "Premieres tonight \u00b7 " + PREMIERES[1].time,
+    get at() { return PREMIERES[1].at; },
+    get label() { return "Premieres " + (testEarly() ? "today" : "tonight") + " \u00b7 " + PREMIERES[1].time; },
     titleId: "reading-rainbow",
     poster: "media/reading-rainbow.jpg",
     thumb: "media/reading-rainbow-sm.jpg",
@@ -1574,7 +1579,7 @@ function heroPremiere() {
       <div class="hero-copy">
         <p class="label-gold">${esc(p.kicker)}</p>
         <h1>${esc(it.title)}</h1>
-        <p class="prem-when"><span class="lv-pill${live ? "" : " lv-pill-soon"}"><i></i>${live ? "PREMIERING NOW" : "PREMIERES TONIGHT"}</span><b>${esc(p.when)}</b></p>
+        <p class="prem-when"><span class="lv-pill${live ? "" : " lv-pill-soon"}"><i></i>${live ? "PREMIERING NOW" : testEarly() ? "PREMIERES TODAY" : "PREMIERES TONIGHT"}</span><b>${esc(p.when)}</b></p>
         <p>${esc(it.description)} ${esc(p.ep)} premieres on GNS 24/7.</p>
         <p class="prem-count" data-prem-count>${esc(premCountText())}</p>
         <div class="actions"><button type="button" class="btn-play" data-page-go="live" data-live-tab="premiere">${PLAY_ICON}${live ? "Watch the premiere" : "Go to the premiere"}</button>${it.trailer ? `<button type="button" class="btn-more" data-trailer="${esc(it.id)}">${PLAY_ICON}Watch trailer</button>` : ""}<button type="button" class="like-btn big" data-like="${esc(p.csId)}" aria-pressed="${isLiked(p.csId)}">${HEART}<span>${isLiked(p.csId) ? "Liked" : "Like"}</span></button></div>
@@ -1760,7 +1765,7 @@ function viewLive() {
     <div class="lv-glow" aria-hidden="true"></div>
     <div class="lv-head">
       ${liveTabs()}
-      ${st !== "done" ? `<button type="button" class="prem-banner" data-live-tab="premiere"><img src="${esc(curPrem().item.thumb)}" alt=""><span><b>${st === "live" ? curPrem().item.title + " is premiering now" : curPrem().item.title + " premieres tonight at " + curPrem().time}</b><small>${st === "live" ? "Watch the world premiere" : "Go to the Premiering tab"}</small></span></button>` : ""}
+      ${st !== "done" ? `<button type="button" class="prem-banner" data-live-tab="premiere"><img src="${esc(curPrem().item.thumb)}" alt=""><span><b>${st === "live" ? curPrem().item.title + " is premiering now" : curPrem().item.title + " premieres " + (testEarly() ? "today" : "tonight") + " at " + curPrem().time}</b><small>${st === "live" ? "Watch the world premiere" : "Go to the Premiering tab"}</small></span></button>` : ""}
       <p class="lv-kicker"><span class="lv-pill"><i></i>LIVE</span><span>${esc(LIVE.title)} · Only on GNS+</span></p>
       <h1 id="lvNow">${esc(LIVE.title)}</h1>
       <p class="lv-desc" id="lvSub">${esc(LIVE.description)}</p>
@@ -1973,7 +1978,7 @@ function premiereTick() {
     premLast = key;
     if (st === "live" && page === "live") liveTab = "premiere";
     const done = premieredTitles();                                  // premiered shows go to the front of the catalog, in premiere order
-    done.forEach(it => { const k = TITLES.indexOf(it); if (k >= 0) TITLES.splice(k, 1); });
+    PREMIERES.forEach(p => { const k = TITLES.indexOf(p.item); if (k >= 0) TITLES.splice(k, 1); });
     TITLES.unshift(...done);
     if (player.hidden && (page === "home" || page === "live" || page === "new")) { const y = window.scrollY; render(); window.scrollTo(0, y); }
   }
