@@ -1002,18 +1002,15 @@ const ROWS = [
   { id: "originals", name: "GNS+ Originals", empty: "No GNS+ Originals yet", emptyNote: "Original shows will show up here as soon as they're added." },
   { id: "games", name: "Games", empty: "No games yet", emptyNote: "Games will show up here as soon as they're added." }
 ];
-/* ===== North Park world premiere =====
-   Plays on the Live page's Premiering tab on a shared clock: the GNS+ premiere intro, then the episode,
-   with one ad at the break (plans with ads only). It joins the catalog once the premiere is over. */
-const PREMIERE = {
-  id: "north-park",
-  at: Date.UTC(2026, 9, 15, 0, 30, 0),          // Wednesday, October 14, 2026, 8:30 PM Eastern
-  when: "Tonight at 8:30 PM ET",
-  intro: { src: "media/v/premiere-intro.mp4", dur: 9 }
-};
+/* ===== Premieres =====
+   Premieres play one after another on the Live page's Premiering tab on a shared clock: the GNS+ premiere intro,
+   then the episode, with one ad at the break (plans with ads only). Each show joins the catalog, and the front of
+   GNS 24/7, once its premiere is over. */
+const PREMIERE_INTRO = { src: "media/v/premiere-intro.mp4", dur: 9 };
 const NP_PARTS = [{ src: "media/v/north-park-01a.mp4", dur: 141.323 }, { src: "media/v/north-park-01b.mp4", dur: 162.767 }];
-const premiereEnd = () => PREMIERE.at + (PREMIERE.intro.dur + NP_PARTS.reduce((a, x) => a + x.dur, 0) + 60) * 1000;   // 60 s covers the longest ad
-const premiereState = () => Date.now() < PREMIERE.at ? "soon" : Date.now() < premiereEnd() ? "live" : "done";
+const RR_PARTS = [{ src: "media/v/reading-rainbow-01a.mp4", dur: 101.802 }, { src: "media/v/reading-rainbow-01b.mp4", dur: 262.744 }];
+/* The North Park trailer runs as a commercial across GNS+: before every show, between programs on GNS 24/7, and at the Reading Rainbow premiere's break. */
+const NP_TRAILER_AD = { src: "media/v/north-park-trailer.mp4", poster: "media/north-park.jpg", dur: 58.2, promo: "north-park" };
 const NORTH_PARK = {
   id: "north-park",
   row: "originals",
@@ -1028,8 +1025,42 @@ const NORTH_PARK = {
   trailer: { src: "media/v/north-park-trailer.mp4", dur: 58.2 },
   episodes: [{ title: "Episode 1: The Storm Warning", desc: "A tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in. Subtitles available.", subs: "media/north-park-01.vtt", breaks: [141.323], parts: NP_PARTS }]
 };
+const READING_RAINBOW = {
+  id: "reading-rainbow",
+  row: "originals",
+  title: "Reading Rainbow",
+  kind: "Kids storytime",
+  featured: true,
+  poster: "media/reading-rainbow.jpg",
+  thumb: "media/reading-rainbow-sm.jpg",
+  posterHasTitle: true,
+  added: "2026-10-14",
+  description: "GNS Kids presents Reading Rainbow, hosted by Grace Langley. Grace settles in with a good book, the pages come to life, and the whole story gets read aloud, start to finish.",
+  episodes: [{ title: "Episode 1: The Lighthouse Cat", desc: "At the edge of the sea lives Pip, a small orange cat at the top of a lighthouse. When the fog rolls in so thick the great lamp can't reach the boats, Pip finds another way to bring the fishermen home.", breaks: [RR_PARTS[0].dur], parts: RR_PARTS }]
+};
+const etTime = ms => new Date(ms).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York" }) + " ET";
+const premEndOf = p => p.at + (PREMIERE_INTRO.dur + p.parts.reduce((a, x) => a + x.dur, 0) + 60) * 1000;   // 60 s covers the longest ad
+const PREMIERES = [{
+  item: NORTH_PARK, csId: "cs-north-park", parts: NP_PARTS, subs: "media/north-park-01.vtt",
+  at: Date.UTC(2026, 9, 15, 0, 30, 0),          // Wednesday, October 14, 2026, 8:30 PM Eastern
+  kicker: "GNS+ Original \u00b7 World Premiere", ep: "Episode 1, \u201cThe Storm Warning,\u201d",
+  epDesc: "Episode 1, \u201cThe Storm Warning\u201d: a tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in.",
+  ad: () => ADS.list[0]
+}];
+PREMIERES.push({
+  item: READING_RAINBOW, csId: "cs-reading-rainbow", parts: RR_PARTS, subs: "",
+  at: Math.ceil(premEndOf(PREMIERES[0]) / 60000) * 60000,   // the next full minute after North Park's premiere ends
+  kicker: "GNS Kids \u00b7 Premiere", ep: "Episode 1, \u201cThe Lighthouse Cat,\u201d", after: "right after North Park",
+  epDesc: READING_RAINBOW.episodes[0].desc,
+  ad: () => NP_TRAILER_AD
+});
+PREMIERES.forEach(p => { p.time = etTime(p.at); p.when = "Tonight at " + p.time + (p.after ? ", " + p.after : ""); });
+const premiereEnd = () => premEndOf(PREMIERES[PREMIERES.length - 1]);
+const curPrem = () => PREMIERES.find(p => Date.now() < premEndOf(p)) || PREMIERES[PREMIERES.length - 1];
+const premiereState = () => { const p = curPrem(); return Date.now() < p.at ? "soon" : Date.now() < premEndOf(p) ? "live" : "done"; };
+const premieredTitles = () => PREMIERES.filter(p => Date.now() >= premEndOf(p)).map(p => p.item);
 const TITLES = [
-  ...(Date.now() >= premiereEnd() ? [NORTH_PARK] : []),
+  ...premieredTitles(),
   {
     id: "gns-keynote",
     row: "broadcasts",
@@ -1138,6 +1169,18 @@ const COMING = [
     poster: "media/north-park.jpg",
     thumb: "media/north-park-sm.jpg",
     description: "Four kids, one bus stop, and a whole lot of Kansas. Seth, Matt, Sam and Tim are just trying to get through the day in North Park, Kansas, a small prairie town where the sky is construction paper, the weather is always out to get you, and Sam's dad Hector Castillo has a steel-vault bunker in the backyard for every emergency. Episode 1, \u201cThe Storm Warning\u201d: a tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in."
+  },
+  {
+    id: "cs-reading-rainbow",
+    title: "Reading Rainbow",
+    kind: "Kids storytime \u00b7 Hosted by Grace Langley",
+    release: "2026-10-14",
+    at: PREMIERES[1].at,
+    label: "Premieres tonight \u00b7 " + PREMIERES[1].time,
+    titleId: "reading-rainbow",
+    poster: "media/reading-rainbow.jpg",
+    thumb: "media/reading-rainbow-sm.jpg",
+    description: "GNS Kids presents Reading Rainbow, hosted by Grace Langley. Grace settles in with a good book and reads the whole story aloud as the pages come to life. It premieres tonight right after North Park. Episode 1, \u201cThe Lighthouse Cat\u201d: when the fog gets too thick for the lighthouse lamp, a small orange cat named Pip finds another way to bring the fishermen home."
   },
   {
     id: "cs-lower-management",
@@ -1523,18 +1566,18 @@ function heroFeatured(f) {
     </section>`;
 }
 const fmtCount = ms => { const s = Math.max(0, Math.floor(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : String(m)) + ":" + String(x).padStart(2, "0"); };
-const premCountText = () => premiereState() === "soon" ? `Starts in ${fmtCount(PREMIERE.at - Date.now())}` : premiereState() === "live" ? "Premiering now" : "Now streaming";
+const premCountText = () => premiereState() === "soon" ? `Starts in ${fmtCount(curPrem().at - Date.now())}` : premiereState() === "live" ? "Premiering now" : "Now streaming";
 function heroPremiere() {
-  const live = premiereState() === "live";
+  const p = curPrem(), it = p.item, live = premiereState() === "live";
   return `<section class="hero featured prem-hero">
-      <div class="hero-art" style="background-image:url('media/north-park.jpg')" role="img" aria-label="North Park title card"></div>
+      <div class="hero-art" style="background-image:url('${esc(it.poster)}')" role="img" aria-label="${esc(it.title)} title card"></div>
       <div class="hero-copy">
-        <p class="label-gold">GNS+ Original \u00b7 World Premiere</p>
-        <h1>North Park</h1>
-        <p class="prem-when"><span class="lv-pill${live ? "" : " lv-pill-soon"}"><i></i>${live ? "PREMIERING NOW" : "PREMIERES TONIGHT"}</span><b>${esc(PREMIERE.when)}</b></p>
-        <p>${esc(NORTH_PARK.description)} Episode 1, \u201cThe Storm Warning,\u201d premieres on GNS 24/7.</p>
+        <p class="label-gold">${esc(p.kicker)}</p>
+        <h1>${esc(it.title)}</h1>
+        <p class="prem-when"><span class="lv-pill${live ? "" : " lv-pill-soon"}"><i></i>${live ? "PREMIERING NOW" : "PREMIERES TONIGHT"}</span><b>${esc(p.when)}</b></p>
+        <p>${esc(it.description)} ${esc(p.ep)} premieres on GNS 24/7.</p>
         <p class="prem-count" data-prem-count>${esc(premCountText())}</p>
-        <div class="actions"><button type="button" class="btn-play" data-page-go="live" data-live-tab="premiere">${PLAY_ICON}${live ? "Watch the premiere" : "Go to the premiere"}</button><button type="button" class="btn-more" data-trailer="north-park">${PLAY_ICON}Watch trailer</button><button type="button" class="like-btn big" data-like="cs-north-park" aria-pressed="${isLiked("cs-north-park")}">${HEART}<span>${isLiked("cs-north-park") ? "Liked" : "Like"}</span></button></div>
+        <div class="actions"><button type="button" class="btn-play" data-page-go="live" data-live-tab="premiere">${PLAY_ICON}${live ? "Watch the premiere" : "Go to the premiere"}</button>${it.trailer ? `<button type="button" class="btn-more" data-trailer="${esc(it.id)}">${PLAY_ICON}Watch trailer</button>` : ""}<button type="button" class="like-btn big" data-like="${esc(p.csId)}" aria-pressed="${isLiked(p.csId)}">${HEART}<span>${isLiked(p.csId) ? "Liked" : "Like"}</span></button></div>
       </div>
     </section>`;
 }
@@ -1652,9 +1695,13 @@ function viewPlans() {
 }
 function liveLineup() {
   const segs = [], ads = adsOn() && ADS.list.length; let n = 0;
-  TITLES.forEach(item => episodesOf(item).forEach((ep, i) => {
+  const first = premieredTitles(), order = [...first, ...TITLES.filter(t => !first.includes(t))];
+  order.forEach(item => episodesOf(item).forEach((ep, i) => {
     if (!ep.parts || !ep.parts.length) return;
-    if (ads) { const ad = ADS.list[n % ADS.list.length]; segs.push({ ad: true, src: ad.src, dur: ad.dur, title: "Commercial break" }); }
+    if (ads) {
+      if (item.id !== NP_TRAILER_AD.promo) segs.push({ ad: true, src: NP_TRAILER_AD.src, dur: NP_TRAILER_AD.dur, title: "Commercial break" });
+      const ad = ADS.list[n % ADS.list.length]; segs.push({ ad: true, src: ad.src, dur: ad.dur, title: "Commercial break" });
+    }
     n++;
     const name = episodesOf(item).length > 1 ? `${item.title}: ${ep.title}` : item.title;
     ep.parts.forEach((pt, k) => segs.push({ src: pt.src, dur: pt.dur, title: name, kind: item.kind || "", poster: item.thumb || item.poster || "", first: k === 0 }));
@@ -1666,18 +1713,18 @@ const liveTabs = () => {
   const st = premiereState();
   return `<div class="lv-tabs" role="tablist" aria-label="Live channels">
     <button type="button" role="tab" data-live-tab="247" aria-selected="${liveTab === "247"}">GNS 24/7</button>
-    <button type="button" role="tab" data-live-tab="premiere" aria-selected="${liveTab === "premiere"}">${st === "live" ? '<i class="lv-dot"></i>' : ""}Premiering${st === "soon" ? " \u00b7 8:30 PM ET" : ""}</button>
+    <button type="button" role="tab" data-live-tab="premiere" aria-selected="${liveTab === "premiere"}">${st === "live" ? '<i class="lv-dot"></i>' : ""}Premiering${st === "soon" ? " \u00b7 " + curPrem().time : ""}</button>
   </div>`;
 };
 function viewPremiere() {
-  const st = premiereState();
-  const desc = "Episode 1, \u201cThe Storm Warning\u201d: a tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in.";
+  const st = premiereState(), p = curPrem(), it = p.item;
+  const desc = p.epDesc;
   let frame;
   if (st === "live") frame = `<div class="lv-frame" id="prFrame">
       <video id="prVid" playsinline preload="auto" disablepictureinpicture></video>
       <div class="subs" id="prSubs" hidden></div>
       <div class="lv-bug" aria-hidden="true"><span class="logo"><span class="logo-gns">GNS</span><span class="logo-plus">+</span></span><b>PREMIERE</b></div>
-      <div class="lv-adhud" id="prAd" hidden><i class="ad-tag">AD</i><span id="prAdLeft">North Park continues shortly</span></div>
+      <div class="lv-adhud" id="prAd" hidden><i class="ad-tag">AD</i><span id="prAdLeft">${esc(it.title)} continues shortly</span></div>
       <button type="button" class="lv-tap" id="prTap" hidden>Tap to watch the premiere</button>
       <div class="lv-ctl">
         <button type="button" class="lv-btn lv-cc" id="prCC" aria-pressed="${subsOn()}" aria-label="Subtitles">CC</button>
@@ -1685,23 +1732,23 @@ function viewPremiere() {
         <button type="button" class="lv-btn" id="prFull" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg></button>
       </div></div>`;
   else frame = `<div class="lv-frame prem-card">
-      <img src="media/north-park.jpg" alt="North Park title card">
+      <img src="${esc(it.poster)}" alt="${esc(it.title)} title card">
       <div class="prem-over">${st === "soon"
-        ? `<p class="prem-k">World premiere \u00b7 ${esc(PREMIERE.when)}</p><p class="prem-big" data-prem-count>${esc(premCountText())}</p>`
-        : `<p class="prem-k">The premiere has ended</p><p class="prem-big">Now streaming on GNS+</p>${TITLES.some(t => t.id === "north-park") ? `<button type="button" class="btn-play" data-play="north-park" data-ep="0">${PLAY_ICON}Play Episode 1</button>` : `<button type="button" class="btn-play" onclick="location.reload()">${PLAY_ICON}Watch now</button>`}`}</div></div>`;
+        ? `<p class="prem-k">${p === PREMIERES[0] ? "World premiere" : "Premiere"} \u00b7 ${esc(p.when)}</p><p class="prem-big" data-prem-count>${esc(premCountText())}</p>`
+        : `<p class="prem-k">The premiere has ended</p><p class="prem-big">Now streaming on GNS+</p>${TITLES.some(t => t.id === it.id) ? `<button type="button" class="btn-play" data-play="${esc(it.id)}" data-ep="0">${PLAY_ICON}Play Episode 1</button>` : `<button type="button" class="btn-play" onclick="location.reload()">${PLAY_ICON}Watch now</button>`}`}</div></div>`;
   return `<section class="lv">
     <div class="lv-glow" aria-hidden="true"></div>
     <div class="lv-head">
       ${liveTabs()}
-      <p class="lv-kicker"><span class="lv-pill${st === "live" ? "" : " lv-pill-soon"}"><i></i>${st === "live" ? "PREMIERING NOW" : st === "soon" ? "PREMIERE" : "ENDED"}</span><span>GNS+ Original \u00b7 Only on GNS 24/7</span></p>
-      <h1>North Park</h1>
+      <p class="lv-kicker"><span class="lv-pill${st === "live" ? "" : " lv-pill-soon"}"><i></i>${st === "live" ? "PREMIERING NOW" : st === "soon" ? "PREMIERE" : "ENDED"}</span><span>${esc(p.kicker.split(" \u00b7 ")[0])} \u00b7 Only on GNS 24/7</span></p>
+      <h1>${esc(it.title)}</h1>
       <p class="lv-desc">${esc(desc)}</p>
     </div>
     <div class="lv-stage">${frame}</div>
     <div class="lv-up prem-meta">
-      <div class="cs-actions"><button type="button" class="btn-more" data-trailer="north-park">${PLAY_ICON}Watch trailer</button><button type="button" class="like-btn big" data-like="cs-north-park" aria-pressed="${isLiked("cs-north-park")}">${HEART}<span>${isLiked("cs-north-park") ? "Liked" : "Like"}</span></button>
+      <div class="cs-actions">${it.trailer ? `<button type="button" class="btn-more" data-trailer="${esc(it.id)}">${PLAY_ICON}Watch trailer</button>` : ""}<button type="button" class="like-btn big" data-like="${esc(p.csId)}" aria-pressed="${isLiked(p.csId)}">${HEART}<span>${isLiked(p.csId) ? "Liked" : "Like"}</span></button>
       <p class="cs-note">${st === "soon" ? "Like it to get it recommended to you when it premieres." : "Liked shows are saved to your profile."}</p></div>
-      <p class="prem-about">${esc(NORTH_PARK.description)}</p>
+      <p class="prem-about">${esc(it.description)}</p>
     </div>
   </section>`;
 }
@@ -1713,7 +1760,7 @@ function viewLive() {
     <div class="lv-glow" aria-hidden="true"></div>
     <div class="lv-head">
       ${liveTabs()}
-      ${st !== "done" ? `<button type="button" class="prem-banner" data-live-tab="premiere"><img src="media/north-park-sm.jpg" alt=""><span><b>${st === "live" ? "North Park is premiering now" : "North Park premieres tonight at 8:30 PM ET"}</b><small>${st === "live" ? "Watch the world premiere" : "Go to the Premiering tab"}</small></span></button>` : ""}
+      ${st !== "done" ? `<button type="button" class="prem-banner" data-live-tab="premiere"><img src="${esc(curPrem().item.thumb)}" alt=""><span><b>${st === "live" ? curPrem().item.title + " is premiering now" : curPrem().item.title + " premieres tonight at " + curPrem().time}</b><small>${st === "live" ? "Watch the world premiere" : "Go to the Premiering tab"}</small></span></button>` : ""}
       <p class="lv-kicker"><span class="lv-pill"><i></i>LIVE</span><span>${esc(LIVE.title)} · Only on GNS+</span></p>
       <h1 id="lvNow">${esc(LIVE.title)}</h1>
       <p class="lv-desc" id="lvSub">${esc(LIVE.description)}</p>
@@ -1733,8 +1780,10 @@ function viewLive() {
   </section>`;
 }
 const LV = { v: null, segs: [], total: 0, cur: -1, timer: 0 };
+/* once the premieres are over, GNS 24/7 starts over from them: North Park first, then Reading Rainbow */
+const liveEpoch = () => Date.now() >= premiereEnd() ? premiereEnd() : LIVE.epoch;
 function liveAt(ms) {
-  const t = (((ms - LIVE.epoch) / 1000) % LV.total + LV.total) % LV.total;
+  const t = (((ms - liveEpoch()) / 1000) % LV.total + LV.total) % LV.total;
   let acc = 0;
   for (let i = 0; i < LV.segs.length; i++) { if (t < acc + LV.segs[i].dur) return { i, off: t - acc }; acc += LV.segs[i].dur; }
   return { i: 0, off: 0 };
@@ -1847,16 +1896,16 @@ const cueAt = (cues, t) => { for (const c of cues || []) if (t >= c.a && t < c.z
 function paintSub(el, text) { if (!el) return; const on = subsOn() && !!text; if (el._t !== text) { el._t = text; el.textContent = text; } el.hidden = !on; }
 
 /* ---- the premiere: everyone watches the same moment, timed from PREMIERE.at ---- */
-const PR = { v: null, segs: [], cur: -1, timer: 0, cues: [] };
-function premiereSegs() {
-  const segs = [{ src: PREMIERE.intro.src, dur: PREMIERE.intro.dur, intro: true }];
-  segs.push({ src: NP_PARTS[0].src, dur: NP_PARTS[0].dur, ep: 0 });
-  if (adsOn() && ADS.list.length) { const ad = ADS.list[0]; segs.push({ ad: true, src: ad.src, dur: ad.dur }); }
-  segs.push({ src: NP_PARTS[1].src, dur: NP_PARTS[1].dur, ep: NP_PARTS[0].dur });
+const PR = { v: null, segs: [], cur: -1, timer: 0, cues: [], p: null };
+function premiereSegs(p) {
+  const segs = [{ src: PREMIERE_INTRO.src, dur: PREMIERE_INTRO.dur, intro: true }];
+  segs.push({ src: p.parts[0].src, dur: p.parts[0].dur, ep: 0 });
+  if (adsOn() && ADS.list.length) { const ad = p.ad(); segs.push({ ad: true, src: ad.src, dur: ad.dur }); }
+  segs.push({ src: p.parts[1].src, dur: p.parts[1].dur, ep: p.parts[0].dur });
   return segs;
 }
 function premiereAt(ms) {
-  let t = (ms - PREMIERE.at) / 1000, acc = 0;
+  let t = (ms - (PR.p || curPrem()).at) / 1000, acc = 0;
   for (let i = 0; i < PR.segs.length; i++) { if (t < acc + PR.segs[i].dur) return { i, off: Math.max(0, t - acc) }; acc += PR.segs[i].dur; }
   return null;
 }
@@ -1883,14 +1932,14 @@ function paintPremiere() {
   if (!PR.v || PR.cur < 0) return;
   const s = PR.segs[PR.cur];
   $("prAd").hidden = !s.ad;
-  if (s.ad) $("prAdLeft").textContent = `North Park continues in ${fmtT(Math.ceil(Math.max(0, s.dur - (PR.v.currentTime || 0))))}`;
+  if (s.ad) $("prAdLeft").textContent = `${PR.p ? PR.p.item.title : "The show"} continues in ${fmtT(Math.ceil(Math.max(0, s.dur - (PR.v.currentTime || 0))))}`;
   paintSub($("prSubs"), s.ep != null ? cueAt(PR.cues, s.ep + (PR.v.currentTime || 0)) : "");
 }
 function startPremiere() {
   stopPremiere();
   const v = $("prVid"); if (!v) { clearInterval(PR.timer); PR.timer = setInterval(premiereTick, 1000); return; }
-  PR.segs = premiereSegs(); PR.v = v; v.muted = false;
-  loadSubs(NORTH_PARK.episodes[0].subs).then(c => { PR.cues = c; });
+  PR.p = curPrem(); PR.segs = premiereSegs(PR.p); PR.v = v; v.muted = false; PR.cues = [];
+  if (PR.p.subs) loadSubs(PR.p.subs).then(c => { PR.cues = c; });
   v.addEventListener("ended", () => setTimeout(tunePremiere, 50));
   v.addEventListener("error", () => setTimeout(tunePremiere, 1500));
   v.addEventListener("play", () => { $("prTap").hidden = true; });
@@ -1915,14 +1964,17 @@ function startPremiere() {
   }, 1000);
 }
 /* countdowns tick everywhere; when the premiere starts or ends, the page redraws itself */
-let premLast = premiereState();
+const premKey = () => PREMIERES.indexOf(curPrem()) + ":" + premiereState();
+let premLast = premKey();
 function premiereTick() {
   document.querySelectorAll("[data-prem-count]").forEach(el => { el.textContent = premCountText(); });
-  const st = premiereState();
-  if (st !== premLast) {
-    premLast = st;
+  const st = premiereState(), key = premKey();
+  if (key !== premLast) {
+    premLast = key;
     if (st === "live" && page === "live") liveTab = "premiere";
-    if (st === "done" && !TITLES.some(t => t.id === "north-park")) TITLES.unshift(NORTH_PARK);
+    const done = premieredTitles();                                  // premiered shows go to the front of the catalog, in premiere order
+    done.forEach(it => { const k = TITLES.indexOf(it); if (k >= 0) TITLES.splice(k, 1); });
+    TITLES.unshift(...done);
     if (player.hidden && (page === "home" || page === "live" || page === "new")) { const y = window.scrollY; render(); window.scrollTo(0, y); }
   }
 }
@@ -2434,9 +2486,9 @@ function unlockPlayers() {
 const vAd = $("vAd"), adBox = $("adBreak");
 let adNext = 0; try { adNext = (+localStorage.getItem("gnsp-ad-next") || 0) % ADS.list.length; } catch (e) {}
 P.inAd = false; P.adCb = null; P.adMarks = []; P.adDone = new Set();
-function startAd(after) {
-  const ad = ADS.list[adNext % ADS.list.length];
-  adNext = (adNext + 1) % ADS.list.length; try { localStorage.setItem("gnsp-ad-next", String(adNext)); } catch (e) {}
+function startAd(after, pick) {
+  const ad = pick || ADS.list[adNext % ADS.list.length];
+  if (!pick) { adNext = (adNext + 1) % ADS.list.length; try { localStorage.setItem("gnsp-ad-next", String(adNext)); } catch (e) {} }
   P.inAd = true; P.adCb = after; player.classList.add("in-ad");
   vids.forEach(v => { if (!v.paused) v.pause(); });
   adBox.hidden = false; $("adTap").hidden = true; $("adCount").textContent = "Your show will resume shortly";
@@ -2501,7 +2553,7 @@ function openPlayer(item) {
   if (adsOn() && ADS.list.length && !item.noAds) {
     const marks = item.breaks || []; if (!item.breaks) for (let m = ADS.every; m < P.total - 60; m += ADS.every) marks.push(m);
     marks.forEach(m => { P.adMarks.push(m); if (m <= resume) P.adDone.add(m); });
-    startAd(resumeMain);                                             // the ad before the show, started inside the tap so it plays with sound
+    startAd(resumeMain, P.key && !P.key.startsWith(NP_TRAILER_AD.promo + ":") ? NP_TRAILER_AD : null);   // the ad before the show (the North Park trailer), started inside the tap so it plays with sound
   }
   $("playerBack").focus({ preventScroll: true });
 }
