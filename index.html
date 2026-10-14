@@ -456,6 +456,21 @@
   }
   .tile.placeholder:hover { transform: none; }
 
+  /* Coming soon */
+  .cs-track { grid-auto-columns: clamp(300px, 34vw, 440px); gap: 14px; }
+  @media (max-width: 719px) { .cs-track { grid-auto-columns: 84vw; } }
+  .cs-card { display: grid; grid-template-rows: auto 1fr; min-width: 0; border-radius: 8px; overflow: hidden; background: linear-gradient(170deg, #22161a, #160f11); border: 1px solid var(--line); }
+  .cs-art { position: relative; aspect-ratio: 16 / 9; background: var(--raise); }
+  .cs-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cs-date { position: absolute; left: 10px; bottom: 10px; padding: 5px 10px; border-radius: 4px; background: rgba(12,6,7,.86); color: var(--gold); font-weight: 700; font-size: 13px; letter-spacing: .02em; }
+  .cs-body { display: grid; align-content: start; gap: 6px; padding: 14px 16px 16px; min-width: 0; }
+  .cs-kind { margin: 0; color: var(--gold); font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  .cs-body h3 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 22px; line-height: 1.1; }
+  .cs-desc { margin: 0; color: #d8cdca; font-size: 14.5px; line-height: 1.5; }
+  .cs-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 6px; }
+  .cs-note { margin: 0; flex: 1 1 160px; color: var(--muted); font-size: 13px; }
+  .cs-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 14px; }
+
   /* Section pages */
   .page-head { padding: 112px var(--gutter) 6px; text-align: center; }
   .wl-trial { margin: 0 0 12px; display: inline-block; font-weight: 800; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: #120c0d; background: linear-gradient(45deg, #9f8a57, #d2be85); padding: 6px 12px; border-radius: 4px; }
@@ -1048,6 +1063,59 @@ const TITLES = [
   }
 ];
 
+/* ===== Coming soon =====
+   release: "YYYY-MM-DD" (local day it comes out). Liking one saves it to the account's likes under its id;
+   on release day a liked show moves to "Recommended for you" on Home. */
+const COMING = [
+  {
+    id: "cs-north-park",
+    title: "North Park",
+    kind: "Animated comedy",
+    release: "2026-10-15",
+    poster: "media/north-park.jpg",
+    thumb: "media/north-park-sm.jpg",
+    description: "Four kids, one bus stop, and a whole lot of Kansas. Seth, Matt, Sam and Tim are just trying to get through the day in North Park, Kansas, a small prairie town where the sky is construction paper, the weather is always out to get you, and Sam's dad Hector Castillo has a steel-vault bunker in the backyard for every emergency. Episode 1, \u201cThe Storm Warning\u201d: a tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in."
+  },
+  {
+    id: "cs-lower-management",
+    title: "Lower Management",
+    kind: "Workplace sitcom",
+    release: "2026-10-18",
+    poster: "media/lower-management.jpg",
+    thumb: "media/lower-management-sm.jpg",
+    description: "Bev and Kevin work at the very bottom of SynergyCore, in the basement. Every morning an executive named Chad video-calls with one task, gets their names wrong, and expects it done without either of them leaving the basement. Episode 1, \u201cClimate Control\u201d: Chad wants his office at exactly 68 degrees, and the only thermostat in the building is a 1994 machine called The Beast."
+  }
+];
+const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+const isOut = c => todayStr() >= c.release;
+function releaseLabel(c) {
+  const d = new Date(c.release + "T12:00:00"), t = new Date(todayStr() + "T12:00:00");
+  const days = Math.round((d - t) / 864e5);
+  const date = d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  return days <= 0 ? "Out now" : days === 1 ? `Tomorrow \u00b7 ${date}` : `${date}`;
+}
+function comingCard(c) {
+  const on = isLiked(c.id), out = isOut(c);
+  return `<article class="cs-card" aria-labelledby="cs-${esc(c.id)}">
+    <div class="cs-art"><img src="${esc(c.thumb || c.poster)}" alt="${esc(c.title)} title card" loading="lazy"><span class="cs-date">${out ? "Out now" : "Coming " + esc(releaseLabel(c))}</span></div>
+    <div class="cs-body">
+      <p class="cs-kind">${esc(c.kind)}</p>
+      <h3 id="cs-${esc(c.id)}">${esc(c.title)}</h3>
+      <p class="cs-desc">${esc(c.description)}</p>
+      <div class="cs-actions"><button type="button" class="like-btn big" data-like="${esc(c.id)}" aria-pressed="${on}">${HEART}<span>${on ? "Liked" : "Like"}</span></button>
+      <p class="cs-note">${on ? (out ? "It\u2019s out. It\u2019s on your Home page under Recommended for you." : `We\u2019ll recommend it to you when it comes out.`) : "Like it to get it recommended to you when it comes out."}</p></div>
+    </div>
+  </article>`;
+}
+const comingRow = () => {
+  const soon = COMING.filter(c => !isOut(c));
+  return soon.length ? `<section class="row cs-row" aria-labelledby="row-coming"><div class="row-head"><h2 id="row-coming">Coming Soon</h2></div><div class="row-track cs-track">${soon.map(comingCard).join("")}</div></section>` : "";
+};
+const recommendedRow = () => {
+  const recs = COMING.filter(c => isOut(c) && isLiked(c.id));
+  return recs.length ? `<section class="row cs-row" aria-labelledby="row-recs"><div class="row-head"><h2 id="row-recs">Recommended for you</h2><span class="row-note">Shows you liked before they came out</span></div><div class="row-track cs-track">${recs.map(comingCard).join("")}</div></section>` : "";
+};
+
 /* Top 5: ranked by YouTube views once they're filled in below (key = "<title id>:<episode index>").
    Until every video has a number, the default order is used. */
 const YT_VIEWS = {};
@@ -1413,7 +1481,8 @@ function viewHome() {
   const cont = TITLES.map(t => ({ t, lw: lastWatched(t) })).filter(x => x.lw && !x.lw.done && x.lw.t > 30).sort((a, b) => b.lw.at - a.lw.at).map(x => x.t);
   const liked = Object.entries(readLikes()).sort((a, b) => b[1] - a[1]).map(([id]) => TITLES.find(t => t.id === id)).filter(Boolean);
   const extraTop = (cont.length ? rowHtml("continue", "Continue watching", cont.map(tile).join("")) : "")
-    + `<section class="row" aria-labelledby="row-top"><div class="row-head"><h2 id="row-top">Top 5 on GNS+</h2></div><div class="row-track top-track">${topList().map((x, i) => topTile(x, i + 1)).join("")}</div></section>`;
+    + `<section class="row" aria-labelledby="row-top"><div class="row-head"><h2 id="row-top">Top 5 on GNS+</h2></div><div class="row-track top-track">${topList().map((x, i) => topTile(x, i + 1)).join("")}</div></section>`
+    + comingRow();
   const extraBottom = liked.length ? rowHtml("liked", "Your liked media", liked.map(tile).join("")) : "";
   const rows = [...ROWS].sort((a, b) => hasItems(b) - hasItems(a)).map(r => {
     const items = TITLES.filter(t => t.row === r.id);
@@ -1424,7 +1493,7 @@ function viewHome() {
   }).join("");
   const featured = TITLES.find(t => t.featured);
   return `${featured ? heroFeatured(featured) : heroWelcome()}
-    <div class="rows">${trialBanner()}${extraTop}${rows}${extraBottom}</div>`;
+    <div class="rows">${trialBanner()}${recommendedRow()}${extraTop}${rows}${extraBottom}</div>`;
 }
 function listRow(item, i, rank, extra) {
   const ep = episodesOf(item)[i];
@@ -1446,6 +1515,7 @@ function viewNew() {
   const addedOn = d => { try { return "Added " + new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }); } catch (e) { return ""; } };
   return `<div class="page-head"><h1>New &amp; Popular</h1></div>
     <div class="np">
+      ${COMING.some(c => !isOut(c)) ? `<section aria-labelledby="np-soon"><h2 id="np-soon" class="np-h">Coming Soon</h2><div class="cs-list">${COMING.filter(c => !isOut(c)).map(comingCard).join("")}</div></section>` : ""}
       <section aria-labelledby="np-top"><h2 id="np-top" class="np-h">Top 5 on GNS+</h2>
         <ol class="list">${top.map((x, n) => listRow(x.item, x.i, n + 1, x.views != null ? fmtViews(x.views) : "")).join("")}</ol></section>
       <section aria-labelledby="np-new"><h2 id="np-new" class="np-h">New on GNS+</h2>
@@ -1777,7 +1847,7 @@ document.addEventListener("click", e => {
     document.querySelectorAll(`[data-like="${CSS.escape(lk.dataset.like)}"]`).forEach(b => {
       b.setAttribute("aria-pressed", String(on)); const sp = b.querySelector("span"); if (sp) sp.textContent = on ? "Liked" : "Like";
     });
-    if (page === "liked" || page === "home") { const y = window.scrollY; render(); window.scrollTo(0, y); }
+    if (page === "liked" || page === "home" || page === "new") { const y = window.scrollY; render(); window.scrollTo(0, y); }
     return;
   }
   const d = e.target.closest("[data-details]");
