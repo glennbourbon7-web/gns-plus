@@ -15,3 +15,4 @@ This catalogue is mirrored in `EMPLOYEE_ACCOUNTS` in `index.html`, which is what
 | Peytonmanhog | Peyton Manning | 2026-10-12 |
 | JosephRM | Joseph Reyes-McCollum | 2026-10-12 |
 | Charles1 | Markwayne Mullin | 2026-10-12 |
+| LeoStone | Leo Stone | 2026-10-14 |
