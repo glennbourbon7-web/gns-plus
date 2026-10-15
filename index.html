@@ -1051,7 +1051,7 @@ const PREMIERES = [{
 }];
 PREMIERES.push({
   item: READING_RAINBOW, csId: "cs-reading-rainbow", parts: RR_PARTS, subs: "",
-  get at() { return Math.ceil(premEndOf(PREMIERES[0]) / 60000) * 60000; },   // the next full minute after North Park's premiere ends
+  get at() { return Date.UTC(2026, 9, 15, 1, 10, 0); },   // 9:10 PM ET, October 14
   kicker: "GNS Kids \u00b7 Premiere", ep: "Episode 1, \u201cThe Lighthouse Cat,\u201d", after: "right after North Park",
   epDesc: READING_RAINBOW.episodes[0].desc,
   ad: () => NP_TRAILER_AD
