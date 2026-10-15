@@ -1039,7 +1039,7 @@ const READING_RAINBOW = {
   episodes: [{ title: "Episode 1: The Lighthouse Cat", desc: "At the edge of the sea lives Pip, a small orange cat at the top of a lighthouse. When the fog rolls in so thick the great lamp can't reach the boats, Pip finds another way to bring the fishermen home.", breaks: [RR_PARTS[0].dur], parts: RR_PARTS }]
 };
 const etTime = ms => new Date(ms).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York" }) + " ET";
-const premEndOf = p => p.at + (PREMIERE_INTRO.dur + p.parts.reduce((a, x) => a + x.dur, 0) + 60) * 1000;   // 60 s covers the longest ad
+const premEndOf = p => p.at + ((p.skipIntro ? 0 : PREMIERE_INTRO.dur) + p.parts.reduce((a, x) => a + x.dur, 0) + 60) * 1000;   // 60 s covers the longest ad
 /* Test Account gets North Park early: its premiere runs at 2:53 PM ET today, with Reading Rainbow right after. */
 const testEarly = () => { try { return (currentName || "").trim().toLowerCase() === "testaccount"; } catch (e) { return false; } };
 const PREMIERES = [{
@@ -1050,8 +1050,8 @@ const PREMIERES = [{
   ad: () => ADS.list[0]
 }];
 PREMIERES.push({
-  item: READING_RAINBOW, csId: "cs-reading-rainbow", parts: RR_PARTS, subs: "",
-  get at() { return Date.UTC(2026, 9, 15, 1, 7, 0); },   // 9:07 PM ET, October 14
+  item: READING_RAINBOW, csId: "cs-reading-rainbow", parts: RR_PARTS, subs: "", skipIntro: true,
+  get at() { return Date.UTC(2026, 9, 15, 1, 8, 0); },   // 9:08 PM ET, October 14
   kicker: "GNS Kids \u00b7 Premiere", ep: "Episode 1, \u201cThe Lighthouse Cat,\u201d", after: "right after North Park",
   epDesc: READING_RAINBOW.episodes[0].desc,
   ad: () => NP_TRAILER_AD
@@ -1915,7 +1915,7 @@ function paintSub(el, text) { if (!el) return; const on = subsOn() && !!text; if
 /* ---- the premiere: everyone watches the same moment, timed from PREMIERE.at ---- */
 const PR = { v: null, segs: [], cur: -1, timer: 0, cues: [], p: null };
 function premiereSegs(p) {
-  const segs = [{ src: PREMIERE_INTRO.src, dur: PREMIERE_INTRO.dur, intro: true }];
+  const segs = p.skipIntro ? [] : [{ src: PREMIERE_INTRO.src, dur: PREMIERE_INTRO.dur, intro: true }];
   segs.push({ src: p.parts[0].src, dur: p.parts[0].dur, ep: 0 });
   if (adsOn() && ADS.list.length) { const ad = p.ad(); segs.push({ ad: true, src: ad.src, dur: ad.dur }); }
   segs.push({ src: p.parts[1].src, dur: p.parts[1].dur, ep: p.parts[0].dur });
