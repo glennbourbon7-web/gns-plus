@@ -1067,6 +1067,18 @@ const premieredTitles = () => PREMIERES.filter(p => Date.now() >= premEndOf(p)).
 const TITLES = [
   ...premieredTitles(),
   {
+    id: "rick-singer-rally",
+    row: "broadcasts",
+    title: "Rick Singer for Senate Rally",
+    kind: "Campaign rally",
+    poster: "media/rick-singer-rally.jpg",
+    thumb: "media/rick-singer-rally-sm.jpg",
+    posterHasTitle: true,
+    added: "2026-10-14",
+    description: "Rick Singer, candidate for U.S. Senate in Texas, rallies supporters in a campaign event streamed live on GNS.",
+    episodes: [{ title: "Full rally", desc: "The complete Rick Singer for Senate rally as it streamed live on the GNS YouTube channel.", url: "https://www.youtube.com/@GNS_BP/streams" }]
+  },
+  {
     id: "gns-keynote",
     row: "broadcasts",
     title: "GNS Keynote: Innovation Starts Now",
@@ -1465,17 +1477,6 @@ const LIVE = {
   description: "Every GNS broadcast, debate and original, back to back, around the clock.",
   epoch: Date.UTC(2026, 9, 13, 15, 20, 0)   // the rotation started at midnight Eastern on Oct 12, 2026
 };
-/* GNS Live on YouTube: special events streamed live on the GNS channel (@GNS_BP) get their own tab on the Live page.
-   The tab opens at "at" and closes at "until"; while it's open it's the Live page's default tab (after a premiere that's on). */
-const GNS_YT_CHANNEL = "UCmC2aO9wljfvD_f3wLuRKHg";   // youtube.com/@GNS_BP
-const YT_EVENT = {
-  title: "Rick Singer for Senate Rally",
-  kicker: "Campaign rally \u00b7 Live on GNS",
-  description: "Live coverage of the Rick Singer for Senate rally, streaming as it happens from the GNS YouTube channel.",
-  at: Date.UTC(2026, 9, 14, 23, 40, 0),       // Wednesday, October 14, 2026, 7:40 PM Eastern
-  until: Date.UTC(2026, 9, 15, 3, 0, 0)       // the tab stays up until 11:00 PM Eastern
-};
-const ytState = () => Date.now() < YT_EVENT.at ? "soon" : Date.now() < YT_EVENT.until ? "live" : "done";
 const PAGES = [{ id: "home", name: "Home" }, { id: "live", name: "Live" }, { id: "new", name: "New & Popular" }, ...ROWS.map(r => ({ id: r.id, name: r.name })), { id: "liked", name: "Liked" }];
 
 const INFO_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.2v.1" stroke-linecap="round"/></svg>';
@@ -1729,7 +1730,6 @@ const liveTabs = () => {
   const st = premiereState();
   return `<div class="lv-tabs" role="tablist" aria-label="Live channels">
     <button type="button" role="tab" data-live-tab="247" aria-selected="${liveTab === "247"}">GNS 24/7</button>
-    ${ytState() !== "done" ? `<button type="button" role="tab" data-live-tab="rally" aria-selected="${liveTab === "rally"}">${ytState() === "live" ? '<i class="lv-dot"></i>' : ""}Rick Singer Rally${ytState() === "soon" ? " \u00b7 " + etTime(YT_EVENT.at) : ""}</button>` : ""}
     <button type="button" role="tab" data-live-tab="premiere" aria-selected="${liveTab === "premiere"}">${st === "live" ? '<i class="lv-dot"></i>' : ""}Premiering${st === "soon" ? " \u00b7 " + curPrem().time : ""}</button>
   </div>`;
 };
@@ -1769,34 +1769,14 @@ function viewPremiere() {
     </div>
   </section>`;
 }
-function viewYtEvent() {
-  const st = ytState();
-  const frame = st === "live"
-    ? `<div class="lv-frame"><iframe src="https://www.youtube.com/embed/live_stream?channel=${GNS_YT_CHANNEL}&autoplay=1&playsinline=1&rel=0" title="${esc(YT_EVENT.title)}, live on GNS" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div>`
-    : `<div class="lv-frame prem-card"><div class="prem-over"><p class="prem-k">Live on GNS \u00b7 Tonight at ${esc(etTime(YT_EVENT.at))}</p><p class="prem-big" data-yt-count>Starts in ${esc(fmtCount(YT_EVENT.at - Date.now()))}</p></div></div>`;
-  return `<section class="lv">
-    <div class="lv-glow" aria-hidden="true"></div>
-    <div class="lv-head">
-      ${liveTabs()}
-      <p class="lv-kicker"><span class="lv-pill${st === "live" ? "" : " lv-pill-soon"}"><i></i>${st === "live" ? "LIVE" : "STARTS SOON"}</span><span>${esc(YT_EVENT.kicker)}</span></p>
-      <h1>${esc(YT_EVENT.title)}</h1>
-      <p class="lv-desc">${esc(YT_EVENT.description)}</p>
-    </div>
-    <div class="lv-stage">${frame}</div>
-    <div class="lv-up prem-meta"><p class="cs-note">If the stream doesn't load, <a href="https://www.youtube.com/@GNS_BP/live" target="_blank" rel="noopener">watch it on the GNS YouTube channel</a>.</p></div>
-  </section>`;
-}
 function viewLive() {
-  if (!liveTab) liveTab = premiereState() === "live" ? "premiere" : ytState() === "live" ? "rally" : "247";
-  if (liveTab === "rally" && ytState() === "done") liveTab = "247";
+  if (!liveTab) liveTab = premiereState() === "live" ? "premiere" : "247";
   if (liveTab === "premiere") return viewPremiere();
-  if (liveTab === "rally") return viewYtEvent();
   const st = premiereState();
   return `<section class="lv">
     <div class="lv-glow" aria-hidden="true"></div>
     <div class="lv-head">
       ${liveTabs()}
-      ${ytState() !== "done" ? `<button type="button" class="prem-banner" data-live-tab="rally"><span><b>${ytState() === "live" ? "The Rick Singer for Senate Rally is live now" : "The Rick Singer for Senate Rally streams live at " + etTime(YT_EVENT.at)}</b><small>Go to the Rick Singer Rally tab</small></span></button>` : ""}
       ${st !== "done" ? `<button type="button" class="prem-banner" data-live-tab="premiere"><img src="${esc(curPrem().item.thumb)}" alt=""><span><b>${st === "live" ? curPrem().item.title + " is premiering now" : curPrem().item.title + " premieres " + (testEarly() ? "today" : "tonight") + " at " + curPrem().time}</b><small>${st === "live" ? "Watch the world premiere" : "Go to the Premiering tab"}</small></span></button>` : ""}
       <p class="lv-kicker"><span class="lv-pill"><i></i>LIVE</span><span>${esc(LIVE.title)} · Only on GNS+</span></p>
       <h1 id="lvNow">${esc(LIVE.title)}</h1>
@@ -2002,16 +1982,9 @@ function startPremiere() {
 }
 /* countdowns tick everywhere; when the premiere starts or ends, the page redraws itself */
 const premKey = () => PREMIERES.indexOf(curPrem()) + ":" + premiereState();
-let premLast = premKey(), ytLast = ytState();
+let premLast = premKey();
 function premiereTick() {
   document.querySelectorAll("[data-prem-count]").forEach(el => { el.textContent = premCountText(); });
-  document.querySelectorAll("[data-yt-count]").forEach(el => { el.textContent = "Starts in " + fmtCount(YT_EVENT.at - Date.now()); });
-  const ys = ytState();
-  if (ys !== ytLast) {
-    ytLast = ys;
-    if (ys === "live" && page === "live" && liveTab !== "premiere") liveTab = "rally";
-    if (player.hidden && (page === "live" || page === "home")) { const y = window.scrollY; render(); window.scrollTo(0, y); }
-  }
   const st = premiereState(), key = premKey();
   if (key !== premLast) {
     premLast = key;
@@ -2083,7 +2056,7 @@ function render() {
     `<button type="button" data-page="${p.id}"${p.id === page ? ' aria-current="page"' : ""}>${esc(p.name)}</button>`).join("");
   hideHover(true);
   $("pages").innerHTML = page === "home" ? viewHome() : page === "new" ? viewNew() : page === "liked" ? viewLiked() : page === "live" ? viewLive() : page === "plans" ? viewPlans() : page === "search" ? viewSearch() : viewRow(page);
-  if (page === "live") { if (liveTab === "premiere") startPremiere(); else if (liveTab !== "rally") startLive(); }
+  if (page === "live") { if (liveTab === "premiere") startPremiere(); else startLive(); }
 }
 function go(p) {
   if (p !== "search" && searchQ) { searchQ = ""; $("searchInput").value = ""; closeSearch(); }
