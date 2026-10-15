@@ -1044,7 +1044,7 @@ const premEndOf = p => p.at + (PREMIERE_INTRO.dur + p.parts.reduce((a, x) => a +
 const testEarly = () => { try { return (currentName || "").trim().toLowerCase() === "testaccount"; } catch (e) { return false; } };
 const PREMIERES = [{
   item: NORTH_PARK, csId: "cs-north-park", parts: NP_PARTS, subs: "media/north-park-01.vtt",
-  get at() { return testEarly() ? Date.UTC(2026, 9, 14, 18, 53, 0) : Date.UTC(2026, 9, 15, 0, 30, 0); },   // 8:30 PM ET tonight (2:53 PM ET for Test Account)
+  get at() { return testEarly() ? Date.UTC(2026, 9, 14, 18, 53, 0) : Date.UTC(2026, 9, 15, 1, 5, 0); },   // 9:05 PM ET tonight (2:53 PM ET for Test Account)
   kicker: "GNS+ Original \u00b7 World Premiere", ep: "Episode 1, \u201cThe Storm Warning,\u201d",
   epDesc: "Episode 1, \u201cThe Storm Warning\u201d: a tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in.",
   ad: () => ADS.list[0]
