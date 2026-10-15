@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>GNS+</title>
 <meta name="description" content="GNS+, the Global News Service streaming service. Sign in to watch.">
-<meta name="gns-plus-build" content="2026-10-14-rotation-top5-refresh-2">
+<meta name="gns-plus-build" content="2026-10-14-episodes-3">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -1016,6 +1016,7 @@ const NP_TRAILER_AD = { src: "media/v/north-park-trailer.mp4", poster: "media/no
 const NORTH_PARK = {
   id: "north-park",
   row: "originals",
+  episodic: true,
   title: "North Park",
   kind: "Animated comedy",
   featured: true,
@@ -1030,6 +1031,7 @@ const NORTH_PARK = {
 const READING_RAINBOW = {
   id: "reading-rainbow",
   row: "originals",
+  episodic: true,
   title: "Reading Rainbow",
   kind: "Kids storytime",
   featured: true,
@@ -1484,6 +1486,8 @@ const PAGES = [{ id: "home", name: "Home" }, { id: "live", name: "Live" }, { id:
 const INFO_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.2v.1" stroke-linecap="round"/></svg>';
 const CLOSE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 
+/* episodic shows (North Park, Reading Rainbow) always show their episode number and description, like multi-part shows */
+const showEps = item => episodesOf(item).length > 1 || !!item.episodic;
 const episodesOf = item => item.episodes && item.episodes.length ? item.episodes : [item];
 const epLen = ep => (ep.parts || []).reduce((a, p) => a + p.dur, 0);
 const fmtLen = sec => { const m = Math.max(1, Math.round(sec / 60)); return m < 60 ? `${m} min` : `${Math.floor(m / 60)} hr ${m % 60} min`; };
@@ -1610,9 +1614,9 @@ function heroWelcome() {
     </section>`;
 }
 function topTile(x, n) {
-  return `<button type="button" class="top-tile" data-details="${esc(x.item.id)}" data-hover="${esc(x.item.id)}" data-hover-ep="${x.i}" aria-label="Number ${n}: ${esc(x.item.title)}${episodesOf(x.item).length > 1 ? ", " + esc(x.ep.title) : ""}">
+  return `<button type="button" class="top-tile" data-details="${esc(x.item.id)}" data-hover="${esc(x.item.id)}" data-hover-ep="${x.i}" aria-label="Number ${n}: ${esc(x.item.title)}${showEps(x.item) ? ", " + esc(x.ep.title) : ""}">
     <span class="top-num" aria-hidden="true">${n}</span>
-    <span class="top-art"><img src="${esc(x.item.thumb || x.item.poster)}" alt="" loading="lazy">${(episodesOf(x.item).length > 1 || x.item.id === "north-park" || x.item.id === "reading-rainbow") ? `<span class="top-ep">${esc(x.ep.title)}</span>` : ""}</span>
+    <span class="top-art"><img src="${esc(x.item.thumb || x.item.poster)}" alt="" loading="lazy">${showEps(x.item) ? `<span class="top-ep">${esc(x.ep.title)}</span>` : ""}</span>
   </button>`;
 }
 const rowHtml = (id, name, inner, note = "") => `<section class="row" aria-labelledby="row-${id}">
@@ -1639,7 +1643,7 @@ function viewHome() {
 }
 function listRow(item, i, rank, extra) {
   const ep = episodesOf(item)[i];
-  const multi = episodesOf(item).length > 1;
+  const multi = showEps(item);
   return `<li class="list-row">
     ${rank ? `<span class="list-rank" aria-hidden="true">${rank}</span>` : ""}
     <button type="button" class="list-art" data-details="${esc(item.id)}" data-hover="${esc(item.id)}" data-hover-ep="${i}" aria-label="${esc(item.title)}, more info"><img src="${esc(item.thumb || item.poster)}" alt="" loading="lazy"></button>
@@ -1723,7 +1727,7 @@ function liveLineup() {
       const ad = ADS.list[n % ADS.list.length]; segs.push({ ad: true, src: ad.src, dur: ad.dur, title: "Commercial break" });
     }
     n++;
-    const name = (episodesOf(item).length > 1 || item.id === "north-park" || item.id === "reading-rainbow") ? `${item.title}: ${ep.title}` : item.title;
+    const name = showEps(item) ? `${item.title}: ${ep.title}` : item.title;
     ep.parts.forEach((pt, k) => segs.push({ src: pt.src, dur: pt.dur, title: name, kind: item.kind || "", poster: item.thumb || item.poster || "", first: k === 0 }));
   }));
   return segs;
@@ -2112,8 +2116,8 @@ function openDetails(id) {
       <div class="actions">${playControl(item, (lastWatched(item) && !lastWatched(item).done && lastWatched(item).ep.parts) ? lastWatched(item).i : 0)}${item.trailer ? `<button type="button" class="btn-more" data-trailer="${esc(item.id)}">${PLAY_ICON}Trailer</button>` : ""}${likeBtn(item.id, true)}</div>
       ${playNote(item)}
       <p class="last-line">${esc(lastLine(item))}</p>
-      ${eps.length <= 1 && episodesOf(item)[0].desc ? `<p class="details-desc">${esc(episodesOf(item)[0].desc)}</p>` : ""}
-      ${eps.length > 1 ? `<section class="episodes"><h3>Episodes</h3>
+      ${!showEps(item) && episodesOf(item)[0].desc ? `<p class="details-desc">${esc(episodesOf(item)[0].desc)}</p>` : ""}
+      ${showEps(item) ? `<section class="episodes"><h3>Episodes</h3>
         <ol class="ep-list">${eps.map((ep, i) => `<li>${epRow(item, ep, i)}</li>`).join("")}</ol></section>` : ""}
     </div>`;
   details.hidden = false;
@@ -2220,7 +2224,7 @@ function showHover(el) {
       <p class="hc-title">${esc(item.title)}</p>
       ${chips(item)}
       <p class="hc-desc">${esc(item.description || "")}</p>
-      ${ep && (episodesOf(item).length > 1 || item.id === "north-park" || item.id === "reading-rainbow") ? `<p class="hc-ep">${esc(ep.title)}${ep.desc ? ": " + esc(ep.desc) : ""}</p>` : ""}
+      ${ep && showEps(item) ? `<p class="hc-ep">${esc(ep.title)}${ep.desc ? ": " + esc(ep.desc) : ""}</p>` : ""}
       <p class="hc-last">${esc(lastLine(item))}</p>
     </div>`;
   const r = el.getBoundingClientRect();
@@ -2580,7 +2584,7 @@ function openPlayer(item) {
 function playEpisode(item, i) {
   const eps = episodesOf(item), ep = eps[i];
   if (!ep || !ep.parts) return;
-  const multi = eps.length > 1;
+  const multi = showEps(item);
   const next = i + 1 < eps.length && eps[i + 1].parts ? { label: eps[i + 1].title, go: () => playEpisode(item, i + 1) } : null;
   openPlayer({ title: multi ? `${item.title}: ${ep.title}` : item.title, parts: ep.parts, poster: item.poster, key: item.id + ":" + i, next, yt: ep.yt || "", subs: ep.subs || "", breaks: ep.breaks || null });
 }
