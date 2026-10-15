@@ -1242,7 +1242,7 @@ const recommendedRow = () => {
 /* Top 5: ranked by YouTube views once they're filled in below (key = "<title id>:<episode index>").
    Until every video has a number, the default order is used. */
 const YT_VIEWS = {};
-const TOP5_DEFAULT = ["presidential-debate:0", "vp-townhall:0", "breaking-through:0", "breaking-through:1", "third-congress-opening:0"];
+const TOP5_DEFAULT = ["presidential-debate:0", "north-park:0", "vp-townhall:0", "breaking-through:0", "reading-rainbow:0"];
 
 /* ===== One site: every show plays right here ===== */
 const HUB_URL = location.href.split("#")[0];
@@ -1610,7 +1610,7 @@ function heroWelcome() {
 function topTile(x, n) {
   return `<button type="button" class="top-tile" data-details="${esc(x.item.id)}" data-hover="${esc(x.item.id)}" data-hover-ep="${x.i}" aria-label="Number ${n}: ${esc(x.item.title)}${episodesOf(x.item).length > 1 ? ", " + esc(x.ep.title) : ""}">
     <span class="top-num" aria-hidden="true">${n}</span>
-    <span class="top-art"><img src="${esc(x.item.thumb || x.item.poster)}" alt="" loading="lazy">${episodesOf(x.item).length > 1 ? `<span class="top-ep">${esc(x.ep.title)}</span>` : ""}</span>
+    <span class="top-art"><img src="${esc(x.item.thumb || x.item.poster)}" alt="" loading="lazy">${(episodesOf(x.item).length > 1 || x.item.id === "north-park" || x.item.id === "reading-rainbow") ? `<span class="top-ep">${esc(x.ep.title)}</span>` : ""}</span>
   </button>`;
 }
 const rowHtml = (id, name, inner, note = "") => `<section class="row" aria-labelledby="row-${id}">
@@ -1712,7 +1712,8 @@ function viewPlans() {
 }
 function liveLineup() {
   const segs = [], ads = adsOn() && ADS.list.length; let n = 0;
-  const first = premieredTitles(), order = [...first, ...TITLES.filter(t => !first.includes(t))];
+  const first = [NORTH_PARK, READING_RAINBOW].filter(t => TITLES.some(x => x.id === t.id));
+  const order = [...first, ...TITLES.filter(t => !first.some(x => x.id === t.id))];
   order.forEach(item => episodesOf(item).forEach((ep, i) => {
     if (!ep.parts || !ep.parts.length) return;
     if (ads) {
@@ -1720,7 +1721,7 @@ function liveLineup() {
       const ad = ADS.list[n % ADS.list.length]; segs.push({ ad: true, src: ad.src, dur: ad.dur, title: "Commercial break" });
     }
     n++;
-    const name = episodesOf(item).length > 1 ? `${item.title}: ${ep.title}` : item.title;
+    const name = (episodesOf(item).length > 1 || item.id === "north-park" || item.id === "reading-rainbow") ? `${item.title}: ${ep.title}` : item.title;
     ep.parts.forEach((pt, k) => segs.push({ src: pt.src, dur: pt.dur, title: name, kind: item.kind || "", poster: item.thumb || item.poster || "", first: k === 0 }));
   }));
   return segs;
@@ -2217,7 +2218,7 @@ function showHover(el) {
       <p class="hc-title">${esc(item.title)}</p>
       ${chips(item)}
       <p class="hc-desc">${esc(item.description || "")}</p>
-      ${episodesOf(item).length > 1 && ep ? `<p class="hc-ep">${esc(ep.title)}${ep.desc ? ": " + esc(ep.desc) : ""}</p>` : ""}
+      ${ep && (episodesOf(item).length > 1 || item.id === "north-park" || item.id === "reading-rainbow") ? `<p class="hc-ep">${esc(ep.title)}${ep.desc ? ": " + esc(ep.desc) : ""}</p>` : ""}
       <p class="hc-last">${esc(lastLine(item))}</p>
     </div>`;
   const r = el.getBoundingClientRect();
