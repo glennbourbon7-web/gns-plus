@@ -1738,7 +1738,7 @@ function viewPlans() {
 }
 function liveLineup() {
   const segs = [], ads = adsOn() && ADS.list.length; let n = 0;
-  const first = [NORTH_PARK, READING_RAINBOW].filter(t => TITLES.some(x => x.id === t.id));
+  const first = [TITLES.find(t => t.id === "rick-singer-rally"), NORTH_PARK, READING_RAINBOW].filter(t => t && TITLES.some(x => x.id === t.id));
   const order = [...first, ...TITLES.filter(t => !first.some(x => x.id === t.id))];
   order.forEach(item => episodesOf(item).forEach((ep, i) => {
     if (!ep.parts || !ep.parts.length) return;
@@ -1825,8 +1825,8 @@ function viewLive() {
 }
 const LV = { v: null, segs: [], total: 0, cur: -1, timer: 0 };
 /* once the premieres are over, GNS 24/7 starts over from them: North Park first, then Reading Rainbow */
-/* GNS 24/7 restarted from the top of the lineup (North Park, then Reading Rainbow) at 10:24 PM ET on Oct 14, 2026 */
-const LIVE_RESTART = Date.UTC(2026, 9, 15, 2, 24, 0);
+/* GNS 24/7 restarted from the top of the lineup (Rick Singer rally, then North Park, then Reading Rainbow) at 4:15 PM ET on Oct 16, 2026 */
+const LIVE_RESTART = Date.UTC(2026, 9, 16, 20, 15, 0);
 const liveEpoch = () => Date.now() >= LIVE_RESTART ? LIVE_RESTART : Date.now() >= premiereEnd() ? premiereEnd() : LIVE.epoch;
 function liveAt(ms) {
   const t = (((ms - liveEpoch()) / 1000) % LV.total + LV.total) % LV.total;
