@@ -1084,12 +1084,18 @@ const TITLES = [
     row: "broadcasts",
     title: "Rick Singer for Senate Rally",
     kind: "Campaign rally",
-    poster: "media/rick-singer-rally.jpg",
-    thumb: "media/rick-singer-rally-sm.jpg",
+    poster: "media/rick-singer-rally.jpg?v=2",
+    thumb: "media/rick-singer-rally-sm.jpg?v=2",
     posterHasTitle: true,
     added: "2026-10-14",
     description: "Rick Singer, candidate for U.S. Senate in Texas, rallies supporters in a campaign event streamed live on GNS.",
-    episodes: [{ title: "Full rally", desc: "The complete Rick Singer for Senate rally as it streamed live on the GNS YouTube channel.", url: "https://www.youtube.com/@GNS_BP/streams" }]
+    episodes: [{ title: "Full rally", desc: "The complete Rick Singer for Senate rally as it streamed live on GNS.", parts: [
+      { src: "media/v/rick-singer-rally-00.mp4", dur: 360 },
+      { src: "media/v/rick-singer-rally-01.mp4", dur: 348.3 },
+      { src: "media/v/rick-singer-rally-stay-tuned.mp4", dur: 78.575 },
+      { src: "media/v/rick-singer-rally-02.mp4", dur: 360 },
+      { src: "media/v/rick-singer-rally-03.mp4", dur: 245.665 }
+    ], breaks: [360, 1050] }]
   },
   {
     id: "gns-keynote",
