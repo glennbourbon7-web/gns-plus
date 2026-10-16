@@ -531,8 +531,12 @@
   .trial-bar p { margin: 0; min-width: 0; flex: 1 1 280px; }
   @media (max-width: 860px) { .plans, .how { grid-template-columns: minmax(0, 1fr); } .plans { gap: 22px; } }
   /* Ad breaks */
-  .adbreak { position: absolute; inset: 0; z-index: 3; background: #000; display: grid; place-items: center; }
-  .adbreak video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+  .adbreak { position: absolute; inset: 0; z-index: 3; background: #000; transform: translateZ(0); -webkit-transform: translateZ(0); }
+  .adbreak video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+  .adbreak .ad-tap { left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  .ad-mute { pointer-events: auto; display: inline-grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 6px; background: rgba(0,0,0,.65); color: #fff; }
+  .ad-mute svg { width: 20px; height: 20px; }
+  .player.in-ad .stage { visibility: hidden; }
   .ad-hud { position: absolute; left: var(--gutter); right: var(--gutter); bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; pointer-events: none; }
   .ad-hud > span { display: inline-flex; gap: 8px; align-items: center; background: rgba(0,0,0,.65); padding: 7px 12px; border-radius: 6px; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
   .ad-tag { font-style: normal; background: var(--gold); color: #120c0d; font-weight: 800; font-size: 12px; letter-spacing: .08em; padding: 2px 7px; border-radius: 3px; }
@@ -615,7 +619,7 @@
   .player-bar h2 { margin: 0; font-size: 17px; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .back-btn { display: inline-flex; align-items: center; gap: 8px; background: none; border: 0; padding: 6px 4px; font-weight: 600; font-size: 15px; flex: none; }
   .back-btn svg { width: 22px; height: 22px; }
-  .stage { position: absolute; inset: 0; }
+  .stage { position: absolute; inset: 0; z-index: 0; }
   .stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; opacity: 0; }
   .stage video.on { opacity: 1; }
   .player-bar, .controls { transition: opacity 0.25s ease; }
@@ -950,7 +954,7 @@
   </div>
   <div class="adbreak" id="adBreak" hidden>
     <video id="vAd" playsinline preload="auto" disablepictureinpicture></video>
-    <div class="ad-hud"><span><i class="ad-tag">AD</i><span id="adCount">Your show will resume shortly</span></span><span class="ad-up">No ads with <b>GNS+ Gold</b> or <b>Premium</b></span></div>
+    <div class="ad-hud"><span><i class="ad-tag">AD</i><span id="adCount">Your show will resume shortly</span></span><span class="ad-up">No ads with <b>GNS+ Gold</b> or <b>Premium</b></span><button type="button" class="ad-mute" id="adMute" aria-label="Mute"></button></div>
     <button type="button" class="ad-tap" id="adTap" hidden>Tap to play</button>
   </div>
   <div class="subs" id="pSubs" hidden></div>
@@ -1017,7 +1021,7 @@ const PREMIERE_INTRO = { src: "media/v/premiere-intro.mp4", dur: 9 };
 const NP_PARTS = [{ src: "media/v/north-park-01a.mp4", dur: 141.323 }, { src: "media/v/north-park-01b.mp4", dur: 162.767 }];
 const RR_PARTS = [{ src: "media/v/reading-rainbow-01a.mp4", dur: 101.802 }, { src: "media/v/reading-rainbow-01b.mp4", dur: 262.744 }];
 /* The North Park trailer runs as a commercial across GNS+: before every show, between programs on GNS 24/7, and at the Reading Rainbow premiere's break. */
-const NP_TRAILER_AD = { src: "media/v/north-park-trailer.mp4", poster: "media/north-park.jpg", dur: 58.2, promo: "north-park" };
+const NP_TRAILER_AD = { src: "media/v/north-park-trailer.mp4", poster: "media/north-park.jpg", dur: 58.21, promo: "north-park" };
 const NORTH_PARK = {
   id: "north-park",
   row: "originals",
@@ -1472,13 +1476,13 @@ const PLANS = [
 /* Ad breaks on regular GNS+ shows (not on GNS Live): one unskippable ad before the show starts and one every ADS.every seconds.
    The ads take turns, one per break. */
 const ADS = { every: 420, list: [
-  { src: "media/ads/ciccerone.mp4", poster: "media/ads/ciccerone.jpg", dur: 40.4 },
+  { src: "media/ads/ciccerone.mp4", poster: "media/ads/ciccerone.jpg", dur: 40.5 },
   { src: "media/ads/powers.mp4", poster: "media/ads/powers.jpg", dur: 23.6 },
   { src: "media/ads/ozempic.mp4", poster: "media/ads/ozempic.jpg", dur: 43.97 },
-  { src: "PowersMidtermAd-github.mp4", dur: 37.5 },
-  { src: "BBWendys_BOGO_1_-_Obvious_Choice_-_BBWendys_LLC_1080p.mp4", dur: 19.528 },
-  { src: "BCFA_Front_Door_compressed.mp4", dur: 58.955 },
-  { src: "BBWendys_Update_Meal_compressed.mp4", dur: 5.224 }
+  { src: "PowersMidtermAd-github.mp4", poster: "media/ads/powers-midterm.jpg", dur: 37.6 },
+  { src: "BBWendys_BOGO_1_-_Obvious_Choice_-_BBWendys_LLC_1080p.mp4", poster: "media/ads/bbwendys-bogo.jpg", dur: 19.6 },
+  { src: "BCFA_Front_Door_compressed.mp4", poster: "media/ads/bcfa-front-door.jpg", dur: 59 },
+  { src: "BBWendys_Update_Meal_compressed.mp4", poster: "media/ads/bbwendys-update.jpg", dur: 5.224 }
 ] };
 
 /* ===== GNS Live =====
@@ -1832,6 +1836,7 @@ function stopLive() {
   const warning = $("lvWarning"); if (warning) { warning.hidden = true; warning.style.opacity = "0"; }
   LV.v = null; LV.cur = -1;
 }
+function liveTapMsg(b, text) { if (!b) return; b.textContent = text; b.hidden = false; }
 function paintLiveMute() {
   const b = $("lvMute"); if (!b || !LV.v) return;
   b.innerHTML = LV.v.muted ? ICON_MUTED : ICON_VOL; b.setAttribute("aria-label", LV.v.muted ? "Unmute" : "Mute");
@@ -1880,7 +1885,10 @@ function tuneLive(next) {
   const seek = () => { try { if (Math.abs((v.currentTime || 0) - pos.off) > 2) v.currentTime = pos.off; } catch (e) {} };
   if (v.readyState >= 1) seek(); else v.addEventListener("loadedmetadata", seek, { once: true });
   const pr = v.play();
-  if (pr && pr.catch) pr.catch(() => { v.muted = true; paintLiveMute(); v.play().catch(() => { $("lvTap").hidden = false; }); });
+  if (pr && pr.catch) pr.catch(() => {   // sound blocked until a tap: keep playing muted and ask for the tap
+    v.muted = true; paintLiveMute();
+    v.play().then(() => liveTapMsg($("lvTap"), "Tap to unmute"), () => liveTapMsg($("lvTap"), "Tap to watch live"));
+  });
   if (changed) paintLiveProgram();
   paintLiveInfo();
 }
@@ -1890,9 +1898,11 @@ function startLive() {
   LV.segs = liveLineup(); LV.total = LV.segs.reduce((a, s) => a + s.dur, 0);
   if (!LV.total) { $("lvNow").textContent = "Off Air"; return; }
   LV.v = v; v.muted = false;
+  try { stingerEl.pause(); } catch (e) {}
   v.addEventListener("ended", () => tuneLive(true));
   v.addEventListener("error", () => setTimeout(() => tuneLive(true), 1500));   // skip anything that won't load
-  v.addEventListener("play", () => { $("lvTap").hidden = true; });
+  v.addEventListener("play", () => { if (!v.muted) $("lvTap").hidden = true; });
+  v.addEventListener("volumechange", () => { paintLiveMute(); if (!v.muted) $("lvTap").hidden = true; });
   v.addEventListener("ratechange", () => { if (v.playbackRate !== 1) v.playbackRate = 1; });
   $("lvMute").onclick = () => { v.muted = !v.muted; paintLiveMute(); if (v.paused) v.play().catch(() => {}); };
   $("lvTap").onclick = () => { v.muted = false; paintLiveMute(); tuneLive(false); };
@@ -1960,7 +1970,10 @@ function tunePremiere() {
   const seek = () => { try { if (Math.abs((v.currentTime || 0) - pos.off) > 2) v.currentTime = pos.off; } catch (e) {} };
   if (v.readyState >= 1) seek(); else v.addEventListener("loadedmetadata", seek, { once: true });
   const pr = v.play();
-  if (pr && pr.catch) pr.catch(() => { v.muted = true; paintPremMute(); v.play().catch(() => { $("prTap").hidden = false; }); });
+  if (pr && pr.catch) pr.catch(() => {   // sound blocked until a tap: keep playing muted and ask for the tap
+    v.muted = true; paintPremMute();
+    v.play().then(() => liveTapMsg($("prTap"), "Tap to unmute"), () => liveTapMsg($("prTap"), "Tap to watch the premiere"));
+  });
   paintPremiere();
 }
 function paintPremMute() { const b = $("prMute"); if (!b || !PR.v) return; b.innerHTML = PR.v.muted ? ICON_MUTED : ICON_VOL; b.setAttribute("aria-label", PR.v.muted ? "Unmute" : "Mute"); }
@@ -1975,10 +1988,12 @@ function startPremiere() {
   stopPremiere();
   const v = $("prVid"); if (!v) { clearInterval(PR.timer); PR.timer = setInterval(premiereTick, 1000); return; }
   PR.p = curPrem(); PR.segs = premiereSegs(PR.p); PR.v = v; v.muted = false; PR.cues = [];
+  try { stingerEl.pause(); } catch (e) {}
   if (PR.p.subs) loadSubs(PR.p.subs).then(c => { PR.cues = c; });
   v.addEventListener("ended", () => setTimeout(tunePremiere, 50));
   v.addEventListener("error", () => setTimeout(tunePremiere, 1500));
-  v.addEventListener("play", () => { $("prTap").hidden = true; });
+  v.addEventListener("play", () => { if (!v.muted) $("prTap").hidden = true; });
+  v.addEventListener("volumechange", () => { paintPremMute(); if (!v.muted) $("prTap").hidden = true; });
   v.addEventListener("timeupdate", paintPremiere);
   v.addEventListener("ratechange", () => { if (v.playbackRate !== 1) v.playbackRate = 1; });
   $("prMute").onclick = () => { v.muted = !v.muted; paintPremMute(); if (v.paused) v.play().catch(() => {}); };
@@ -2378,6 +2393,7 @@ function cue(v, i, off, play) {
 }
 function applyCue(v) {
   if (v._off != null) { setTime(v, v._off); v._off = null; }
+  if (v._play && P.inAd) return;   // keep the request; resumeMain starts it when the ad is over
   if (v._play) { v._play = false; v.play().catch(() => { if (v === act()) setPlayingUI(false); }); }
 }
 /* Jump within one part; if the file isn't seekable yet, retry as soon as enough of it has loaded. */
@@ -2420,7 +2436,7 @@ function setPlayingUI(on) {
   $("pBig").hidden = on || !$("pEnd").hidden || !$("pLoad").hidden;
   if (on) armIdle(); else { clearTimeout(P.idleT); player.classList.remove("idle"); }
 }
-function setMuteUI() { $("pMute").innerHTML = P.muted ? ICON_MUTED : ICON_VOL; $("pMute").setAttribute("aria-label", P.muted ? "Unmute" : "Mute"); }
+function setMuteUI() { ["pMute", "adMute"].forEach(id => { $(id).innerHTML = P.muted ? ICON_MUTED : ICON_VOL; $(id).setAttribute("aria-label", P.muted ? "Unmute" : "Mute"); }); }
 function paintSeek(t) {
   const pct = P.total ? Math.min(100, Math.max(0, t / P.total * 100)) : 0;
   $("pFill").style.width = pct + "%"; $("pThumb").style.left = pct + "%";
@@ -2528,8 +2544,28 @@ function startAd(after, pick) {
   P.inAd = true; P.adCb = after; player.classList.add("in-ad");
   vids.forEach(v => { if (!v.paused) v.pause(); });
   adBox.hidden = false; $("adTap").hidden = true; $("adCount").textContent = "Your show will resume shortly";
-  vAd.muted = P.muted; vAd.poster = ad.poster; vAd.src = ad.src; vAd._t = 0;
-  const pr = vAd.play(); if (pr && pr.catch) pr.catch(() => { $("adTap").hidden = false; });
+  if (ad.poster) vAd.poster = ad.poster; else vAd.removeAttribute("poster");
+  vAd.muted = P.muted; setMuteUI(); vAd._t = 0; vAd._frames = 0;
+  vAd.src = ad.src; vAd.load();
+  void adBox.offsetWidth;                                   // lay the ad out before it plays, so phones draw its picture (not just its sound)
+  const pr = vAd.play(); if (pr && pr.catch) pr.catch(() => { if (P.inAd) $("adTap").hidden = false; });
+  watchAdFrames();
+}
+/* Some phones play an ad's sound without drawing its picture. If the ad has been playing for a moment with no
+   frames drawn, re-attach the video so its picture shows up. */
+function watchAdFrames() {
+  if (!vAd.requestVideoFrameCallback) return;
+  const src = vAd.src, onFrame = () => { if (vAd.src !== src || !P.inAd) return; vAd._frames++; vAd.requestVideoFrameCallback(onFrame); };
+  vAd.requestVideoFrameCallback(onFrame);
+  let tries = 0;
+  const check = () => {
+    if (!P.inAd || vAd.src !== src) return;
+    if (!vAd.paused && vAd.currentTime > 1.2 && !vAd._frames && tries < 3) {
+      tries++; vAd.style.display = "none"; void vAd.offsetWidth; vAd.style.display = "";
+    }
+    if (!vAd._frames) setTimeout(check, 1200);
+  };
+  setTimeout(check, 1600);
 }
 function stopAd() {
   P.inAd = false; adBox.hidden = true; player.classList.remove("in-ad"); $("adTap").hidden = true;
@@ -2538,7 +2574,11 @@ function stopAd() {
 function endAd() { if (!P.inAd) return; const cb = P.adCb; P.adCb = null; stopAd(); if (cb) cb(); }
 function resumeMain() {
   const v = act();
-  if (v._loaded) v.play().catch(() => setPlayingUI(false)); else v._play = true;
+  if (P.pend) {                                             // the show was held back during the ad before it: load it now
+    const q = P.pend; P.pend = null;
+    showLoading(0); cue(v, q.i, q.off, true); setPlayingUI(true); return;
+  }
+  if (v._loaded) { v._play = false; v.play().catch(() => setPlayingUI(false)); } else v._play = true;
   setPlayingUI(true);
 }
 vAd.addEventListener("timeupdate", () => {
@@ -2552,6 +2592,7 @@ vAd.addEventListener("pause", () => { if (P.inAd && !vAd.ended && !player.hidden
 vAd.addEventListener("play", () => { $("adTap").hidden = true; });
 vAd.addEventListener("error", () => { if (P.inAd) endAd(); });   // if an ad can't load, go straight to the show
 $("adTap").addEventListener("click", () => { vAd.muted = P.muted; vAd.play().catch(() => {}); });
+$("adMute").addEventListener("click", () => { toggleMute(); if (vAd.paused && P.inAd) vAd.play().catch(() => {}); });
 vids.forEach(v => v.addEventListener("play", () => { if (P.inAd) v.pause(); }));
 document.addEventListener("keydown", e => {   // shortcuts can't skip or seek during an ad (Esc still closes)
   if (!P.inAd || player.hidden || e.key === "Escape" || e.key === "Tab") return;
@@ -2577,8 +2618,11 @@ function openPlayer(item) {
   P.idx = i; showActive();
   act().poster = item.poster || ""; sby().poster = "";
   player.hidden = false; document.body.style.overflow = "hidden";
-  showLoading(0);
-  cue(act(), i, resume - P.starts[i], true);
+  try { stingerEl.pause(); } catch (e) {}
+  P.pend = null;
+  const preroll = adsOn() && ADS.list.length && !item.noAds;
+  if (preroll) { P.pend = { i, off: resume - P.starts[i] }; act()._off = P.pend.off; getBlob(P.parts[i].src).catch(() => {}); }   // download the show during the ad, play it after
+  else { showLoading(0); cue(act(), i, resume - P.starts[i], true); }
   if (i + 1 < P.parts.length) getBlob(P.parts[i + 1].src).catch(() => {});
   if (resume) {
     toast(`Picking up at ${fmtT(resume)}. <button type="button" id="pOver">Start over</button>`);
@@ -2586,7 +2630,7 @@ function openPlayer(item) {
   }
   updateUI(); setPlayingUI(true);
   P.adDone = new Set(); P.adMarks = [];
-  if (adsOn() && ADS.list.length && !item.noAds) {
+  if (preroll) {
     const marks = item.breaks || []; if (!item.breaks) for (let m = ADS.every; m < P.total - 60; m += ADS.every) marks.push(m);
     marks.forEach(m => { P.adMarks.push(m); if (m <= resume) P.adDone.add(m); });
     startAd(resumeMain, P.key && !P.key.startsWith(NP_TRAILER_AD.promo + ":") ? NP_TRAILER_AD : null);   // the ad before the show (the North Park trailer), started inside the tap so it plays with sound
@@ -2608,6 +2652,7 @@ function playTrailer(id) {
 }
 function closePlayer() {
   if (player.hidden) return;
+  P.pend = null;
   if (P.inAd) { P.adCb = null; stopAd(); }
   if (P.key && $("pEnd").hidden && act()._loaded) writeProg(P.key, gTime());
   vids.forEach(v => { v._tok = (v._tok || 0) + 1; v._part = -1; v._loaded = false; v.pause(); v.removeAttribute("src"); v.load(); });
@@ -2624,7 +2669,7 @@ function togglePlay() {
   if (!v._loaded) { v._play = !v._play; setPlayingUI(v._play); return; }
   if (v.paused) v.play().catch(() => setPlayingUI(false)); else v.pause();
 }
-function toggleMute() { P.muted = !P.muted; vids.forEach(v => { v.muted = P.muted; }); setMuteUI(); }
+function toggleMute() { P.muted = !P.muted; vids.forEach(v => { v.muted = P.muted; }); vAd.muted = P.muted; setMuteUI(); }
 function toggleFull() {
   if (document.fullscreenElement || document.webkitFullscreenElement) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
   const req = player.requestFullscreen || player.webkitRequestFullscreen;
