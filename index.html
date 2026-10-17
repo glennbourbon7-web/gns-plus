@@ -1482,6 +1482,8 @@ const PLANS = [
 /* Ad breaks on regular GNS+ shows (not on GNS Live): one unskippable ad before the show starts and one every ADS.every seconds.
    The ads take turns, one per break. */
 const ADS = { every: 420, list: [
+  { src: "media/ads/daniel-heyes.mp4", poster: "media/ads/daniel-heyes.jpg", dur: 22.29 },
+  { src: "media/ads/are-you-a-racist.mp4", poster: "media/ads/are-you-a-racist.jpg", dur: 29.8 },
   { src: "media/ads/ciccerone.mp4", poster: "media/ads/ciccerone.jpg", dur: 40.5 },
   { src: "media/ads/powers.mp4", poster: "media/ads/powers.jpg", dur: 23.6 },
   { src: "media/ads/ozempic.mp4", poster: "media/ads/ozempic.jpg", dur: 43.97 },
@@ -2542,11 +2544,11 @@ function unlockPlayers() {
 
 /* ---- Ad breaks: unskippable, one ad per break, ads take turns ---- */
 const vAd = $("vAd"), adBox = $("adBreak");
-let adNext = 0; try { adNext = (+localStorage.getItem("gnsp-ad-next") || 0) % ADS.list.length; } catch (e) {}
+let adNext = 0; try { adNext = (+localStorage.getItem("gnsp-ad-next-2") || 0) % ADS.list.length; } catch (e) {}
 P.inAd = false; P.adCb = null; P.adMarks = []; P.adDone = new Set();
 function startAd(after, pick) {
   const ad = pick || ADS.list[adNext % ADS.list.length];
-  if (!pick) { adNext = (adNext + 1) % ADS.list.length; try { localStorage.setItem("gnsp-ad-next", String(adNext)); } catch (e) {} }
+  if (!pick) { adNext = (adNext + 1) % ADS.list.length; try { localStorage.setItem("gnsp-ad-next-2", String(adNext)); } catch (e) {} }
   P.inAd = true; P.adCb = after; player.classList.add("in-ad");
   vids.forEach(v => { if (!v.paused) v.pause(); });
   adBox.hidden = false; $("adTap").hidden = true; $("adCount").textContent = "Your show will resume shortly";
