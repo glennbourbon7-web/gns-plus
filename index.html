@@ -1019,6 +1019,8 @@ const ROWS = [
    GNS 24/7, once its premiere is over. */
 const PREMIERE_INTRO = { src: "media/v/premiere-intro.mp4", dur: 9 };
 const NP_PARTS = [{ src: "media/v/north-park-01a.mp4", dur: 141.323 }, { src: "media/v/north-park-01b.mp4", dur: 162.767 }];
+const NP2_PARTS = [{ src: "media/v/north-park-02a.mp4", dur: 205.733 }, { src: "media/v/north-park-02b.mp4", dur: 173.167 }];
+const NP_EP2 = { title: "Episode 2: Yap Season", desc: "Clara Powers brings her presidential campaign to North Park, and her rally speech will not end. Seth, Matt and Sam grab an air horn and a laptop and take over her teleprompter. Subtitles available.", subs: "media/north-park-02.vtt", breaks: [205.733], parts: NP2_PARTS };
 const RR_PARTS = [{ src: "media/v/reading-rainbow-01a.mp4", dur: 101.802 }, { src: "media/v/reading-rainbow-01b.mp4", dur: 262.744 }];
 /* The North Park trailer runs as a commercial across GNS+: before every show, between programs on GNS 24/7, and at the Reading Rainbow premiere's break. */
 const NP_TRAILER_AD = { src: "media/v/north-park-trailer.mp4", poster: "media/north-park.jpg", dur: 58.21, promo: "north-park" };
@@ -1069,6 +1071,15 @@ PREMIERES.push({
   epDesc: READING_RAINBOW.episodes[0].desc,
   ad: () => NP_TRAILER_AD
 });
+/* North Park Episode 2, "Yap Season": premieres 7:30 PM ET, November 6, 2026 (Carolina Strong ad at the break) */
+const NP2_PREM = {
+  item: NORTH_PARK, csId: "cs-north-park", parts: NP2_PARTS, subs: "media/north-park-02.vtt",
+  get at() { return Date.UTC(2026, 10, 7, 0, 30, 0); },   // 7:30 PM ET, November 6
+  kicker: "GNS+ Original \u00b7 New Episode", ep: "Episode 2, \u201cYap Season,\u201d",
+  epDesc: "Episode 2, \u201cYap Season\u201d: Clara Powers brings her campaign rally to North Park, and the boys take over her teleprompter.",
+  ad: () => ADS.list.find(a => a.src === "media/ads/carolina-strong.mp4") || ADS.list[0]
+};
+PREMIERES.push(NP2_PREM);
 PREMIERES.forEach(p => Object.defineProperties(p, {
   time: { get() { return etTime(p.at); } },
   when: { get() { return (testEarly() ? "Today at " : "Tonight at ") + p.time + (p.after ? ", " + p.after : ""); } }
@@ -1076,7 +1087,9 @@ PREMIERES.forEach(p => Object.defineProperties(p, {
 const premiereEnd = () => premEndOf(PREMIERES[PREMIERES.length - 1]);
 const curPrem = () => PREMIERES.find(p => Date.now() < premEndOf(p)) || PREMIERES[PREMIERES.length - 1];
 const premiereState = () => { const p = curPrem(); return Date.now() < p.at ? "soon" : Date.now() < premEndOf(p) ? "live" : "done"; };
-const premieredTitles = () => PREMIERES.filter(p => Date.now() >= premEndOf(p)).map(p => p.item);
+const premieredTitles = () => [...new Set(PREMIERES.filter(p => Date.now() >= premEndOf(p)).map(p => p.item))];
+/* Episode 2 joins North Park (catalog and GNS 24/7) once its premiere is over */
+if (Date.now() >= premEndOf(NP2_PREM)) NORTH_PARK.episodes.push(NP_EP2);
 const TITLES = [
   ...premieredTitles(),
   {
@@ -1490,7 +1503,8 @@ const ADS = { every: 420, list: [
   { src: "PowersMidtermAd-github.mp4", poster: "media/ads/powers-midterm.jpg", dur: 37.6 },
   { src: "BBWendys_BOGO_1_-_Obvious_Choice_-_BBWendys_LLC_1080p.mp4", poster: "media/ads/bbwendys-bogo.jpg", dur: 19.6 },
   { src: "BCFA_Front_Door_compressed.mp4", poster: "media/ads/bcfa-front-door.jpg", dur: 59 },
-  { src: "BBWendys_Update_Meal_compressed.mp4", poster: "media/ads/bbwendys-update.jpg", dur: 5.224 }
+  { src: "BBWendys_Update_Meal_compressed.mp4", poster: "media/ads/bbwendys-update.jpg", dur: 5.224 },
+  { src: "media/ads/carolina-strong.mp4", poster: "media/ads/carolina-strong.jpg", dur: 30 }
 ] };
 
 /* ===== GNS Live =====
