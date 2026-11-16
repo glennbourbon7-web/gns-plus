@@ -109,6 +109,9 @@ body{font-family:var(--body);font-size:16px;line-height:1.5}
 .mast h1{font-weight:800;font-size:clamp(1.6rem,4.4vw,2.8rem);letter-spacing:-.01em}
 .tag{border-color:#d8b66c;color:#d8b66c}
 .rating{font-family:var(--display);font-weight:800;border:1.5px solid rgba(255,255,255,.5);padding:1px 7px;border-radius:3px;font-size:.85rem}
+.back-plus{margin-left:auto;font-family:var(--body);font-weight:700;font-size:.95rem;color:#f6f1ec;text-decoration:none;border:1.5px solid rgba(255,255,255,.35);border-radius:6px;padding:7px 14px;white-space:nowrap}
+.back-plus:hover{border-color:#d8b66c;color:#d8b66c}
+.back-plus:focus-visible{outline:2px solid #d8b66c;outline-offset:2px}
 .chip{background:rgba(255,255,255,.06)}
 .stage{border:0;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .stage::after{content:"";position:absolute;inset:auto 0 0 0;height:18%;background:linear-gradient(180deg,transparent,rgba(18,12,13,.55));pointer-events:none}
@@ -132,6 +135,7 @@ body{font-family:var(--body);font-size:16px;line-height:1.5}
     <div class="row">
       <button class="btn" id="gateGo">I'm a grown-up. Continue</button>
       <a class="btn ghost" href="https://glennbourbon7-web.github.io/gns-kids/vp-day.html">Play the kids version</a>
+      <a class="btn ghost" data-back-plus href="index.html">Back to GNS+</a>
     </div>
   </div>
 </div>
@@ -141,6 +145,7 @@ body{font-family:var(--body);font-size:16px;line-height:1.5}
     <span class="logo" aria-label="GNS+"><span class="logo-gns">GNS</span><span class="logo-plus"></span></span>
     <h1>The Day in the Life of Glenn Bourbon</h1>
     <span class="tag" id="edTag" hidden>Grown-Up Edition</span><span class="rating" id="rating" hidden>18+</span>
+    <a class="back-plus" data-back-plus href="index.html">&larr; Back to GNS+</a>
   </header>
   <div class="hud">
     <span class="chip" id="where">The Vice President's Office</span>
@@ -667,4 +672,18 @@ startScreen();
 })();
 </script>
 
+<script>
+/* Exit to GNS+: return to the Games row, keeping the viewer signed in. */
+(function(){
+  var h = (location.hash || "").replace(/^#/, ""), url = "index.html";
+  if (h.indexOf("gns.") === 0) {
+    var t = h.split("."), keep = t.slice(0, 3);
+    for (var i = 3; i < t.length; i++) {
+      if (t[i] === "av" || t[i] === "avp") { keep.push(t[i], t[i + 1]); i++; }
+    }
+    url += "#" + keep.join(".") + ".pg.games";
+  }
+  document.querySelectorAll("[data-back-plus]").forEach(function(a){ a.href = url; });
+})();
+</script>
 </body></html>
