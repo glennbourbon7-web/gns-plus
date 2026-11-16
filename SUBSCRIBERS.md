@@ -19,3 +19,4 @@ This log is mirrored in `SUBSCRIBERS` in `index.html`, which the site uses for e
 | JoshuaKatz | 2026-10-15 | 2026-10-29 | Peyton Manning | Free trial |
 | TimGold | 2026-10-15 | 2026-10-29 | Grace Langley | Free trial |
 | TulsiGabs | 2026-10-15 | 2026-10-29 | Glenn Bourbon | Free trial |
+| Harvster | 2026-11-16 | 2026-11-30 | Glenn Bourbon | Free trial |
