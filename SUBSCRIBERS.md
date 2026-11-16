@@ -20,3 +20,4 @@ This log is mirrored in `SUBSCRIBERS` in `index.html`, which the site uses for e
 | TimGold | 2026-10-15 | 2026-10-29 | Grace Langley | Free trial |
 | TulsiGabs | 2026-10-15 | 2026-10-29 | Glenn Bourbon | Cancelled 2026-11-16 |
 | Harvster | 2026-11-16 | 2026-11-30 | Glenn Bourbon | Free trial |
+| CountryBumpkin | 2026-11-16 | 2026-11-30 | Grace Langley | Free trial |
