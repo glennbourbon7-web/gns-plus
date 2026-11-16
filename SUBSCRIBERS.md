@@ -12,11 +12,11 @@ This log is mirrored in `SUBSCRIBERS` in `index.html`, which the site uses for e
 | Subscriber | Account created | Circle back | GNS representative | Plan |
 | --- | --- | --- | --- | --- |
 | ricksing (Rick Singer) | 2026-10-12 | 2026-10-26 | Joseph Reyes-McCollum | Free trial |
-| Disappointedbozo (Joseph Lowe) | 2026-10-12 | 2026-10-26 | Peyton Manning | Free trial |
+| Disappointedbozo (Joseph Lowe) | 2026-10-12 | 2026-10-26 | Peyton Manning | Cancelled 2026-11-16 |
 | TestAccount (test account) | 2026-10-12 | 2026-10-26 | Glenn Bourbon | Free trial |
 | DHayes | 2026-10-14 | 2026-10-28 | Glenn Bourbon | Free trial |
 | Daddykeating79 | 2026-10-15 | 2026-10-29 | Henry Reyes | Free trial |
 | JoshuaKatz | 2026-10-15 | 2026-10-29 | Peyton Manning | Free trial |
 | TimGold | 2026-10-15 | 2026-10-29 | Grace Langley | Free trial |
-| TulsiGabs | 2026-10-15 | 2026-10-29 | Glenn Bourbon | Free trial |
+| TulsiGabs | 2026-10-15 | 2026-10-29 | Glenn Bourbon | Cancelled 2026-11-16 |
 | Harvster | 2026-11-16 | 2026-11-30 | Glenn Bourbon | Free trial |
