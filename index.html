@@ -1062,7 +1062,7 @@ const PREMIERES = [{
   get at() { return testEarly() ? Date.UTC(2026, 9, 14, 18, 53, 0) : Date.UTC(2026, 9, 15, 0, 53, 0); },   // 8:53 PM ET tonight (2:53 PM ET for Test Account)
   kicker: "GNS+ Original \u00b7 World Premiere", ep: "Episode 1, \u201cThe Storm Warning,\u201d",
   epDesc: "Episode 1, \u201cThe Storm Warning\u201d: a tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in.",
-  ad: () => ADS.list[0]
+  ad: () => ADS.list.find(a => a.src === "media/ads/daniel-heyes.mp4") || ADS.list[0]
 }];
 PREMIERES.push({
   item: READING_RAINBOW, csId: "cs-reading-rainbow", parts: RR_PARTS, subs: "", skipIntro: true,
@@ -1513,6 +1513,8 @@ const PLANS = [
 /* Ad breaks on regular GNS+ shows (not on GNS Live): one unskippable ad before the show starts and one every ADS.every seconds.
    The ads take turns, one per break. */
 const ADS = { every: 420, list: [
+  { src: "media/ads/longshot-inside-look.mp4", poster: "media/ads/longshot-inside-look.jpg", dur: 41.769 },
+  { src: "media/ads/longshot-teaser.mp4", poster: "media/ads/longshot-teaser.jpg", dur: 9.62 },
   { src: "media/ads/daniel-heyes.mp4", poster: "media/ads/daniel-heyes.jpg", dur: 22.29 },
   { src: "media/ads/are-you-a-racist.mp4", poster: "media/ads/are-you-a-racist.jpg", dur: 29.8 },
   { src: "media/ads/ciccerone.mp4", poster: "media/ads/ciccerone.jpg", dur: 40.5 },
@@ -2568,11 +2570,11 @@ function unlockPlayers() {
 
 /* ---- Ad breaks: unskippable, one ad per break, ads take turns ---- */
 const vAd = $("vAd"), adBox = $("adBreak");
-let adNext = 0; try { adNext = (+localStorage.getItem("gnsp-ad-next-2") || 0) % ADS.list.length; } catch (e) {}
+let adNext = 0; try { adNext = (+localStorage.getItem("gnsp-ad-next-3") || 0) % ADS.list.length; } catch (e) {}
 P.inAd = false; P.adCb = null; P.adMarks = []; P.adDone = new Set();
 function startAd(after, pick) {
   const ad = pick || ADS.list[adNext % ADS.list.length];
-  if (!pick) { adNext = (adNext + 1) % ADS.list.length; try { localStorage.setItem("gnsp-ad-next-2", String(adNext)); } catch (e) {} }
+  if (!pick) { adNext = (adNext + 1) % ADS.list.length; try { localStorage.setItem("gnsp-ad-next-3", String(adNext)); } catch (e) {} }
   P.inAd = true; P.adCb = after; player.classList.add("in-ad");
   vids.forEach(v => { if (!v.paused) v.pause(); });
   adBox.hidden = false; $("adTap").hidden = true; $("adCount").textContent = "Your show will resume shortly";
