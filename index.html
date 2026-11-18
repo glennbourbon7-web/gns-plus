@@ -1022,7 +1022,7 @@ const NP_PARTS = [{ src: "media/v/north-park-01a.mp4", dur: 141.323 }, { src: "m
 const NP2_PARTS = [{ src: "media/v/north-park-02a.mp4", dur: 205.733 }, { src: "media/v/north-park-02b.mp4", dur: 173.167 }];
 const NP_EP2 = { title: "Episode 2: Yap Season", desc: "Clara Powers brings her presidential campaign to North Park, and her rally speech will not end. Seth, Matt and Sam grab an air horn and a laptop and take over her teleprompter. Subtitles available.", subs: "media/north-park-02.vtt", breaks: [205.733], parts: NP2_PARTS };
 const RR_PARTS = [{ src: "media/v/reading-rainbow-01a.mp4", dur: 101.802 }, { src: "media/v/reading-rainbow-01b.mp4", dur: 262.744 }];
-/* The North Park trailer runs as a commercial across GNS+: before every show, between programs on GNS 24/7, and at the Reading Rainbow premiere's break. */
+/* The North Park trailer (no longer a commercial; all ads come from the central ADS rotation). */
 const NP_TRAILER_AD = { src: "media/v/north-park-trailer.mp4", poster: "media/north-park.jpg", dur: 58.21, promo: "north-park" };
 const NORTH_PARK = {
   id: "north-park",
@@ -1526,12 +1526,12 @@ const ADS = { every: 420, list: [
   { src: "BBWendys_Update_Meal_compressed.mp4", poster: "media/ads/bbwendys-update.jpg", dur: 5.224 },
   { src: "media/ads/carolina-strong.mp4", poster: "media/ads/carolina-strong.jpg", dur: 30 }
 ] };
-/* Lead ads: the Longshot documentary ads play first, before the show and at the start of every GNS 24/7 break,
-   taking turns. The rest of the list rotates behind them. */
-const LEAD_ADS = ADS.list.filter(a => a.src.startsWith("media/ads/longshot-"));
-const REG_ADS = () => ADS.list.filter(a => !LEAD_ADS.includes(a));
-let leadNext = 0; try { leadNext = +localStorage.getItem("gnsp-lead-next") || 0; } catch (e) {}
-function nextLeadAd() { const ad = LEAD_ADS[leadNext % LEAD_ADS.length]; leadNext++; try { localStorage.setItem("gnsp-lead-next", String(leadNext % LEAD_ADS.length)); } catch (e) {} return ad; }
+/* ONE central ad rotation for all of GNS+: every ad slot on every program (before the show, breaks during it,
+   GNS 24/7 and premieres) takes the next ad from ADS.list, in order, then loops back to the top.
+   To change what plays first, reorder ADS.list. */
+const AD_KEY = "gnsp-ad-rot-" + [...ADS.list.map(a => a.src).join("|")].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);   // restarts at the top whenever the list changes
+let adNext = 0; try { adNext = (+localStorage.getItem(AD_KEY) || 0) % ADS.list.length; } catch (e) {}
+function nextAd() { const ad = ADS.list[adNext % ADS.list.length]; adNext = (adNext + 1) % ADS.list.length; try { localStorage.setItem(AD_KEY, String(adNext)); } catch (e) {} return ad; }
 
 /* ===== GNS Live =====
    Paste the GNS YouTube channel ID here (it starts with "UC"). The Live page then shows
@@ -1777,8 +1777,7 @@ function liveLineup() {
   order.forEach(item => episodesOf(item).forEach((ep, i) => {
     if (!ep.parts || !ep.parts.length) return;
     if (ads) {
-      const lead = LEAD_ADS[n % LEAD_ADS.length]; segs.push({ ad: true, src: lead.src, dur: lead.dur, title: "Commercial break" });
-      const reg = REG_ADS(), ad = reg[n % reg.length]; segs.push({ ad: true, src: ad.src, dur: ad.dur, title: "Commercial break" });
+      const ad = ADS.list[n % ADS.list.length]; segs.push({ ad: true, src: ad.src, dur: ad.dur, title: "Commercial break" });
     }
     n++;
     const name = showEps(item) ? `${item.title}: ${ep.title}` : item.title;
@@ -1986,7 +1985,7 @@ const PR = { v: null, segs: [], cur: -1, timer: 0, cues: [], p: null };
 function premiereSegs(p) {
   const segs = p.skipIntro ? [] : [{ src: PREMIERE_INTRO.src, dur: PREMIERE_INTRO.dur, intro: true }];
   segs.push({ src: p.parts[0].src, dur: p.parts[0].dur, ep: 0 });
-  if (adsOn() && ADS.list.length) { const ad = p.ad(); segs.push({ ad: true, src: ad.src, dur: ad.dur }); }
+  if (adsOn() && ADS.list.length) { const ad = ADS.list[0]; segs.push({ ad: true, src: ad.src, dur: ad.dur }); }
   segs.push({ src: p.parts[1].src, dur: p.parts[1].dur, ep: p.parts[0].dur });
   return segs;
 }
@@ -2576,11 +2575,9 @@ function unlockPlayers() {
 
 /* ---- Ad breaks: unskippable, one ad per break, ads take turns ---- */
 const vAd = $("vAd"), adBox = $("adBreak");
-let adNext = 0; try { adNext = (+localStorage.getItem("gnsp-ad-next-3") || 0) % ADS.list.length; } catch (e) {}
 P.inAd = false; P.adCb = null; P.adMarks = []; P.adDone = new Set();
 function startAd(after, pick) {
-  const ad = pick || ADS.list[adNext % ADS.list.length];
-  if (!pick) { adNext = (adNext + 1) % ADS.list.length; try { localStorage.setItem("gnsp-ad-next-3", String(adNext)); } catch (e) {} }
+  const ad = nextAd();
   P.inAd = true; P.adCb = after; player.classList.add("in-ad");
   vids.forEach(v => { if (!v.paused) v.pause(); });
   adBox.hidden = false; $("adTap").hidden = true; $("adCount").textContent = "Your show will resume shortly";
@@ -2673,7 +2670,7 @@ function openPlayer(item) {
   if (preroll) {
     const marks = item.breaks || []; if (!item.breaks) for (let m = ADS.every; m < P.total - 60; m += ADS.every) marks.push(m);
     marks.forEach(m => { P.adMarks.push(m); if (m <= resume) P.adDone.add(m); });
-    startAd(resumeMain, nextLeadAd());   // the ad before the show (a Longshot ad), started inside the tap so it plays with sound
+    startAd(resumeMain);   // the ad before the show (next in the central rotation), started inside the tap so it plays with sound
   }
   $("playerBack").focus({ preventScroll: true });
 }
