@@ -801,9 +801,9 @@
       <button type="button" class="btn-red" data-goto-signin>Sign In</button>
     </header>
     <div class="wl-hero-copy">
-      <p class="wl-trial">Try it free for 2 weeks</p>
+      <p class="wl-trial">Watch free, with ads</p>
       <h1 id="wlTitle">Every GNS broadcast, debate and original, in one place.</h1>
-      <p class="wl-lead">Start with a 2-week free trial. Then pick the plan that fits you.</p>
+      <p class="wl-lead">GNS+ is free with ads. Want it ad-free? Go Gold or Premium.</p>
       <form class="wl-start" data-start novalidate>
         <p>Ready to watch? Enter your GNS+ username to sign in.</p>
         <div class="wl-start-row">
@@ -832,7 +832,7 @@
       </div>
     </section>
     <section class="wl-sec" aria-labelledby="wlPlansH">
-      <h2 id="wlPlansH">Start free for 2 weeks, then pick your plan</h2>
+      <h2 id="wlPlansH">Watch free, or go ad-free</h2>
       <div class="wl-plans-wrap">
         <div id="wlHow"></div>
         <div id="wlPlans"></div>
@@ -909,7 +909,7 @@
       <div class="menu" id="profileMenu" hidden>
         <div class="menu-who">Signed in as <strong id="whoName"></strong></div>
         <button type="button" id="avatarPickBtn">Change profile picture</button>
-        <button type="button" id="plansBtn" data-goto-plans>Plans &amp; free trial</button>
+        <button type="button" id="plansBtn" data-goto-plans>Plans</button>
         <button type="button" id="pfSwitchBtn" hidden>Switch profile</button>
         <button type="button" id="getAppBtn" data-install-app>Get the GNS+ app</button>
         <button type="button" id="signOutBtn">Sign out of GNS+</button>
@@ -987,7 +987,7 @@
    Usernames ignore capitals; passwords are exact apart from spaces at either end. */
 const ACCOUNTS = [
   "641d57acc4e8a895b504747ed16a82c592f16564873544798c34d57e305d8b40", // Powers
-  "d6738d9eb71574d803054fc0d23f23bb06eb20bf8593ed63fc84b20711e4bee4", // TestAccount — regular trial
+  "d6738d9eb71574d803054fc0d23f23bb06eb20bf8593ed63fc84b20711e4bee4", // TestAccount — GNS+ Free
   "17d5f5102235769e927cffbdb789c539ddfbdf8b7b66cf2ef19510a734841ef9", // ricksing
   "60a059584c9b8c74c43b56c7d570c5e164818f0b443a5f4382665e3874218e89", // DHayes, added 2026-10-14
   "c1013852ac4d742954a1bda30630353a494b414a0be8f3d1968a7a2f9a6789ef", // LeoStone (employee), added 2026-10-14
@@ -1455,21 +1455,21 @@ function fadeIntoHome(name) {
 
 /* ===== App ===== */
 let page = "home";
-/* ===== Plans, free trial and ads =====
-   Every account starts with a 2-week free trial (with ads). The subscriber log below is kept in step with SUBSCRIBERS.md:
-   username (lowercase) -> { created, circleBack, rep, plan }. The trial runs from "created"; after the plan meeting,
-   set "plan" to "regular" | "gold" | "premium" ("trial" until then). */
+/* ===== Plans and ads =====
+   GNS+ Free (with ads) costs nothing and is every account's default; Gold and Premium are the paid, ad-free plans. The subscriber log below is kept in step with SUBSCRIBERS.md:
+   username (lowercase) -> { created, circleBack, rep, plan }. "created" is the sign-up date; after an upgrade meeting,
+   set "plan" to "gold" | "premium" after an upgrade meeting ("free" otherwise). */
 const TRIAL_DAYS = 14;
 const GNS_REPS = ["Grace Langley", "Glenn Bourbon", "Henry Reyes", "Peyton Manning", "Joseph Reyes-McCollum"];
 const SUBSCRIBERS = {
-  "ricksing": { created: "2026-10-12", circleBack: "2026-10-26", rep: "Joseph Reyes-McCollum", plan: "trial" },
-  "testaccount": { created: "2026-10-12", circleBack: "2026-10-26", rep: "Glenn Bourbon", plan: "trial" },
-  "dhayes": { created: "2026-10-14", circleBack: "2026-10-28", rep: "Glenn Bourbon", plan: "trial" },
-  "daddykeating79": { created: "2026-10-15", circleBack: "2026-10-29", rep: "Henry Reyes", plan: "trial" },
-  "joshuakatz": { created: "2026-10-15", circleBack: "2026-10-29", rep: "Peyton Manning", plan: "trial" },
-  "timgold": { created: "2026-10-15", circleBack: "2026-10-29", rep: "Grace Langley", plan: "trial" },
-  "harvster": { created: "2026-11-16", circleBack: "2026-11-30", rep: "Glenn Bourbon", plan: "trial" },
-  "countrybumpkin": { created: "2026-11-16", circleBack: "2026-11-30", rep: "Grace Langley", plan: "trial" }
+  "ricksing": { created: "2026-10-12", circleBack: "2026-10-26", rep: "Joseph Reyes-McCollum", plan: "free" },
+  "testaccount": { created: "2026-10-12", circleBack: "2026-10-26", rep: "Glenn Bourbon", plan: "free" },
+  "dhayes": { created: "2026-10-14", circleBack: "2026-10-28", rep: "Glenn Bourbon", plan: "free" },
+  "daddykeating79": { created: "2026-10-15", circleBack: "2026-10-29", rep: "Henry Reyes", plan: "free" },
+  "joshuakatz": { created: "2026-10-15", circleBack: "2026-10-29", rep: "Peyton Manning", plan: "free" },
+  "timgold": { created: "2026-10-15", circleBack: "2026-10-29", rep: "Grace Langley", plan: "free" },
+  "harvster": { created: "2026-11-16", circleBack: "2026-11-30", rep: "Glenn Bourbon", plan: "free" },
+  "countrybumpkin": { created: "2026-11-16", circleBack: "2026-11-30", rep: "Grace Langley", plan: "free" }
 };
 /* Employee Accounts (kept in step with EMPLOYEES.md): permanently ad-free, no free trial, no plan meeting.
    username (lowercase) -> { added } */
@@ -1485,8 +1485,8 @@ const EMPLOYEE_ACCOUNTS = {
   "leostone": { added: "2026-10-14" }
 };
 const PLANS = [
-  { id: "regular", name: "GNS+ Regular", tag: "With ads", ads: true,
-    perks: ["Every GNS broadcast, debate and original", "GNS Live streams", "Short ad breaks during shows"] },
+  { id: "free", name: "GNS+ Free", tag: "Free \u00b7 With ads", ads: true,
+    perks: ["Every GNS broadcast, debate and original", "GNS Live streams", "Short ad breaks during shows", "Free, no contract"] },
   { id: "gold", name: "GNS+ Gold", tag: "No ads", ads: false,
     perks: ["Every GNS broadcast, debate and original", "GNS Live streams", "No ad breaks, ever"] },
   { id: "premium", name: "GNS+ Premium", tag: "No ads + exclusives", ads: false, best: true,
@@ -1708,8 +1708,8 @@ const sessHash = () => { const s = readSession(); return (s && s.hash) || ""; };
 const subOf = () => { const s = readSession(); return SUBSCRIBERS[((s && s.name) || "").trim().toLowerCase()] || null; };
 const sessName = () => { const s = readSession(); return ((s && s.name) || "").trim().toLowerCase(); };
 const isEmployee = () => !!EMPLOYEE_ACCOUNTS[sessName()];
-const currentPlan = () => { if (isEmployee()) return "employee"; const sub = subOf(); return (sub && sub.plan) || "trial"; };
-const adsOn = () => { const pl = currentPlan(); return pl === "trial" || pl === "regular"; };
+const currentPlan = () => { if (isEmployee()) return "employee"; const sub = subOf(), p = (sub && sub.plan) || "free"; return p === "gold" || p === "premium" ? p : "free"; };
+const adsOn = () => currentPlan() === "free";
 function trialInfo() {
   const h = sessHash(), sub = subOf(); let start = Date.now();
   if (sub && sub.created) start = new Date(sub.created + "T00:00:00").getTime();
@@ -1725,23 +1725,15 @@ function planCards(current) {
       <ul>${pl.perks.map(x => `<li>${CHECK_SM}<span>${esc(x)}</span></li>`).join("")}</ul></article>`).join("")}</div>`;
 }
 const HOW_STEPS = `<ol class="how">
-    <li><b>Watch free for ${TRIAL_DAYS / 7} weeks.</b><span>Every show and GNS Live stream, with short ad breaks.</span></li>
-    <li><b>Meet with your GNS representative.</b><span>When your trial ends, a GNS team member sits down with you to go over your contract.</span></li>
-    <li><b>Pick your plan.</b><span>Regular, Gold or Premium. You choose what fits.</span></li>
+    <li><b>Watch free.</b><span>Every show and GNS Live stream, free with short ad breaks, for as long as you like.</span></li>
+    <li><b>Want no ads? Meet your GNS representative.</b><span>A GNS team member sits down with you to go over your contract.</span></li>
+    <li><b>Go Gold or Premium.</b><span>Ad-free, at the same prices as before.</span></li>
   </ol>`;
-function trialBanner() {
-  if (currentPlan() !== "trial") return "";
-  const ti = trialInfo();
-  const msg = ti.ended
-    ? `<b>Your free trial has ended.</b> It's time to meet with your GNS representative to choose your plan.`
-    : `<b>Free trial: ${ti.left} day${ti.left === 1 ? "" : "s"} left.</b> When it ends, you'll meet with a GNS representative to choose your plan.`;
-  return `<div class="trial-bar"><p>${msg}</p><button type="button" class="btn-more" data-goto-plans>See plans</button></div>`;
-}
+function trialBanner() { return ""; }  // retired: GNS+ Free has no trial
 function viewPlans() {
-  const pl = currentPlan(), ti = pl === "trial" ? trialInfo() : null;
-  const status = pl === "trial"
-    ? (ti.ended ? `<p class="plan-status"><span class="lv-pill lv-pill-off">TRIAL ENDED</span> Your 2-week free trial is over. Meet with your GNS representative to go over your contract and pick a plan.</p>`
-               : `<p class="plan-status"><span class="lv-pill">FREE TRIAL</span> ${ti.left} day${ti.left === 1 ? "" : "s"} left. You're watching with ads until you choose a plan.</p>`)
+  const pl = currentPlan();
+  const status = pl === "free"
+    ? `<p class="plan-status"><span class="lv-pill">GNS+ FREE</span> You're watching free, with ads. Want no ads? Meet with your GNS representative about Gold or Premium.</p>`
     : pl === "employee"
     ? `<p class="plan-status"><span class="lv-pill">EMPLOYEE ACCOUNT</span> Ad-free for good, with everything on GNS+. Thanks for being part of the GNS team.</p>`
     : `<p class="plan-status"><span class="lv-pill">${esc((PLANS.find(x => x.id === pl) || {}).name || "")}</span> Thanks for being a subscriber.</p>`;
@@ -1749,7 +1741,7 @@ function viewPlans() {
     <div class="page-head plans-head"><h1>Choose your GNS+ plan</h1>${status}</div>
     ${HOW_STEPS}
     ${planCards(pl)}
-    <p class="plan-foot">Plans and contract terms are set up in person with a GNS representative. Ask the GNS team if you have questions.</p>
+    <p class="plan-foot">GNS+ Free needs no contract. Gold and Premium are set up in person with a GNS representative. Ask the GNS team if you have questions.</p>
   </section>`;
 }
 function liveLineup() {
@@ -2131,7 +2123,7 @@ function showApp(name) {
   currentName = name;
   paintFace($("avatar"), readAvatar());
   $("whoName").textContent = name;
-  $("plansBtn").textContent = isEmployee() ? "Employee Account" : "Plans & free trial";
+  $("plansBtn").textContent = isEmployee() ? "Employee Account" : "Plans";
   $("signin").hidden = true;
   $("app").hidden = false;
   page = "home"; render(); window.scrollTo(0, 0);
@@ -2853,8 +2845,8 @@ function renderWelcome() {
   const nameList = names.length > 1 ? names.slice(0, -1).join(", ") + " and " + names[names.length - 1] : names[0] || "";
   const faq = [
     ["What is GNS+?", ["GNS+ is the streaming home of the Global News Service. It carries full GNS broadcasts, from debates and town halls to addresses and sessions of Congress, plus GNS+ Originals like Breaking Through.", "Everything plays right here, start to finish."]],
-    ["How does the free trial work?", [`Every new GNS+ account starts with a ${TRIAL_DAYS / 7}-week free trial. You can watch everything, including GNS Live, with short ad breaks during shows.`, "When the trial ends, you'll meet with a GNS representative to go over your contract and choose a plan."]],
-    ["What plans are there?", ["GNS+ Regular: every show and GNS Live, with ads.", "GNS+ Gold: every show and GNS Live, with no ads.", "GNS+ Premium: no ads, plus GNS+ exclusives, backstage content like tours of the GNS studios, and fan perks like blooper reels."]],
+    ["Is GNS+ free?", ["Yes. Every GNS+ account can watch everything, including GNS Live, for free with short ad breaks during shows. No contract needed.", "If you want it ad-free, meet with your GNS representative about Gold or Premium."]],
+    ["What plans are there?", ["GNS+ Free: every show and GNS Live, with ads. Free.", "GNS+ Gold: every show and GNS Live, with no ads.", "GNS+ Premium: no ads, plus GNS+ exclusives, backstage content like tours of the GNS studios, and fan perks like blooper reels."]],
     ["How do I get an account?", ["GNS+ is invite-only. Accounts are set up by the GNS team, so ask them for your username and password, then tap Sign In."]],
     ["What can I watch on GNS+?", [`Right now: ${nameList}.`, "New broadcasts show up under New & Popular as soon as GNS adds them."]],
     ["Where can I watch?", ["Anywhere with a web browser: iPhone, Android, iPad, Mac or PC. GNS+ saves your place on each device, so you can pick up where you left off."]]
