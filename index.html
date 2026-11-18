@@ -1093,6 +1093,24 @@ if (Date.now() >= premEndOf(NP2_PREM)) NORTH_PARK.episodes.push(NP_EP2);
 const TITLES = [
   ...premieredTitles(),
   {
+    id: "powers-va-rally",
+    row: "broadcasts",
+    title: "Powers for House Rally in VA",
+    kind: "Campaign rally",
+    poster: "media/powers-va-rally.jpg",
+    thumb: "media/powers-va-rally-sm.jpg",
+    posterHasTitle: true,
+    added: "2026-11-18",
+    description: "Speaker of the House Richard Powers, running for re-election to the House, rallies supporters in Virginia in a campaign event carried by GNS.",
+    episodes: [{ title: "Full rally", desc: "The complete Powers for House rally in Virginia, including the GNS top headlines and \u201cWe will be right back\u201d breaks.", parts: [
+      { src: "media/v/powers-va-rally-00.mp4", dur: 368.356 },
+      { src: "media/v/powers-va-rally-01.mp4", dur: 360 },
+      { src: "media/v/powers-va-rally-02.mp4", dur: 360 },
+      { src: "media/v/powers-va-rally-03.mp4", dur: 360 },
+      { src: "media/v/powers-va-rally-04.mp4", dur: 355.021 }
+    ] }]
+  },
+  {
     id: "reyes-mi-rally",
     row: "broadcasts",
     title: "Reyes for President Rally in MI",
@@ -1516,11 +1534,9 @@ const ADS = { every: 420, list: [
   { src: "media/ads/longshot-inside-look.mp4", poster: "media/ads/longshot-inside-look.jpg", dur: 41.769 },
   { src: "media/ads/longshot-teaser.mp4", poster: "media/ads/longshot-teaser.jpg", dur: 9.62 },
   { src: "media/ads/daniel-heyes.mp4", poster: "media/ads/daniel-heyes.jpg", dur: 22.29 },
-  { src: "media/ads/are-you-a-racist.mp4", poster: "media/ads/are-you-a-racist.jpg", dur: 29.8 },
   { src: "media/ads/ciccerone.mp4", poster: "media/ads/ciccerone.jpg", dur: 40.5 },
   { src: "media/ads/powers.mp4", poster: "media/ads/powers.jpg", dur: 23.6 },
   { src: "media/ads/ozempic.mp4", poster: "media/ads/ozempic.jpg", dur: 43.97 },
-  { src: "PowersMidtermAd-github.mp4", poster: "media/ads/powers-midterm.jpg", dur: 37.6 },
   { src: "BBWendys_BOGO_1_-_Obvious_Choice_-_BBWendys_LLC_1080p.mp4", poster: "media/ads/bbwendys-bogo.jpg", dur: 19.6 },
   { src: "BCFA_Front_Door_compressed.mp4", poster: "media/ads/bcfa-front-door.jpg", dur: 59 },
   { src: "BBWendys_Update_Meal_compressed.mp4", poster: "media/ads/bbwendys-update.jpg", dur: 5.224 },
