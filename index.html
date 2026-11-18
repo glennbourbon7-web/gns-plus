@@ -1005,6 +1005,9 @@ const ACCOUNTS = [
   "89e35a1d569a5bcbb25a0c33a840e4fbbfeb4b9cd8e5b01f759a58997f6d571b"   // JosephRM (employee), added 2026-10-12
 ];
 
+/* Big videos live on the GNS+ media site (repo gns-plus-media) and play here in the GNS+ player. */
+const MEDIA = "media/v/";   // switch to "https://glennbourbon7-web.github.io/gns-plus-media/v/" once that site is live
+
 /* ===== Catalog =====
    Each title: { id, row: "broadcasts" | "originals", title, kind, description, poster, thumb, featured,
    episodes: [{ title, url }]  (url = plays on YouTube)  or  [{ title, parts: [{ src, dur }] }]  (plays in GNS+; parts play back to back) } */
@@ -1018,12 +1021,12 @@ const ROWS = [
    then the episode, with one ad at the break (plans with ads only). Each show joins the catalog, and the front of
    GNS 24/7, once its premiere is over. */
 const PREMIERE_INTRO = { src: "media/v/premiere-intro.mp4", dur: 9 };
-const NP_PARTS = [{ src: "media/v/north-park-01a.mp4", dur: 141.323 }, { src: "media/v/north-park-01b.mp4", dur: 162.767 }];
-const NP2_PARTS = [{ src: "media/v/north-park-02a.mp4", dur: 205.733 }, { src: "media/v/north-park-02b.mp4", dur: 173.167 }];
+const NP_PARTS = [{ src: MEDIA + "north-park-01a.mp4", dur: 141.323 }, { src: MEDIA + "north-park-01b.mp4", dur: 162.767 }];
+const NP2_PARTS = [{ src: MEDIA + "north-park-02a.mp4", dur: 205.733 }, { src: MEDIA + "north-park-02b.mp4", dur: 173.167 }];
 const NP_EP2 = { title: "Episode 2: Yap Season", desc: "Clara Powers brings her presidential campaign to North Park, and her rally speech will not end. Seth, Matt and Sam grab an air horn and a laptop and take over her teleprompter. Subtitles available.", subs: "media/north-park-02.vtt", breaks: [205.733], parts: NP2_PARTS };
-const RR_PARTS = [{ src: "media/v/reading-rainbow-01a.mp4", dur: 101.802 }, { src: "media/v/reading-rainbow-01b.mp4", dur: 262.744 }];
+const RR_PARTS = [{ src: MEDIA + "reading-rainbow-01a.mp4", dur: 101.802 }, { src: MEDIA + "reading-rainbow-01b.mp4", dur: 262.744 }];
 /* The North Park trailer (no longer a commercial; all ads come from the central ADS rotation). */
-const NP_TRAILER_AD = { src: "media/v/north-park-trailer.mp4", poster: "media/north-park.jpg", dur: 58.21, promo: "north-park" };
+const NP_TRAILER_AD = { src: MEDIA + "north-park-trailer.mp4", poster: "media/north-park.jpg", dur: 58.21, promo: "north-park" };
 const NORTH_PARK = {
   id: "north-park",
   row: "originals",
@@ -1036,7 +1039,7 @@ const NORTH_PARK = {
   posterHasTitle: true,
   added: "2026-10-14",
   description: "Four kids, one bus stop, and a whole lot of Kansas. Seth, Matt, Sam and Tim are just trying to get through the day in North Park, Kansas, a small prairie town where the sky is construction paper, the weather is always out to get you, and Sam's dad Hector Castillo has a steel-vault bunker in the backyard for every emergency.",
-  trailer: { src: "media/v/north-park-trailer.mp4", dur: 58.2 },
+  trailer: { src: MEDIA + "north-park-trailer.mp4", dur: 58.2 },
   episodes: [{ title: "Episode 1: The Storm Warning", desc: "A tornado siren sends everyone racing for the Castillo bunker, and not everybody gets in. Subtitles available.", subs: "media/north-park-01.vtt", breaks: [141.323], parts: NP_PARTS }]
 };
 const READING_RAINBOW = {
@@ -1103,29 +1106,29 @@ const TITLES = [
     added: "2026-11-18",
     description: "Vice President Henry Reyes faces First Lady and former Senator Clara Powers on the GNS debate stage, with full GNS coverage before, during and after the debate.",
     episodes: [{ title: "Full coverage", desc: "The complete GNS debate coverage, including the anchor desk and \u201cWe will be right back\u201d breaks.", parts: [
-      { src: "media/v/reyes-powers-debate-00.mp4", dur: 368.356 },
-      { src: "media/v/reyes-powers-debate-01.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-02.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-03.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-04.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-05.mp4", dur: 353.100000 },
-      { src: "media/v/reyes-powers-debate-06.mp4", dur: 366.900000 },
-      { src: "media/v/reyes-powers-debate-07.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-08.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-09.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-10.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-11.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-12.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-13.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-14.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-15.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-16.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-17.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-18.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-19.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-20.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-21.mp4", dur: 360 },
-      { src: "media/v/reyes-powers-debate-22.mp4", dur: 232.668 }
+      { src: MEDIA + "reyes-powers-debate-00.mp4", dur: 368.356 },
+      { src: MEDIA + "reyes-powers-debate-01.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-02.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-03.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-04.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-05.mp4", dur: 353.100000 },
+      { src: MEDIA + "reyes-powers-debate-06.mp4", dur: 366.900000 },
+      { src: MEDIA + "reyes-powers-debate-07.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-08.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-09.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-10.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-11.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-12.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-13.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-14.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-15.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-16.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-17.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-18.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-19.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-20.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-21.mp4", dur: 360 },
+      { src: MEDIA + "reyes-powers-debate-22.mp4", dur: 232.668 }
     ] }]
   },
   {
@@ -1147,21 +1150,21 @@ const TITLES = [
     ] }]
   },
   {
-    id: "reyes-mi-rally",
+    id: "reyes-tx-rally",
     row: "broadcasts",
-    title: "Reyes for President Rally in MI",
+    title: "Reyes for President Rally in TX",
     kind: "Campaign rally",
-    poster: "media/reyes-mi-rally.jpg",
-    thumb: "media/reyes-mi-rally-sm.jpg",
+    poster: "media/reyes-tx-rally.jpg",
+    thumb: "media/reyes-tx-rally-sm.jpg",
     posterHasTitle: true,
     added: "2026-11-18",
-    description: "Vice President Henry Reyes, candidate for President, rallies supporters inside an air hangar in Michigan under the “End the War” banner, in a campaign event carried by GNS.",
-    episodes: [{ title: "Full rally", desc: "The complete Reyes for President rally from the Michigan air hangar, including the GNS “We will be right back” breaks.", parts: [
-      { src: "media/v/reyes-mi-rally-00.mp4", dur: 368.356 },
-      { src: "media/v/reyes-mi-rally-01.mp4", dur: 360 },
-      { src: "media/v/reyes-mi-rally-02.mp4", dur: 360 },
-      { src: "media/v/reyes-mi-rally-03.mp4", dur: 360 },
-      { src: "media/v/reyes-mi-rally-04.mp4", dur: 66.072 }
+    description: "Vice President Henry Reyes, candidate for President, rallies supporters inside an air hangar in Texas under the “End the War” banner, in a campaign event carried by GNS.",
+    episodes: [{ title: "Full rally", desc: "The complete Reyes for President rally from the Texas air hangar, including the GNS “We will be right back” breaks.", parts: [
+      { src: "media/v/reyes-tx-rally-00.mp4", dur: 368.356 },
+      { src: "media/v/reyes-tx-rally-01.mp4", dur: 360 },
+      { src: "media/v/reyes-tx-rally-02.mp4", dur: 360 },
+      { src: "media/v/reyes-tx-rally-03.mp4", dur: 360 },
+      { src: "media/v/reyes-tx-rally-04.mp4", dur: 66.072 }
     ] }]
   },
   {
@@ -1231,7 +1234,7 @@ const TITLES = [
     posterHasTitle: true,
     added: "2026-10-10",
     description: "Stone vs. Powers. The two presidential candidates face off at podiums on the GNS debate stage, with the GNS anchor desk handling the breaks.",
-    episodes: [{ title: "Full broadcast", desc: "The complete debate, opening to close, including the anchor desk and \u201cWe will be right back\u201d breaks.", yt: "https://www.youtube.com/watch?v=ZlFIOHLEDfs", parts: [{ src: "media/v/debate-00.mp4", dur: 360.002 }, { src: "media/v/debate-01.mp4", dur: 360.004 }, { src: "media/v/debate-02.mp4", dur: 360.006 }, { src: "media/v/debate-03.mp4", dur: 360.008 }, { src: "media/v/debate-04.mp4", dur: 360.01 }, { src: "media/v/debate-05.mp4", dur: 360.012 }, { src: "media/v/debate-06.mp4", dur: 360.0 }, { src: "media/v/debate-07.mp4", dur: 360.0 }, { src: "media/v/debate-08.mp4", dur: 360.0 }, { src: "media/v/debate-09.mp4", dur: 360.0 }, { src: "media/v/debate-10.mp4", dur: 360.0 }, { src: "media/v/debate-11.mp4", dur: 360.0 }, { src: "media/v/debate-12.mp4", dur: 360.0 }, { src: "media/v/debate-13.mp4", dur: 360.0 }, { src: "media/v/debate-14.mp4", dur: 85.155 }] }]
+    episodes: [{ title: "Full broadcast", desc: "The complete debate, opening to close, including the anchor desk and \u201cWe will be right back\u201d breaks.", yt: "https://www.youtube.com/watch?v=ZlFIOHLEDfs", parts: [{ src: MEDIA + "debate-00.mp4", dur: 360.002 }, { src: MEDIA + "debate-01.mp4", dur: 360.004 }, { src: MEDIA + "debate-02.mp4", dur: 360.006 }, { src: MEDIA + "debate-03.mp4", dur: 360.008 }, { src: MEDIA + "debate-04.mp4", dur: 360.01 }, { src: MEDIA + "debate-05.mp4", dur: 360.012 }, { src: MEDIA + "debate-06.mp4", dur: 360.0 }, { src: MEDIA + "debate-07.mp4", dur: 360.0 }, { src: MEDIA + "debate-08.mp4", dur: 360.0 }, { src: MEDIA + "debate-09.mp4", dur: 360.0 }, { src: MEDIA + "debate-10.mp4", dur: 360.0 }, { src: MEDIA + "debate-11.mp4", dur: 360.0 }, { src: MEDIA + "debate-12.mp4", dur: 360.0 }, { src: MEDIA + "debate-13.mp4", dur: 360.0 }, { src: MEDIA + "debate-14.mp4", dur: 85.155 }] }]
   },
   {
     id: "vp-townhall",
@@ -1243,7 +1246,7 @@ const TITLES = [
     posterHasTitle: true,
     added: "2026-10-10",
     description: "A vice presidential candidate takes the GNS stage alone and answers questions from the anchor desk, town hall style.",
-    episodes: [{ title: "Full broadcast", desc: "The complete town hall, including the anchor desk segments and breaks.", yt: "https://www.youtube.com/watch?v=DvDE9fJqaEM", parts: [{ src: "media/v/townhall-00.mp4", dur: 451.933 }, { src: "media/v/townhall-01.mp4", dur: 450.0 }, { src: "media/v/townhall-02.mp4", dur: 450.0 }, { src: "media/v/townhall-03.mp4", dur: 450.0 }, { src: "media/v/townhall-04.mp4", dur: 450.0 }, { src: "media/v/townhall-05.mp4", dur: 450.0 }, { src: "media/v/townhall-06.mp4", dur: 450.0 }, { src: "media/v/townhall-07.mp4", dur: 450.0 }, { src: "media/v/townhall-08.mp4", dur: 450.0 }, { src: "media/v/townhall-09.mp4", dur: 300.137 }] }]
+    episodes: [{ title: "Full broadcast", desc: "The complete town hall, including the anchor desk segments and breaks.", yt: "https://www.youtube.com/watch?v=DvDE9fJqaEM", parts: [{ src: MEDIA + "townhall-00.mp4", dur: 451.933 }, { src: MEDIA + "townhall-01.mp4", dur: 450.0 }, { src: MEDIA + "townhall-02.mp4", dur: 450.0 }, { src: MEDIA + "townhall-03.mp4", dur: 450.0 }, { src: MEDIA + "townhall-04.mp4", dur: 450.0 }, { src: MEDIA + "townhall-05.mp4", dur: 450.0 }, { src: MEDIA + "townhall-06.mp4", dur: 450.0 }, { src: MEDIA + "townhall-07.mp4", dur: 450.0 }, { src: MEDIA + "townhall-08.mp4", dur: 450.0 }, { src: MEDIA + "townhall-09.mp4", dur: 300.137 }] }]
   },
   {
     id: "third-congress-opening",
@@ -1255,7 +1258,7 @@ const TITLES = [
     posterHasTitle: true,
     added: "2026-10-08",
     description: "GNS coverage of the opening of the Third Congress.",
-    episodes: [{ title: "Full broadcast", desc: "Full coverage of the opening session from the House chamber, including the GNS \u201cWe will be right back\u201d breaks.", yt: "https://www.youtube.com/watch?v=Ycp7H_nG4L8", parts: [{ src: "media/v/congress-00.mp4", dur: 363.0 }, { src: "media/v/congress-01.mp4", dur: 359.744 }, { src: "media/v/congress-02.mp4", dur: 359.734 }, { src: "media/v/congress-03.mp4", dur: 359.733 }, { src: "media/v/congress-04.mp4", dur: 359.733 }, { src: "media/v/congress-05.mp4", dur: 359.733 }, { src: "media/v/congress-06.mp4", dur: 359.741 }, { src: "media/v/congress-07.mp4", dur: 359.733 }, { src: "media/v/congress-08.mp4", dur: 359.733 }, { src: "media/v/congress-09.mp4", dur: 359.733 }, { src: "media/v/congress-10.mp4", dur: 359.733 }, { src: "media/v/congress-11.mp4", dur: 359.739 }, { src: "media/v/congress-12.mp4", dur: 364.8 }, { src: "media/v/congress-13.mp4", dur: 359.733 }, { src: "media/v/congress-14.mp4", dur: 160.571 }] }]
+    episodes: [{ title: "Full broadcast", desc: "Full coverage of the opening session from the House chamber, including the GNS \u201cWe will be right back\u201d breaks.", yt: "https://www.youtube.com/watch?v=Ycp7H_nG4L8", parts: [{ src: MEDIA + "congress-00.mp4", dur: 363.0 }, { src: MEDIA + "congress-01.mp4", dur: 359.744 }, { src: MEDIA + "congress-02.mp4", dur: 359.734 }, { src: MEDIA + "congress-03.mp4", dur: 359.733 }, { src: MEDIA + "congress-04.mp4", dur: 359.733 }, { src: MEDIA + "congress-05.mp4", dur: 359.733 }, { src: MEDIA + "congress-06.mp4", dur: 359.741 }, { src: MEDIA + "congress-07.mp4", dur: 359.733 }, { src: MEDIA + "congress-08.mp4", dur: 359.733 }, { src: MEDIA + "congress-09.mp4", dur: 359.733 }, { src: MEDIA + "congress-10.mp4", dur: 359.733 }, { src: MEDIA + "congress-11.mp4", dur: 359.739 }, { src: MEDIA + "congress-12.mp4", dur: 364.8 }, { src: MEDIA + "congress-13.mp4", dur: 359.733 }, { src: MEDIA + "congress-14.mp4", dur: 160.571 }] }]
   },
   {
     id: "breaking-through",
@@ -1346,7 +1349,8 @@ const recommendedRow = () => {
 /* Top 5: ranked by YouTube views once they're filled in below (key = "<title id>:<episode index>").
    Until every video has a number, the default order is used. */
 const YT_VIEWS = {};
-const TOP5_DEFAULT = ["presidential-debate:0", "north-park:0", "vp-townhall:0", "breaking-through:0", "reading-rainbow:0"];
+/* Top 5 on GNS+, in this order. "id" = the whole show; "id:2" = one episode of it. */
+const TOP5_DEFAULT = ["powers-va-rally", "reyes-powers-debate", "reyes-tx-rally", "north-park", "reading-rainbow"];
 
 /* ===== One site: every show plays right here ===== */
 const HUB_URL = location.href.split("#")[0];
@@ -1651,9 +1655,8 @@ function lastLine(item) {
 const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.3C1.6 7.8 3.9 4.5 7.3 4.5c2 0 3.6 1.1 4.7 2.7 1.1-1.6 2.7-2.7 4.7-2.7 3.4 0 5.7 3.3 4.5 6.7-1.7 4.7-9.2 9.3-9.2 9.3z"/></svg>';
 const likeBtn = (id, big) => `<button type="button" class="like-btn${big ? " big" : ""}" data-like="${esc(id)}" aria-pressed="${isLiked(id)}" aria-label="Like">${HEART}${big ? `<span>${isLiked(id) ? "Liked" : "Like"}</span>` : ""}</button>`;
 function topList() {
-  const keys = TOP5_DEFAULT.slice();
-  if (keys.every(k => typeof YT_VIEWS[k] === "number")) keys.sort((a, b) => YT_VIEWS[b] - YT_VIEWS[a]);
-  return keys.slice(0, 5).map(k => { const [id, i] = k.split(":"); const item = TITLES.find(t => t.id === id); return item && { item, i: Number(i), ep: episodesOf(item)[Number(i)], views: YT_VIEWS[k] }; }).filter(Boolean);
+  return TOP5_DEFAULT.slice(0, 5).map(k => { const [id, i] = k.split(":"); const item = TITLES.find(t => t.id === id); if (!item) return null;
+    return i == null ? { item, i: null, ep: null, views: YT_VIEWS[k] } : { item, i: Number(i), ep: episodesOf(item)[Number(i)], views: YT_VIEWS[k] }; }).filter(Boolean);
 }
 const fmtViews = n => n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + "K views" : n + " views";
 const savedAt = (item, i) => { const p = readProg()[item.id + ":" + i]; return p && p.t > 30 ? p.t : 0; };
@@ -1728,9 +1731,9 @@ function heroWelcome() {
     </section>`;
 }
 function topTile(x, n) {
-  return `<button type="button" class="top-tile" data-details="${esc(x.item.id)}" data-hover="${esc(x.item.id)}" data-hover-ep="${x.i}" aria-label="Number ${n}: ${esc(x.item.title)}${showEps(x.item) ? ", " + esc(x.ep.title) : ""}">
+  return `<button type="button" class="top-tile" data-details="${esc(x.item.id)}" data-hover="${esc(x.item.id)}" ${x.ep ? ` data-hover-ep="${x.i}"` : ""} aria-label="Number ${n}: ${esc(x.item.title)}${x.ep && showEps(x.item) ? ", " + esc(x.ep.title) : ""}">
     <span class="top-num" aria-hidden="true">${n}</span>
-    <span class="top-art"><img src="${esc(x.item.thumb || x.item.poster)}" alt="" loading="lazy">${showEps(x.item) ? `<span class="top-ep">${esc(x.ep.title)}</span>` : ""}</span>
+    <span class="top-art"><img src="${esc(x.item.thumb || x.item.poster)}" alt="" loading="lazy">${x.ep && showEps(x.item) ? `<span class="top-ep">${esc(x.ep.title)}</span>` : ""}</span>
   </button>`;
 }
 const rowHtml = (id, name, inner, note = "") => `<section class="row" aria-labelledby="row-${id}">
@@ -1756,15 +1759,17 @@ function viewHome() {
     <div class="rows">${trialBanner()}${recommendedRow()}${extraTop}${rows}${extraBottom}</div>`;
 }
 function listRow(item, i, rank, extra) {
-  const ep = episodesOf(item)[i];
-  const multi = showEps(item);
+  const whole = i == null, eps = episodesOf(item), lw = whole ? lastWatched(item) : null;   // whole = the show itself, not one episode
+  if (whole) i = lw && !lw.done && lw.ep.parts ? lw.i : 0;
+  const ep = eps[i];
+  const multi = showEps(item) && !whole;
   return `<li class="list-row">
     ${rank ? `<span class="list-rank" aria-hidden="true">${rank}</span>` : ""}
-    <button type="button" class="list-art" data-details="${esc(item.id)}" data-hover="${esc(item.id)}" data-hover-ep="${i}" aria-label="${esc(item.title)}, more info"><img src="${esc(item.thumb || item.poster)}" alt="" loading="lazy"></button>
+    <button type="button" class="list-art" data-details="${esc(item.id)}" data-hover="${esc(item.id)}" ${whole ? "" : ` data-hover-ep="${i}"`} aria-label="${esc(item.title)}, more info"><img src="${esc(item.thumb || item.poster)}" alt="" loading="lazy"></button>
     <div class="list-text">
       <h3>${esc(item.title)}${multi ? `<span class="list-ep">${esc(ep.title)}</span>` : ""}</h3>
-      <p class="list-meta">${esc(item.kind)}${ep.parts ? " \u00b7 " + fmtLen(epLen(ep)) : item.site ? "" : " \u00b7 on YouTube"}${extra ? " \u00b7 " + extra : ""}</p>
-      <p class="list-desc">${esc(ep.desc || item.description || "")}</p>
+      <p class="list-meta">${esc(item.kind)}${whole && eps.length > 1 ? " \u00b7 " + eps.length + " episodes" : ep.parts ? " \u00b7 " + fmtLen(epLen(ep)) : item.site ? "" : " \u00b7 on YouTube"}${extra ? " \u00b7 " + extra : ""}</p>
+      <p class="list-desc">${esc(whole ? item.description || "" : ep.desc || item.description || "")}</p>
       <div class="list-actions">${playControl(item, i)}${likeBtn(item.id)}</div>
     </div>
   </li>`;
