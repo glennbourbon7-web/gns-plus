@@ -1526,6 +1526,12 @@ const ADS = { every: 420, list: [
   { src: "BBWendys_Update_Meal_compressed.mp4", poster: "media/ads/bbwendys-update.jpg", dur: 5.224 },
   { src: "media/ads/carolina-strong.mp4", poster: "media/ads/carolina-strong.jpg", dur: 30 }
 ] };
+/* Lead ads: the Longshot documentary ads play first, before the show and at the start of every GNS 24/7 break,
+   taking turns. The rest of the list rotates behind them. */
+const LEAD_ADS = ADS.list.filter(a => a.src.startsWith("media/ads/longshot-"));
+const REG_ADS = () => ADS.list.filter(a => !LEAD_ADS.includes(a));
+let leadNext = 0; try { leadNext = +localStorage.getItem("gnsp-lead-next") || 0; } catch (e) {}
+function nextLeadAd() { const ad = LEAD_ADS[leadNext % LEAD_ADS.length]; leadNext++; try { localStorage.setItem("gnsp-lead-next", String(leadNext % LEAD_ADS.length)); } catch (e) {} return ad; }
 
 /* ===== GNS Live =====
    Paste the GNS YouTube channel ID here (it starts with "UC"). The Live page then shows
@@ -1771,8 +1777,8 @@ function liveLineup() {
   order.forEach(item => episodesOf(item).forEach((ep, i) => {
     if (!ep.parts || !ep.parts.length) return;
     if (ads) {
-      if (item.id !== NP_TRAILER_AD.promo) segs.push({ ad: true, src: NP_TRAILER_AD.src, dur: NP_TRAILER_AD.dur, title: "Commercial break" });
-      const ad = ADS.list[n % ADS.list.length]; segs.push({ ad: true, src: ad.src, dur: ad.dur, title: "Commercial break" });
+      const lead = LEAD_ADS[n % LEAD_ADS.length]; segs.push({ ad: true, src: lead.src, dur: lead.dur, title: "Commercial break" });
+      const reg = REG_ADS(), ad = reg[n % reg.length]; segs.push({ ad: true, src: ad.src, dur: ad.dur, title: "Commercial break" });
     }
     n++;
     const name = showEps(item) ? `${item.title}: ${ep.title}` : item.title;
@@ -2667,7 +2673,7 @@ function openPlayer(item) {
   if (preroll) {
     const marks = item.breaks || []; if (!item.breaks) for (let m = ADS.every; m < P.total - 60; m += ADS.every) marks.push(m);
     marks.forEach(m => { P.adMarks.push(m); if (m <= resume) P.adDone.add(m); });
-    startAd(resumeMain, P.key && !P.key.startsWith(NP_TRAILER_AD.promo + ":") ? NP_TRAILER_AD : null);   // the ad before the show (the North Park trailer), started inside the tap so it plays with sound
+    startAd(resumeMain, nextLeadAd());   // the ad before the show (a Longshot ad), started inside the tap so it plays with sound
   }
   $("playerBack").focus({ preventScroll: true });
 }
