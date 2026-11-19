@@ -1083,6 +1083,16 @@ const NP2_PREM = {
   ad: () => ADS.list.find(a => a.src === "media/ads/carolina-strong.mp4") || ADS.list[0]
 };
 PREMIERES.push(NP2_PREM);
+/* North Park Episode 3, "The Debate": premieres 8:30 PM ET, November 19, 2026 (ad at the break comes from the central ADS rotation) */
+const NP3_PARTS = [{ src: MEDIA + "north-park-03a.mp4", dur: 298.9 }, { src: MEDIA + "north-park-03b.mp4", dur: 293.4 }];
+const NP_EP3 = { title: "Episode 3: The Debate", desc: "The presidential debate comes to the North Park school gym. Clara Powers and Henry Reyes take the stage, Richard Powers moderates, and the boys have a new kid in the bleachers: Jerry.", breaks: [298.9], parts: NP3_PARTS };
+const NP3_PREM = {
+  item: NORTH_PARK, csId: "cs-north-park", parts: NP3_PARTS, subs: "", epIndex: 2,
+  get at() { return Date.UTC(2026, 10, 20, 1, 30, 0); },   // 8:30 PM ET, November 19
+  kicker: "GNS+ Original · New Episode", ep: "Episode 3, “The Debate,”",
+  epDesc: "Episode 3, “The Debate”: the presidential debate comes to the North Park school gym, with Richard Powers moderating Clara Powers and Henry Reyes."
+};
+PREMIERES.push(NP3_PREM);
 PREMIERES.forEach(p => Object.defineProperties(p, {
   time: { get() { return etTime(p.at); } },
   when: { get() { return (testEarly() ? "Today at " : "Tonight at ") + p.time + (p.after ? ", " + p.after : ""); } }
@@ -1093,6 +1103,8 @@ const premiereState = () => { const p = curPrem(); return Date.now() < p.at ? "s
 const premieredTitles = () => [...new Set(PREMIERES.filter(p => Date.now() >= premEndOf(p)).map(p => p.item))];
 /* Episode 2 joins North Park (catalog and GNS 24/7) once its premiere is over */
 if (Date.now() >= premEndOf(NP2_PREM)) NORTH_PARK.episodes.push(NP_EP2);
+/* Episode 3 joins North Park once its premiere is over */
+if (Date.now() >= premEndOf(NP3_PREM)) NORTH_PARK.episodes.push(NP_EP3);
 const TITLES = [
   ...premieredTitles(),
   {
@@ -1874,7 +1886,7 @@ function viewPremiere() {
       <img src="${esc(it.poster)}" alt="${esc(it.title)} title card">
       <div class="prem-over">${st === "soon"
         ? `<p class="prem-k">${p === PREMIERES[0] ? "World premiere" : "Premiere"} \u00b7 ${esc(p.when)}</p><p class="prem-big" data-prem-count>${esc(premCountText())}</p>`
-        : `<p class="prem-k">The premiere has ended</p><p class="prem-big">Now streaming on GNS+</p>${TITLES.some(t => t.id === it.id) ? `<button type="button" class="btn-play" data-play="${esc(it.id)}" data-ep="0">${PLAY_ICON}Play Episode 1</button>` : `<button type="button" class="btn-play" onclick="location.reload()">${PLAY_ICON}Watch now</button>`}`}</div></div>`;
+        : `<p class="prem-k">The premiere has ended</p><p class="prem-big">Now streaming on GNS+</p>${TITLES.some(t => t.id === it.id) ? `<button type="button" class="btn-play" data-play="${esc(it.id)}" data-ep="${(it.episodes || [])[p.epIndex || 0] ? p.epIndex || 0 : 0}">${PLAY_ICON}Play Episode ${(it.episodes || [])[p.epIndex || 0] ? (p.epIndex || 0) + 1 : 1}</button>` : `<button type="button" class="btn-play" onclick="location.reload()">${PLAY_ICON}Watch now</button>`}`}</div></div>`;
   return `<section class="lv">
     <div class="lv-glow" aria-hidden="true"></div>
     <div class="lv-head">
@@ -2124,6 +2136,7 @@ function premiereTick() {
   if (key !== premLast) {
     premLast = key;
     if (st === "live" && page === "live") liveTab = "premiere";
+    if (Date.now() >= premEndOf(NP3_PREM) && !NORTH_PARK.episodes.includes(NP_EP3)) NORTH_PARK.episodes.push(NP_EP3);   // Episode 3 appears as soon as its premiere ends
     const done = premieredTitles();                                  // premiered shows go to the front of the catalog, in premiere order
     PREMIERES.forEach(p => { const k = TITLES.indexOf(p.item); if (k >= 0) TITLES.splice(k, 1); });
     TITLES.unshift(...done);
