@@ -1,13 +1,14 @@
 # GNS+ Subscriber Log
 
 Every GNS+ account is on GNS+ Free (with ads) at no cost; the ad-supported paid tier (GNS+ Regular) was retired on 2026-11-17.
+**There is no free trial on any account.** Free with ads never expires; the "Circle back" date is only a reminder for the rep.
 The assigned GNS representative circles back with the subscriber to offer an ad-free upgrade: GNS+ Gold (no ads)
 or GNS+ Premium (no ads, exclusives, backstage content and fan perks), at unchanged prices.
 
 Representatives are assigned at random when an account is created, keeping the load even:
 Grace Langley, Glenn Bourbon, Henry Reyes, Peyton Manning, Joseph Reyes-McCollum.
 
-This log is mirrored in `SUBSCRIBERS` in `index.html`, which the site uses for each subscriber's trial dates and plan.
+This log is mirrored in `SUBSCRIBERS` in `index.html`, which the site uses for each subscriber's plan.
 
 | Subscriber | Account created | Circle back | GNS representative | Plan |
 | --- | --- | --- | --- | --- |

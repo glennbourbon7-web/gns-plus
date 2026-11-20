@@ -504,7 +504,7 @@
 
   /* Section pages */
   .page-head { padding: 112px var(--gutter) 6px; text-align: center; }
-  .wl-trial { margin: 0 0 12px; display: inline-block; font-weight: 800; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: #120c0d; background: linear-gradient(45deg, #9f8a57, #d2be85); padding: 6px 12px; border-radius: 4px; }
+  .wl-badge { margin: 0 0 12px; display: inline-block; font-weight: 800; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: #120c0d; background: linear-gradient(45deg, #9f8a57, #d2be85); padding: 6px 12px; border-radius: 4px; }
   .wl-plans-wrap { padding: 0 var(--gutter); display: grid; gap: 18px; }
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
   .plan { position: relative; padding: 24px 20px 22px; border-radius: 14px; background: linear-gradient(160deg, #23161a, #170f11); border: 1px solid var(--line); min-width: 0; }
@@ -527,8 +527,6 @@
   .plans-head { display: grid; gap: 12px; justify-items: center; }
   .plan-status { margin: 0; display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; color: #d9cfcb; max-width: 62ch; }
   .plan-foot { margin-top: 18px; color: var(--muted); font-size: 14px; }
-  .trial-bar { margin: 0 var(--gutter) 22px; display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 14px 18px; border-radius: 10px; background: linear-gradient(90deg, rgba(181,22,31,.35), rgba(216,182,108,.14)); border: 1px solid rgba(216,182,108,.35); }
-  .trial-bar p { margin: 0; min-width: 0; flex: 1 1 280px; }
   @media (max-width: 860px) { .plans, .how { grid-template-columns: minmax(0, 1fr); } .plans { gap: 22px; } }
   /* Ad breaks */
   .adbreak { position: absolute; inset: 0; z-index: 3; background: #000; transform: translateZ(0); -webkit-transform: translateZ(0); }
@@ -801,7 +799,7 @@
       <button type="button" class="btn-red" data-goto-signin>Sign In</button>
     </header>
     <div class="wl-hero-copy">
-      <p class="wl-trial">Watch free, with ads</p>
+      <p class="wl-badge">Watch free, with ads</p>
       <h1 id="wlTitle">Every GNS broadcast, debate and original, in one place.</h1>
       <p class="wl-lead">GNS+ is free with ads. Want it ad-free? Go Gold or Premium.</p>
       <form class="wl-start" data-start novalidate>
@@ -1545,9 +1543,9 @@ function fadeIntoHome(name) {
 let page = "home";
 /* ===== Plans and ads =====
    GNS+ Free (with ads) costs nothing and is every account's default; Gold and Premium are the paid, ad-free plans. The subscriber log below is kept in step with SUBSCRIBERS.md:
-   username (lowercase) -> { created, circleBack, rep, plan }. "created" is the sign-up date; after an upgrade meeting,
-   set "plan" to "gold" | "premium" after an upgrade meeting ("free" otherwise). */
-const TRIAL_DAYS = 14;
+   username (lowercase) -> { created, circleBack, rep, plan }. There is NO free trial on any account: "free" (with ads) never
+   expires. "created" is the sign-up date and "circleBack" is only a reminder for the rep to offer an upgrade; neither one
+   limits watching. After an upgrade meeting set "plan" to "gold" | "premium" ("free" otherwise). */
 const GNS_REPS = ["Grace Langley", "Glenn Bourbon", "Henry Reyes", "Peyton Manning", "Joseph Reyes-McCollum"];
 const SUBSCRIBERS = {
   "ricksing": { created: "2026-10-12", circleBack: "2026-10-26", rep: "Joseph Reyes-McCollum", plan: "free" },
@@ -1559,7 +1557,7 @@ const SUBSCRIBERS = {
   "harvster": { created: "2026-11-16", circleBack: "2026-11-30", rep: "Glenn Bourbon", plan: "free" },
   "countrybumpkin": { created: "2026-11-16", circleBack: "2026-11-30", rep: "Grace Langley", plan: "free" }
 };
-/* Employee Accounts (kept in step with EMPLOYEES.md): permanently ad-free, no free trial, no plan meeting.
+/* Employee Accounts (kept in step with EMPLOYEES.md): permanently ad-free, no ads, no plan meeting.
    username (lowercase) -> { added } */
 const EMPLOYEE_ACCOUNTS = {
   "josephrm": { added: "2026-10-12" },
@@ -1773,7 +1771,7 @@ function viewHome() {
   }).join("");
   const featured = TITLES.find(t => t.featured);
   return `${premiereState() !== "done" ? heroPremiere() : featured ? heroFeatured(featured) : heroWelcome()}
-    <div class="rows">${trialBanner()}${recommendedRow()}${extraTop}${rows}${extraBottom}</div>`;
+    <div class="rows">${recommendedRow()}${extraTop}${rows}${extraBottom}</div>`;
 }
 function listRow(item, i, rank, extra) {
   const whole = i == null, eps = episodesOf(item), lw = whole ? lastWatched(item) : null;   // whole = the show itself, not one episode
@@ -1810,13 +1808,6 @@ const sessName = () => { const s = readSession(); return ((s && s.name) || "").t
 const isEmployee = () => !!EMPLOYEE_ACCOUNTS[sessName()];
 const currentPlan = () => { if (isEmployee()) return "employee"; const sub = subOf(), p = (sub && sub.plan) || "free"; return p === "gold" || p === "premium" ? p : "free"; };
 const adsOn = () => currentPlan() === "free";
-function trialInfo() {
-  const h = sessHash(), sub = subOf(); let start = Date.now();
-  if (sub && sub.created) start = new Date(sub.created + "T00:00:00").getTime();
-  else if (h) { try { const k = "gnsp-trial-" + h; start = +localStorage.getItem(k) || 0; if (!start) { start = Date.now(); localStorage.setItem(k, String(start)); } } catch (e) {} }
-  const left = Math.ceil((start + TRIAL_DAYS * 864e5 - Date.now()) / 864e5);
-  return { left: Math.max(0, left), ended: left <= 0 };
-}
 const CHECK_SM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 function planCards(current) {
   return `<div class="plans">${PLANS.map(pl => `<article class="plan${pl.best ? " plan-best" : ""}${current === pl.id ? " plan-mine" : ""}">
@@ -1829,7 +1820,6 @@ const HOW_STEPS = `<ol class="how">
     <li><b>Want no ads? Meet your GNS representative.</b><span>A GNS team member sits down with you to go over your contract.</span></li>
     <li><b>Go Gold or Premium.</b><span>Ad-free, at the same prices as before.</span></li>
   </ol>`;
-function trialBanner() { return ""; }  // retired: GNS+ Free has no trial
 function viewPlans() {
   const pl = currentPlan();
   const status = pl === "free"
@@ -3157,6 +3147,26 @@ function startApp() {
   if (s && s.name && ACCOUNTS.includes(s.hash)) showApp(s.name);
   else { if (s) clearSession(); showWelcome(); }
 })();
+
+/* ===== Stay up to date =====
+   A phone can keep an old copy of GNS+ open for weeks. Whenever the app opens or comes back on screen, it asks the server
+   when the site last changed; if that's newer than the copy on screen, it reloads (never in the middle of a video). */
+try { Object.keys(localStorage).filter(k => k.startsWith("gnsp-trial-")).forEach(k => localStorage.removeItem(k)); } catch (e) {}   // leftovers from the old free trial
+let updateReady = false;
+const busyWatching = () => !$("player").hidden || page === "live";
+function applyUpdate() { if (updateReady && !busyWatching()) location.reload(); }
+async function checkForUpdate() {
+  if (updateReady || !/^https?:$/.test(location.protocol)) return;
+  try {
+    const r = await fetch(location.pathname + "?v=" + Date.now(), { method: "HEAD", cache: "no-store" });
+    const server = Date.parse(r.headers.get("last-modified") || ""), mine = Date.parse(document.lastModified);
+    if (server && mine && server > mine + 2000) { updateReady = true; applyUpdate(); }
+  } catch (e) {}
+}
+checkForUpdate();
+setInterval(checkForUpdate, 10 * 60 * 1000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) checkForUpdate(); });
+document.addEventListener("click", () => setTimeout(applyUpdate, 0));   // e.g. right after closing the player or leaving Live
 </script>
 
 <script src="install.js" data-name="GNS+" data-icon="apple-touch-icon.png" data-accent="#b5161f" data-theme="dark" data-tagline="Watch GNS+ from your Home Screen" defer></script>

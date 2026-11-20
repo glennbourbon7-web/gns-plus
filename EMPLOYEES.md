@@ -1,6 +1,6 @@
 # GNS+ Employee Accounts
 
-Employee Accounts are permanently ad-free. They never get a free trial, a trial countdown, or a plan meeting,
+Employee Accounts are permanently ad-free. They never get ads or a plan meeting,
 and they watch every show and GNS 24/7 with no ads. Passwords are never written down here.
 
 This catalogue is mirrored in `EMPLOYEE_ACCOUNTS` in `index.html`, which is what turns the feature on for each username.
