@@ -22,3 +22,4 @@ This log is mirrored in `SUBSCRIBERS` in `index.html`, which the site uses for e
 | TulsiGabs | 2026-10-15 | 2026-10-29 | Glenn Bourbon | Cancelled 2026-11-16 |
 | Harvster | 2026-11-16 | 2026-11-30 | Glenn Bourbon | GNS+ Free |
 | CountryBumpkin | 2026-11-16 | 2026-11-30 | Grace Langley | GNS+ Free |
+| Orbitsolar | 2026-11-19 | 2026-12-03 | Peyton Manning | GNS+ Free |
