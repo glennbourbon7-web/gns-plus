@@ -1082,12 +1082,12 @@ const NP2_PREM = {
   ad: () => ADS.list.find(a => a.src === "media/ads/carolina-strong.mp4") || ADS.list[0]
 };
 PREMIERES.push(NP2_PREM);
-/* North Park Episode 3, "The Debate": premieres 8:30 PM ET, November 19, 2026 (ad at the break comes from the central ADS rotation) */
+/* North Park Episode 3, "The Debate": premieres 9:28 PM ET, November 19, 2026 (ad at the break comes from the central ADS rotation) */
 const NP3_PARTS = [{ src: MEDIA + "north-park-03a.mp4", dur: 298.9 }, { src: MEDIA + "north-park-03b.mp4", dur: 293.4 }];
 const NP_EP3 = { title: "Episode 3: The Debate", desc: "The presidential debate comes to the North Park school gym. Clara Powers and Henry Reyes take the stage, Richard Powers moderates, and the boys watch it all from the bleachers. Subtitles available.", subs: "media/north-park-03.vtt", breaks: [298.9], parts: NP3_PARTS };
 const NP3_PREM = {
   item: NORTH_PARK, csId: "cs-north-park", parts: NP3_PARTS, subs: "media/north-park-03.vtt", epIndex: 2,
-  get at() { return Date.UTC(2026, 10, 20, 1, 30, 0); },   // 8:30 PM ET, November 19
+  get at() { return Date.UTC(2026, 10, 20, 2, 28, 0); },   // 9:28 PM ET, November 19
   kicker: "GNS+ Original · New Episode", ep: "Episode 3, “The Debate,”",
   epDesc: "Episode 3, “The Debate”: the presidential debate comes to the North Park school gym, with Richard Powers moderating Clara Powers and Henry Reyes."
 };
