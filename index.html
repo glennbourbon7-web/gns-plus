@@ -87,6 +87,32 @@
   .bk-btns .big { width: 64px; height: 64px; min-width: 64px; border-radius: 50%; }
   .bk-btns .bk-speed { width: 44px; height: 44px; line-height: 1; }
   .bk-btns > span { flex: none; width: 44px; }
+  .bk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 22px; padding: 18px var(--gutter) 120px; max-width: 1200px; margin: 0 auto; }
+  .bk-tile { background: none; border: 0; padding: 0; color: inherit; text-align: left; cursor: pointer; font: inherit; }
+  .bk-cover { position: relative; display: block; border-radius: 6px; overflow: hidden; box-shadow: 0 10px 26px rgba(0,0,0,.45); transition: transform .15s; }
+  .bk-tile:hover .bk-cover { transform: translateY(-3px); }
+  .bk-cover img { display: block; width: 100%; aspect-ratio: 1545/1999; object-fit: cover; }
+  .bk-lock { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%; background: rgba(10,6,7,.78); color: #fff; display: flex; align-items: center; justify-content: center; }
+  .bk-lock svg { width: 16px; height: 16px; display: block; }
+  .bk-tile b { display: block; margin-top: 10px; font-size: 15px; line-height: 1.25; }
+  .bk-au { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .bk-hero { position: relative; }
+  .bk-backrow { flex: 0 0 100%; margin-bottom: -8px; }
+  @media (max-width: 700px) { .bk-hero { padding-top: 124px; } }
+  .bk-back { position: static; width: 38px; height: 38px; border-radius: 50%; border: 0; background: rgba(0,0,0,.35); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .bk-back svg { width: 22px; height: 22px; display: block; }
+  .bk-soon { position: fixed; inset: 0; z-index: 90; background: var(--scrim); display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .bk-soon[hidden] { display: none; }
+  .bk-soon-card { position: relative; width: min(520px, 100%); background: var(--raise); border-radius: 12px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+  .bk-soon-x { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(255,255,255,.08); color: var(--ink); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .bk-soon-x svg { width: 20px; height: 20px; display: block; }
+  .bk-soon-body { display: flex; gap: 18px; align-items: flex-start; }
+  .bk-soon-body img { width: 120px; flex: none; border-radius: 6px; aspect-ratio: 1545/1999; object-fit: cover; }
+  .bk-soon-body h2 { margin: 8px 0 2px; font-family: var(--font-display); font-size: 22px; line-height: 1.15; padding-right: 28px; }
+  .bk-soon-body p { margin: 8px 0 0; font-size: 14.5px; line-height: 1.5; color: #d6cdca; }
+  .bk-soon-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+  .bk-soon-tag svg { width: 13px; height: 13px; }
+  @media (max-width: 480px) { .bk-soon-body { flex-direction: column; align-items: center; text-align: center; } .bk-soon-body h2 { padding-right: 0; } .bk-grid { grid-template-columns: repeat(2, 1fr); } }
 </style>
 <title>GNS+</title>
 <meta name="description" content="GNS+, the Global News Service streaming service. Sign in to watch.">
@@ -1006,6 +1032,7 @@
 
   <main id="pages"></main>
   <div class="bk-mini" id="bkMini" hidden><img id="bkMiniImg" alt=""><div class="mt"><b id="bkMiniT"></b><span id="bkMiniS"></span></div><button type="button" id="bkMiniPlay" aria-label="Play or pause"></button><div class="bar"><i id="bkMiniBar"></i></div></div>
+  <div class="bk-soon" id="bkSoon" hidden role="dialog" aria-modal="true" aria-label="Coming soon"><div class="bk-soon-card"><button type="button" class="bk-soon-x" data-bk-soon-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div id="bkSoonBody" class="bk-soon-body"></div></div></div>
   <section class="bk-now" id="bkNow" hidden aria-label="Now playing">
     <div class="bk-top"><button type="button" id="bkClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="tt"><small>Playing from Books</small><b id="bkNowTitle"></b></div><button type="button" id="bkAmbBtn" aria-label="Background music" aria-pressed="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path transform="translate(-0.6 0.7)" d="M10 4.5l9-2v12.2a2.8 2.8 0 1 1-2-2.7V6.6l-5 1.1v9.5a2.8 2.8 0 1 1-2-2.7z"/></svg></button></div>
     <div class="bk-lyrics" id="bkLyrics"></div>
@@ -2284,6 +2311,7 @@ function render() {
   if (page === "live") { if (liveTab === "premiere") startPremiere(); else startLive(); }
 }
 function go(p) {
+  if (p === "books") bkOpenId = null;
   if (p !== "search" && searchQ) { searchQ = ""; $("searchInput").value = ""; closeSearch(); }
   page = p; render(); window.scrollTo(0, 0);
 }
@@ -3290,11 +3318,27 @@ function bkAmb() { if (BK.playing && bkAmbOn) { BK_AMB.volume = BK_AMB_VOL; BK_A
 const BK = { book: null, ci: 0, lines: [], total: 0, t: 0, playing: false, li: -1, speed: 1, timer: null, last: 0, audio: new Audio() };
 BK.audio.preload = "metadata";
 
+/* Books are open only to these accounts for now; everyone else sees them locked with a "Coming soon" summary. */
+const BOOK_READERS = ["glennbourbonvp"];
+const bkCanRead = () => BOOK_READERS.includes(uid());
+const LOCK_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5a4.5 4.5 0 0 0-4.5 4.5v3H6.5A1.5 1.5 0 0 0 5 11.5v8A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5v-8a1.5 1.5 0 0 0-1.5-1.5h-1V7A4.5 4.5 0 0 0 12 2.5zm-2.5 4.5a2.5 2.5 0 0 1 5 0v3h-5z"/></svg>';
+let bkOpenId = null;
 function viewBooks() {
-  const b = BOOKS[0];
+  const open = bkOpenId && bkCanRead() ? bkFind(bkOpenId) : null;
+  if (open) return viewBookDetail(open);
+  return `<div class="page-head"><h1>Books</h1></div>
+    <div class="bk-grid">${BOOKS.map(b => `<button type="button" class="bk-tile" data-bk-tile="${esc(b.id)}" aria-label="${esc(b.title)} by ${esc(b.author)}${bkCanRead() ? "" : ", coming soon"}">
+      <span class="bk-cover"><img src="${esc(b.cover)}" alt="">${bkCanRead() ? "" : `<span class="bk-lock">${LOCK_ICON}</span>`}</span>
+      <b>${esc(b.title)}</b><span class="bk-au">by ${esc(b.author)}</span></button>`).join("")}</div>`;
+}
+function bkShowSoon(b) {
+  $("bkSoonBody").innerHTML = `<img src="${esc(b.cover)}" alt=""><div><span class="bk-soon-tag">${LOCK_ICON}Coming soon</span><h2>${esc(b.title)}</h2><p class="bk-au">by ${esc(b.author)}</p><p>${esc(b.description)}</p></div>`;
+  $("bkSoon").hidden = false;
+}
+function viewBookDetail(b) {
   if (!b) return `<div class="page-head"><h1>Books</h1></div><div class="empty-state"><h2>No books yet</h2><p>Audiobooks will show up here as soon as they're added.</p></div>`;
   const playing = BK.book && BK.book.id === b.id;
-  return `<section class="bk-hero">
+  return `<section class="bk-hero"><div class="bk-backrow"><button type="button" class="bk-back" data-bk-shelf aria-label="Back to Books"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button></div>
       <img src="${esc(b.cover)}" alt="Cover of ${esc(b.title)}">
       <div class="bk-meta"><div class="bk-kind">Audiobook${b.badge ? ` · ${esc(b.badge)}` : ""}</div>
         <h1>${esc(b.title)}</h1><p class="bk-sub">${esc(b.subtitle)}</p>
@@ -3404,6 +3448,9 @@ function bkCloseNow() { $("bkNow").hidden = true; document.body.style.overflow =
 const bkFind = id => BOOKS.find(b => b.id === id);
 
 $("pages").addEventListener("click", e => {
+  const tile = e.target.closest("[data-bk-tile]");
+  if (tile) { const b = bkFind(tile.dataset.bkTile); if (bkCanRead()) { bkOpenId = b.id; render(); window.scrollTo(0, 0); } else bkShowSoon(b); return; }
+  if (e.target.closest("[data-bk-shelf]")) { bkOpenId = null; render(); window.scrollTo(0, 0); return; }
   const play = e.target.closest("[data-bk-play]"), open = e.target.closest("[data-bk-open]"), row = e.target.closest("[data-bk-ch]");
   if (play) {
     const b = bkFind(play.dataset.bkPlay);
@@ -3415,6 +3462,7 @@ $("pages").addEventListener("click", e => {
 });
 $("pages").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.closest("[data-bk-ch]")) e.target.click(); });
 $("bkClose").addEventListener("click", bkCloseNow);
+$("bkSoon").addEventListener("click", e => { if (e.target === $("bkSoon") || e.target.closest("[data-bk-soon-close]")) $("bkSoon").hidden = true; });
 $("bkAmbBtn").addEventListener("click", () => { bkAmbOn = !bkAmbOn; try { localStorage.setItem("gnsplus.bookAmbience", bkAmbOn ? "on" : "off"); } catch (e) {} bkAmb(); toast(bkAmbOn ? "Background music on" : "Background music off", 2000); });
 $("bkPlayBtn").addEventListener("click", () => BK.playing ? bkPause() : bkPlay());
 $("bkPrev").addEventListener("click", () => { if (BK.t > 4) bkSeek(0); else if (BK.ci > 0) bkLoad(BK.book, BK.ci - 1, BK.playing); });
