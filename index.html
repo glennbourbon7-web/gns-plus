@@ -1,4 +1,87 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}  /* ===== Books (audiobooks, Spotify-style) ===== */
+  .bk-hero { position: relative; padding: 108px var(--gutter) 28px; display: flex; gap: 28px; align-items: flex-end; flex-wrap: wrap;
+    background: linear-gradient(180deg, #26406b 0%, #1b2d4b 55%, var(--ground) 100%); }
+  .bk-hero img { width: min(240px, 52vw); aspect-ratio: 1545 / 1999; object-fit: cover; border-radius: 6px; box-shadow: 0 18px 50px rgba(0,0,0,.55); }
+  .bk-meta { flex: 1 1 280px; min-width: 0; }
+  .bk-kind { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #f3c3a6; }
+  .bk-meta h1 { margin: 6px 0 4px; font-family: var(--font-display); font-weight: 800; font-size: clamp(34px, 6vw, 72px); line-height: 1; }
+  .bk-sub { font-size: 18px; color: #f2b08c; margin: 0 0 12px; }
+  .bk-by { font-size: 15px; color: #e3dcd8; margin: 0 0 10px; }
+  .bk-by b { color: var(--ink); }
+  .bk-desc { font-size: 15px; line-height: 1.55; color: #cfc6c3; max-width: 640px; margin: 0; }
+  .bk-actions { display: flex; align-items: center; gap: 14px; padding: 22px var(--gutter) 6px; flex-wrap: wrap; }
+  .bk-play { width: 58px; height: 58px; border-radius: 50%; border: 0; background: #e98a5a; color: #1a1010; display: grid; place-items: center; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,.4); transition: transform .15s; }
+  .bk-play:hover { transform: scale(1.05); background: #f29b6c; }
+  .bk-play svg { width: 26px; height: 26px; }
+  .bk-ghost { border: 1px solid rgba(255,255,255,.45); background: transparent; color: var(--ink); border-radius: 999px; padding: 9px 18px; font: 600 14px var(--font-ui); cursor: pointer; }
+  .bk-ghost:hover { border-color: var(--ink); }
+  .bk-list { padding: 8px var(--gutter) 120px; }
+  .bk-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 14px; align-items: center; padding: 10px 12px; border-radius: 6px; cursor: pointer; }
+  .bk-row:hover, .bk-row.on { background: rgba(255,255,255,.08); }
+  .bk-row .n { color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
+  .bk-row.on .n, .bk-row.on .t { color: #f2a37a; }
+  .bk-row .t { font-weight: 600; font-size: 16px; }
+  .bk-row .r { font-size: 13.5px; color: var(--muted); margin-top: 2px; }
+  .bk-row .s { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  .bk-shelf-h { padding: 26px var(--gutter) 8px; font-family: var(--font-display); font-size: 22px; font-weight: 700; margin: 0; }
+  .bk-shelf { display: flex; gap: 18px; padding: 4px var(--gutter) 40px; overflow-x: auto; }
+  .bk-card { width: 150px; flex: none; background: var(--raise); border-radius: 8px; padding: 10px; cursor: pointer; border: 0; color: inherit; text-align: left; font: inherit; }
+  .bk-card:hover { background: #2a2021; }
+  .bk-card img { width: 100%; aspect-ratio: 1545/1999; object-fit: cover; border-radius: 4px; display: block; }
+  .bk-card b { display: block; font-size: 14px; margin-top: 8px; }
+  .bk-card span { font-size: 12.5px; color: var(--muted); }
+
+  /* mini player */
+  .bk-mini { position: fixed; left: 10px; right: 10px; bottom: 10px; z-index: 60; display: flex; align-items: center; gap: 12px; padding: 8px 12px 10px;
+    background: linear-gradient(90deg, #2a3e63, #3a2a2c); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.5); cursor: pointer; }
+  .bk-mini[hidden] { display: none; }
+  .bk-mini img { width: 42px; height: 42px; object-fit: cover; border-radius: 4px; }
+  .bk-mini .mt { flex: 1; min-width: 0; }
+  .bk-mini .mt b { display: block; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bk-mini .mt span { font-size: 12.5px; color: #d7cfcc; }
+  .bk-mini button { background: none; border: 0; color: var(--ink); width: 38px; height: 38px; display: grid; place-items: center; cursor: pointer; }
+  .bk-mini button svg { width: 24px; height: 24px; }
+  .bk-mini .bar { position: absolute; left: 12px; right: 12px; bottom: 4px; height: 2px; background: rgba(255,255,255,.25); border-radius: 2px; overflow: hidden; }
+  .bk-mini .bar i { display: block; height: 100%; width: 0; background: var(--ink); }
+
+  /* lyrics-style now playing */
+  .bk-now { position: fixed; inset: 0; z-index: 80; display: flex; flex-direction: column; overflow: hidden; color: #fff;
+    background: linear-gradient(160deg, #2c4a7a 0%, #26406b 38%, #8c5a52 78%, #e98a5a 100%); }
+  .bk-now[hidden] { display: none; }
+  .bk-now::before { content: ""; position: absolute; inset: -40px; background: var(--bk-cover) center / cover no-repeat; filter: blur(48px) saturate(1.2); opacity: .28; }
+  .bk-now > * { position: relative; }
+  .bk-top { display: flex; align-items: center; gap: 12px; padding: 14px var(--gutter); }
+  .bk-top button { background: rgba(0,0,0,.18); border: 0; color: #fff; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; }
+  .bk-top button svg { width: 22px; height: 22px; }
+  .bk-top .tt { flex: 1; text-align: center; min-width: 0; }
+  .bk-top .tt small { display: block; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; opacity: .8; }
+  .bk-top .tt b { font-size: 15px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bk-lyrics { flex: 1; overflow-y: auto; padding: 18vh var(--gutter) 40vh; scroll-behavior: smooth; scrollbar-width: none; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 80%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 80%, transparent 100%); }
+  .bk-lyrics::-webkit-scrollbar { display: none; }
+  .bk-lyrics .ly-wrap { max-width: 820px; margin: 0 auto; }
+  .bk-lyrics h2 { font-family: var(--font-display); font-size: clamp(16px, 2vw, 20px); letter-spacing: .14em; text-transform: uppercase; opacity: .75; margin: 0 0 6px; }
+  .bk-lyrics h3 { font-family: var(--font-display); font-size: clamp(30px, 4.4vw, 48px); margin: 0 0 4vh; line-height: 1.05; }
+  .ly-p { margin: 0 0 3.2vh; }
+  .ly { font-family: var(--font-display); font-weight: 800; font-size: clamp(24px, 3.4vw, 40px); line-height: 1.25; color: rgba(255,255,255,.42); cursor: pointer; transition: color .35s; }
+  .ly:hover { color: rgba(255,255,255,.7); }
+  .ly.past { color: rgba(255,255,255,.72); }
+  .ly.on { color: #fff; }
+  .ly-p.q .ly { font-style: italic; }
+  .ly-p.a .ly { font-size: clamp(18px, 2.2vw, 24px); color: rgba(255,230,210,.6); }
+  .ly-p.a .ly.on, .ly-p.a .ly.past { color: #ffd9c2; }
+  .ly-img { display: block; width: min(420px, 80%); border-radius: 8px; margin: 0 0 1.4vh; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+  .bk-ctrl { padding: 8px var(--gutter) max(18px, env(safe-area-inset-bottom)); }
+  .bk-seek { display: flex; align-items: center; gap: 10px; font-size: 12px; opacity: .9; font-variant-numeric: tabular-nums; max-width: 820px; margin: 0 auto; }
+  .bk-seek input { flex: 1; accent-color: #fff; }
+  .bk-btns { display: flex; justify-content: center; align-items: center; gap: 22px; margin-top: 6px; }
+  .bk-btns button { background: none; border: 0; color: #fff; display: grid; place-items: center; cursor: pointer; width: 44px; height: 44px; }
+  .bk-btns button svg { width: 26px; height: 26px; }
+  .bk-btns .big { width: 64px; height: 64px; border-radius: 50%; background: #fff; color: #1d2c48; }
+  .bk-btns .big svg { width: 30px; height: 30px; }
+  .bk-btns button[disabled] { opacity: .35; cursor: default; }
+  .bk-note { text-align: center; font-size: 12.5px; opacity: .8; margin-top: 4px; min-height: 16px; }
+  .bk-speed { font: 700 13px var(--font-ui); width: auto !important; padding: 0 6px; }
+</style>
 <title>GNS+</title>
 <meta name="description" content="GNS+, the Global News Service streaming service. Sign in to watch.">
 <meta name="gns-plus-build" content="2026-10-14-episodes-3">
@@ -916,6 +999,16 @@
   </header>
 
   <main id="pages"></main>
+  <div class="bk-mini" id="bkMini" hidden><img id="bkMiniImg" alt=""><div class="mt"><b id="bkMiniT"></b><span id="bkMiniS"></span></div><button type="button" id="bkMiniPlay" aria-label="Play or pause"></button><div class="bar"><i id="bkMiniBar"></i></div></div>
+  <section class="bk-now" id="bkNow" hidden aria-label="Now playing">
+    <div class="bk-top"><button type="button" id="bkClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="tt"><small>Playing from Books</small><b id="bkNowTitle"></b></div><span style="width:40px"></span></div>
+    <div class="bk-lyrics" id="bkLyrics"></div>
+    <div class="bk-ctrl">
+      <div class="bk-seek"><span id="bkCur">0:00</span><input type="range" id="bkSeek" min="0" max="1000" value="0" aria-label="Seek"><span id="bkLeft">-0:00</span></div>
+      <div class="bk-btns"><button type="button" class="bk-speed" id="bkSpeed">1×</button><button type="button" id="bkBack" aria-label="Back 15 seconds"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></svg></button><button type="button" id="bkPrev" aria-label="Previous chapter"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2v14H6zM9.5 12L19 5.5v13z"/></svg></button><button type="button" class="big" id="bkPlayBtn" aria-label="Play or pause"></button><button type="button" id="bkNext" aria-label="Next chapter"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 5h2v14h-2zM14.5 12L5 18.5v-13z"/></svg></button><button type="button" id="bkFwd" aria-label="Forward 15 seconds"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4h-4"/></svg></button><span style="width:44px"></span></div>
+      <div class="bk-note" id="bkNote"></div>
+    </div>
+  </section>
 
   <footer class="app-foot">&copy; 2026 Global News Service</footer>
 </div>
@@ -1012,8 +1105,7 @@ const MEDIA = "https://glennbourbon7-web.github.io/gns-plus-media/v/";
    episodes: [{ title, url }]  (url = plays on YouTube)  or  [{ title, parts: [{ src, dur }] }]  (plays in GNS+; parts play back to back) } */
 const ROWS = [
   { id: "broadcasts", name: "Broadcasts", empty: "No broadcasts yet", emptyNote: "Broadcasts will show up here as soon as they're added." },
-  { id: "originals", name: "GNS+ Originals", empty: "No GNS+ Originals yet", emptyNote: "Original shows will show up here as soon as they're added." },
-  { id: "games", name: "Games", empty: "No games yet", emptyNote: "Games will show up here as soon as they're added." }
+  { id: "originals", name: "GNS+ Originals", empty: "No GNS+ Originals yet", emptyNote: "Original shows will show up here as soon as they're added." }
 ];
 /* ===== Premieres =====
    Premieres play one after another on the Live page's Premiering tab on a shared clock: the GNS+ premiere intro,
@@ -1209,19 +1301,6 @@ const TITLES = [
     added: "2026-10-11",
     description: "Executive Chairman Richard Powers unveils the new GNS, GNS Kids and GNS+ websites and apps, names Grace Langley CEO of GNS+, and lays out ad-supported and ad-free membership. Note: a few audio disruptions were made for artistic purposes by the GNS editing bay.",
     episodes: [{ title: "Full keynote", desc: "Richard Powers' complete keynote address. A few audio disruptions were added for artistic purposes by the GNS editing bay.", parts: [{ src: "media/v/keynote-00.mp4", dur: 360 }, { src: "media/v/keynote-01.mp4", dur: 345.867 }] }]
-  },
-  {
-    id: "vp-day-game",
-    row: "games",
-    title: "The Day in the Life of Glenn Bourbon",
-    kind: "Game",
-    site: "vp-day-grown-up.html",
-    poster: "media/vp-day-game.jpg",
-    thumb: "media/vp-day-game-sm.jpg",
-    posterHasTitle: true,
-    added: "2026-10-11",
-    description: "Be Vice President Glenn Bourbon for a day. Work the VP's office, ride the motorcade home to the Naval Observatory, and solve the problems that come up. Grown-up edition, 18+.",
-    episodes: [{ title: "Play", desc: "100 problems, a new mix every day you play. Ends with a grown-up joke." }]
   },
   {
     id: "vp-address",
@@ -1616,7 +1695,7 @@ const LIVE = {
   description: "Every GNS broadcast, debate and original, back to back, around the clock.",
   epoch: Date.UTC(2026, 9, 13, 15, 20, 0)   // the rotation started at midnight Eastern on Oct 12, 2026
 };
-const PAGES = [{ id: "home", name: "Home" }, { id: "live", name: "Live" }, { id: "new", name: "New & Popular" }, ...ROWS.map(r => ({ id: r.id, name: r.name })), { id: "liked", name: "Liked" }];
+const PAGES = [{ id: "home", name: "Home" }, { id: "live", name: "Live" }, { id: "new", name: "New & Popular" }, { id: "books", name: "Books" }, ...ROWS.map(r => ({ id: r.id, name: r.name })), { id: "liked", name: "Liked" }];
 
 const INFO_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.2v.1" stroke-linecap="round"/></svg>';
 const CLOSE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
@@ -2195,7 +2274,7 @@ function render() {
   $("navLinks").innerHTML = PAGES.map(p =>
     `<button type="button" data-page="${p.id}"${p.id === page ? ' aria-current="page"' : ""}>${esc(p.name)}</button>`).join("");
   hideHover(true);
-  $("pages").innerHTML = page === "home" ? viewHome() : page === "new" ? viewNew() : page === "liked" ? viewLiked() : page === "live" ? viewLive() : page === "plans" ? viewPlans() : page === "search" ? viewSearch() : viewRow(page);
+  $("pages").innerHTML = page === "home" ? viewHome() : page === "new" ? viewNew() : page === "liked" ? viewLiked() : page === "live" ? viewLive() : page === "plans" ? viewPlans() : page === "books" ? viewBooks() : page === "search" ? viewSearch() : viewRow(page);
   if (page === "live") { if (liveTab === "premiere") startPremiere(); else startLive(); }
 }
 function go(p) {
@@ -3169,6 +3248,170 @@ checkForUpdate();
 setInterval(checkForUpdate, 10 * 60 * 1000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) checkForUpdate(); });
 document.addEventListener("click", () => setTimeout(applyUpdate, 0));   // e.g. right after closing the player or leaving Live
+/* ===== Books: audiobooks with Spotify-style read-along =====
+   Each chapter: { n, title, reader, audio: "media/books/<book>/<file>.mp3" or null, paras: [{ k, s: [sentences] } | { img, s }] }
+   With no audio yet, a chapter still plays as a read-along: the words light up at narration pace. */
+const BOOKS = [{"id": "good-news", "title": "And the Good News Is…", "subtitle": "How I Learned To Love Beyond Loss", "author": "Glenn Bourbon", "authorRole": "Former Senate Majority Leader", "cover": "media/books/good-news/cover.jpg", "added": "2026-11-23", "badge": "#1 GNS Weekly Bestseller", "description": "Disqualified without explanation, elected anyway and still denied his Senate seat, Glenn Bourbon found a new purpose managing Henry Reyes’s winning campaign for President. A memoir about losing an election and finding something better.", "chapters": [{"n": null, "title": "Dedication", "reader": null, "audio": null, "paras": [{"k": "p", "s": ["To all my enemies,"]}, {"k": "p", "s": ["I’m sorry for any feelings I may have hurt.", "We all have our faults, and I wish you nothing but the best."]}, {"k": "p", "s": ["With love,"]}, {"k": "e", "s": ["Glenn Bourbon"]}]}, {"n": "One", "title": "Well, That Didn’t Go as Planned", "reader": "Leo Stone", "audio": null, "paras": [{"k": "p", "s": ["I’m Black, gay, Republican, and formerly the Majority Leader of the United States Senate.", "I know.", "Quite the combination.", "It is not the sort of description people expect to hear in one breath, and over the years I have watched more than a few faces try to work out how all of those things could belong to the same man.", "They do.", "They always have.", "And I have never felt the need to apologize for any of them."]}, {"k": "p", "s": ["As a senator from North Carolina, I had grown accustomed to political criticism.", "I wasn’t particularly loved, and I certainly wasn’t universally respected.", "In fact, I was publicly excoriated more times than I care to remember.", "That comes with the job, especially when you hold a position of leadership.", "People do not tend to hand out compliments to the Majority Leader.", "They hand out complaints, and they hand them out generously."]}, {"k": "p", "s": ["But I believed in my work, and I intended to keep doing it.", "Criticism was never a reason to stop.", "If anything, it was a reminder that the work mattered enough for people to have strong feelings about it.", "I was not in the Senate to be popular.", "I was there to serve the people of North Carolina, and I fully expected to go on serving them."]}, {"k": "p", "s": ["Unfortunately, Federal Election Commission Chairman Leo Stone had other plans.", "My campaign was disqualified without explanation.", "Not a lengthy explanation, not a confusing explanation, not even a bad explanation.", "No explanation at all."]}, {"k": "p", "s": ["Now, I’m a Republican.", "I believe in rules, institutions, and the importance of fair elections.", "I believe that the systems we build to govern ourselves deserve respect, and that the people who run those systems carry a serious responsibility.", "But I also believe those rules should make at least a little sense.", "A rule that cannot be explained is difficult to respect, and a decision that comes with no reason at all is difficult to accept.", "Apparently, that was asking too much."]}]}, {"n": "Two", "title": "The Election I Won but Lost", "reader": null, "audio": null, "paras": [{"k": "p", "s": ["Despite my disqualification, citizens of North Carolina decided they still wanted me representing them.", "So they wrote my name in.", "And I won."]}, {"k": "p", "s": ["I want to pause on that for a moment, because it still means a great deal to me.", "My name was not supposed to matter in that race anymore.", "I had been removed from it.", "And yet the people I had served looked at the situation, decided for themselves what they wanted, and took the trouble to write my name in by hand.", "Whatever else anyone may say about me, I will always be grateful to them for that."]}, {"k": "p", "s": ["Wonderful, right?", "Well, not exactly.", "The FEC refused to recognize my victory and denied me my Senate seat."]}, {"k": "p", "s": ["Imagine winning an election only to be told that you hadn’t actually won anything.", "The voters had spoken, and the answer they gave was simply set aside.", "It was frustrating, embarrassing, and frankly ridiculous.", "Frustrating because I had done nothing to deserve it.", "Embarrassing because losing in public is never pleasant, and losing after you have already won is somehow worse.", "And ridiculous because, quite honestly, there is no other word for it."]}, {"k": "p", "s": ["I could have spent the rest of my political life complaining about Leo Stone and the FEC.", "And believe me, I had plenty to complain about.", "It would have been easy to let that one decision define everything that came after it.", "Plenty of people in my position would have done exactly that, and I would not entirely blame them."]}, {"k": "p", "s": ["But eventually I realized something.", "Losing my Senate seat didn’t mean I had to lose my purpose.", "The seat was a place to do the work.", "It was never the work itself.", "And once I understood that, the loss started to look a little less like an ending.", "And thank goodness for that, because something much better was waiting."]}]}, {"n": "Three", "title": "A New Direction", "reader": "Anthony Mistretta", "audio": null, "paras": [{"k": "p", "s": ["Henry Reyes was running for President, and I became his campaign manager."]}, {"k": "p", "s": ["Suddenly, instead of worrying about my own political future, I was working to help someone else achieve something extraordinary.", "It was refreshing.", "For a long time my attention had been fixed on one question: what was going to happen to me?", "Now there was a far more interesting question in front of me: what could we accomplish together?"]}, {"k": "p", "s": ["I wasn’t the candidate.", "I wasn’t fighting for my own seat.", "And for once, my entire political existence didn’t revolve around whether people liked me.", "Anyone who has spent years in public office knows how heavy that weight can become.", "Every decision is judged, every word is picked apart, and your own name is always the one on the line.", "Setting that weight down, even for a while, was a relief I had not expected."]}, {"k": "p", "s": ["My focus had shifted.", "I wanted to elect Henry Reyes President of the United States.", "That became my goal, and it was a considerably better use of my time than arguing endlessly over an election the FEC refused to recognize.", "I could keep looking backward at a decision I could not change, or I could look forward at a race that was still there to be won.", "It was not a difficult choice."]}, {"k": "p", "s": ["I began to understand that politics didn’t have to be about holding the highest office or having the most impressive title.", "Titles come and go, as I had recently learned in a rather painful way.", "What lasts is the work you do and the people you help along the way."]}, {"k": "p", "s": ["Sometimes the most meaningful thing you can do is help somebody else succeed.", "And that’s exactly what I intended to do."]}]}, {"n": "Four", "title": "He’s Moving In", "reader": null, "audio": null, "paras": [{"k": "p", "s": ["Henry Reyes won.", "Forty-eight to forty-three.", "He defeated Clara Powers and became President-elect of the United States.", "And I had managed his campaign."]}, {"k": "p", "s": ["Now, there’s something rather funny about that.", "I couldn’t even get the FEC to recognize my own Senate election, but I had helped elect the President of the United States.", "The same man who had been told his own victory did not count had just helped deliver a victory that very much did."]}, {"k": "p", "s": ["Washington certainly has a sense of humor.", "I have learned to appreciate it, even when the joke is on me.", "Perhaps especially then."]}, {"k": "p", "s": ["And the story didn’t end there.", "After Henry’s victory, I became his transition manager.", "The former Senate Majority Leader who had been denied his seat was now helping prepare the next presidential administration.", "There is a great deal of work involved in that, and I am grateful to be trusted with it.", "Not a bad career change, if you ask me."]}]}, {"n": "Five", "title": "In Pictures", "reader": "Rick Singer", "audio": null, "paras": [{"k": "p", "s": ["They say a picture is worth a thousand words.", "I have already written quite a few words in this book, so here are some pictures from the road that brought me here."]}, {"img": "media/books/good-news/senate1.jpg", "s": ["The stage for my Senate campaign in North Carolina.", "The sign said \"Glenn wins.\"", "As it turned out, I did.", "The Federal Election Commission simply never agreed."]}, {"img": "media/books/good-news/senate2.jpg", "s": ["Making my case to the voters of North Carolina, back when I still expected my name to be on the ballot.", "Not long after, FEC Chairman Leo Stone disqualified my campaign without explanation."]}, {"img": "media/books/good-news/senate3.jpg", "s": ["I have never been shy on a stage.", "People said plenty of things about me as Majority Leader, but nobody ever accused me of holding back."]}, {"img": "media/books/good-news/senate4.jpg", "s": ["Speaking to supporters during the Senate campaign.", "It was the citizens of North Carolina who later wrote my name in and handed me a victory I was never allowed to claim.", "I will always be grateful to them."]}, {"img": "media/books/good-news/reyes1.jpg", "s": ["Back on a stage, this time for someone else.", "As Henry Reyes’s campaign manager, I spent my days helping build the case for a man I believed in.", "His slogan was \"Believe in America,\" and I did."]}, {"img": "media/books/good-news/reyes2.jpg", "s": ["Campaigning for Henry Reyes.", "Henry held nearly ten campaign events across the country, and it was a privilege to stand behind the Reyes podium for the man who would become President-elect."]}, {"img": "media/books/good-news/debate.jpg", "s": ["Henry Reyes at the presidential debate against Clara Powers, with the words of the Declaration of Independence behind him.", "While Powers discussed a Marxist approach to the economy before more than 40 live viewers, Henry was relaxed and confident.", "A poll afterward found 50% of respondents favored his performance, compared with just 8% for Powers."]}, {"img": "media/books/good-news/wall.jpg", "s": ["Speaker of the House Richard Powers at the Western Wall in Jerusalem, wearing a kippah and his American and Israeli flag pin.", "For generations, the Jewish people have come to this wall to pray, holding on to their faith through exile and hardship, and their resilience is a lesson for anyone who has ever been counted out.", "Israel has been one of America’s truest friends, and Richard has never been shy about standing with Israel and the Jewish people.", "A man who came from a hovel in Slovenia to become Speaker of the House knows something about perseverance, and it is fitting to see him at a place that stands for exactly that."]}]}, {"n": "Six", "title": "Words That Kept Me Going", "reader": "Richard Powers", "audio": null, "paras": [{"k": "p", "s": ["I have always been a reader of other people’s wisdom.", "When things go wrong, I find it helps to remember that someone, somewhere, has already been through something like it and found the words to describe it.", "These are some of the lines that stayed with me, from the philosophers who came long before me and from the people I have worked beside."]}, {"k": "q", "s": ["\"Men are disturbed not by the things which happen, but by the opinions about the things.\""]}, {"k": "a", "s": ["— Epictetus"]}, {"k": "p", "s": ["This one hit close to home.", "My disqualification happened, and nothing I could say would change that.", "But how much it disturbed me was up to me.", "For a while I let it disturb me a great deal.", "I replayed it, I complained about it, and I let it sit at the center of everything.", "Epictetus would have told me that the decision itself was not the problem.", "My opinion of what it meant for my life was.", "Once I stopped believing that losing my seat meant losing everything, the disturbance began to fade."]}, {"k": "q", "s": ["\"What stands in the way becomes the way.\""]}, {"k": "a", "s": ["— Marcus Aurelius"]}, {"k": "p", "s": ["Marcus Aurelius ran an empire, so I suspect he knew a thing or two about obstacles.", "When the FEC denied me my seat, it stood squarely in my way.", "And yet, in a very real sense, that obstacle became the path.", "If I had kept my seat, I would not have been free to manage Henry’s campaign.", "The thing that blocked me was the very thing that pointed me somewhere better."]}, {"k": "q", "s": ["\"It is not because things are difficult that we do not dare; it is because we do not dare that they are difficult.\""]}, {"k": "a", "s": ["— Seneca"]}, {"k": "p", "s": ["There was a moment when I could have decided that politics was simply too hard, too unfair, and too unkind to bother with anymore.", "Seneca reminds me that the difficulty often grows in our own minds when we stop daring.", "Taking on a presidential campaign right after losing my own seat was a dare.", "It would have felt much harder if I had never tried."]}, {"k": "q", "s": ["\"The superior man is distressed by his want of ability. He is not distressed by men’s not knowing him.\""]}, {"k": "a", "s": ["— Confucius"]}, {"k": "p", "s": ["I have read this line more times than I can count.", "The FEC refused to recognize my victory.", "Confucius tells me that being unrecognized is not the thing worth worrying about.", "What is worth worrying about is whether I am capable and whether I am doing good work.", "Recognition is in other people’s hands.", "Ability is in mine.", "I chose to focus on the part I could control."]}, {"k": "q", "s": ["\"It is not the critic who counts; not the man who points out how the strong man stumbles, or where the doer of deeds could have done them better. The credit belongs to the man who is actually in the arena.\""]}, {"k": "a", "s": ["— Theodore Roosevelt"]}, {"k": "p", "s": ["As I said at the start of this book, I was publicly excoriated more times than I care to remember.", "Roosevelt understood that criticism is cheap and effort is not.", "I would much rather be the man in the arena, stumbling now and then, than the one in the stands explaining how he would have done it better.", "Every campaign I have been part of has been an arena, and I am proud to have been in it."]}, {"k": "q", "s": ["\"Whoso would be a man must be a nonconformist.\""]}, {"k": "a", "s": ["— Ralph Waldo Emerson"]}, {"k": "p", "s": ["Black, gay, and Republican.", "I have spent my life not fitting the mold people expected.", "Emerson saw nonconformity not as a flaw but as a requirement for being fully yourself.", "I did not set out to be different for its own sake.", "I simply refused to become someone else to make other people comfortable, and I would make the same choice again."]}, {"k": "q", "s": ["\"A journey of a thousand miles begins with a single step.\""]}, {"k": "a", "s": ["— Lao Tzu"]}, {"k": "p", "s": ["When I lost my seat, the road ahead looked very long and very unclear.", "My single step was saying yes to Henry Reyes.", "I did not know at the time that it would lead to the White House transition.", "I only knew it was the next step.", "Lao Tzu reminds me that you rarely see the whole journey at the start, and you do not need to."]}, {"k": "q", "s": ["\"A campaign is never about the man at the podium. It’s about every person who believed in him before anyone else did.\""]}, {"k": "a", "s": ["— Henry Reyes"]}, {"k": "p", "s": ["Henry has always been generous with credit, and this line is a good example.", "It is the kind of thing that makes people want to work for him.", "As his campaign manager, I saw firsthand how much the people around him mattered to him.", "He never treated the campaign as a one-man show, and that is exactly why so many of us were willing to give it everything we had."]}, {"k": "q", "s": ["\"Anyone can be counted out. The trick is refusing to stay counted.\""]}, {"k": "a", "s": ["— Richard Powers"]}, {"k": "p", "s": ["I like this one because it is short, blunt, and true.", "I was counted out more than once, first by my disqualification and then by the refusal to recognize my win.", "Richard’s point is that being counted out is not the same as being finished.", "The count is not final until you accept it, and I never did."]}, {"k": "q", "s": ["\"I lost the primary and gained a partner. Some losses come with a promotion attached.\""]}, {"k": "a", "s": ["— Rick Singer"]}, {"k": "p", "s": ["Rick knows something about losing gracefully.", "He challenged Henry in the Republican primary, lost, and then became his running mate.", "His story and mine rhyme in a way.", "We both lost something we wanted and ended up somewhere we never expected to be, on the same winning team.", "If anyone understands that a loss can turn into an opportunity, it is Rick Singer."]}, {"k": "p", "s": ["Looking at these quotes together, I notice that they all say the same thing in different ways.", "What happens to you matters less than what you do next.", "The philosophers said it centuries ago, and the people I worked beside said it again in their own words.", "I am grateful to all of them."]}]}, {"n": "Seven", "title": "And the Good News Is…", "reader": null, "audio": null, "paras": [{"k": "p", "s": ["Looking back, I don’t regret serving in the Senate.", "I don’t regret being a Republican, even when people expected otherwise because I’m Black and gay.", "And I certainly don’t regret standing by my convictions when doing so made me unpopular.", "Each of those choices cost me something at one time or another.", "Each of them was still worth making."]}, {"k": "p", "s": ["But I’ve learned something important.", "Your life doesn’t end when you lose an election.", "Your value doesn’t disappear when you lose a title.", "And sometimes, the best opportunities arrive just after you’ve convinced yourself that everything has gone terribly wrong.", "If I had stayed fixed on what was taken from me, I would have missed what was being offered to me.", "I am very glad I didn’t."]}, {"k": "p", "s": ["I’m still Glenn Bourbon.", "Still Black.", "Still gay.", "Still Republican.", "Still occasionally unpopular.", "None of that changed when I lost my seat, and none of it changed when I found my way into a new role.", "I am the same man I always was, just a little wiser about what really matters."]}, {"k": "p", "s": ["But I’m no longer spending my days worrying about a Senate seat that was taken from me.", "I’m helping Henry Reyes prepare to become President of the United States.", "And that’s a pretty wonderful place to be."]}, {"k": "p", "s": ["As for what comes next?", "Well, I haven’t the slightest idea.", "Maybe I’ll return to the Senate.", "Maybe I’ll end up somewhere in the White House.", "Maybe I’ll find an entirely different adventure.", "Or maybe Leo Stone will finally tell me why I was disqualified.", "Although I suspect the first three possibilities are considerably more likely."]}, {"k": "p", "s": ["Whatever happens, I’m looking forward to it.", "Because if there’s one thing I’ve learned, it’s that life has a funny way of working out.", "Not always in the way you planned, and not always on the schedule you would have chosen, but it does work out."]}, {"k": "e", "s": ["And the good news is..."]}, {"k": "e", "s": ["I may have lost my seat in the Senate, but I helped Henry Reyes win his seat in the Oval Office."]}, {"k": "e", "s": ["The End. For Now."]}]}]}];
+const BK_ICON = {
+  play: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+  prev: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2v14H6zM9.5 12L19 5.5v13z"/></svg>',
+  next: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 5h2v14h-2zM14.5 12L5 18.5v-13z"/></svg>',
+  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/><text x="12" y="15.5" font-size="7" text-anchor="middle" fill="currentColor" stroke="none" font-family="sans-serif">15</text></svg>',
+  fwd: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4h-4"/><text x="12" y="15.5" font-size="7" text-anchor="middle" fill="currentColor" stroke="none" font-family="sans-serif">15</text></svg>'
+};
+const bkChName = c => c.n ? `Chapter ${c.n}` : c.title;
+const bkChFull = c => c.n ? `Chapter ${c.n}: ${c.title}` : c.title;
+const bkReader = c => c.reader ? `Read by ${c.reader}` : "Narrator to be announced";
+const WPM = 155;
+function bkLines(ch) {          // flatten a chapter into timed lines
+  const out = []; let t = 0;
+  ch.paras.forEach((p, pi) => p.s.forEach(s => {
+    const words = s.split(/\s+/).length, dur = words * 60 / WPM + 0.5;
+    out.push({ pi, text: s, start: t, end: t + dur }); t += dur;
+  }));
+  return { lines: out, total: t };
+}
+const bkClock = s => { s = Math.max(0, Math.floor(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+const bkMins = ch => `${Math.max(1, Math.round(bkLines(ch).total / 60))} min`;
+
+const BK = { book: null, ci: 0, lines: [], total: 0, t: 0, playing: false, li: -1, speed: 1, timer: null, last: 0, audio: new Audio() };
+BK.audio.preload = "metadata";
+
+function viewBooks() {
+  const b = BOOKS[0];
+  if (!b) return `<div class="page-head"><h1>Books</h1></div><div class="empty-state"><h2>No books yet</h2><p>Audiobooks will show up here as soon as they're added.</p></div>`;
+  const playing = BK.book && BK.book.id === b.id;
+  return `<section class="bk-hero">
+      <img src="${esc(b.cover)}" alt="Cover of ${esc(b.title)}">
+      <div class="bk-meta"><div class="bk-kind">Audiobook${b.badge ? ` · ${esc(b.badge)}` : ""}</div>
+        <h1>${esc(b.title)}</h1><p class="bk-sub">${esc(b.subtitle)}</p>
+        <p class="bk-by"><b>${esc(b.author)}</b> · ${esc(b.authorRole)} · ${b.chapters.length} parts</p>
+        <p class="bk-desc">${esc(b.description)}</p></div>
+    </section>
+    <div class="bk-actions">
+      <button type="button" class="bk-play" data-bk-play="${esc(b.id)}" aria-label="Play">${playing && BK.playing ? BK_ICON.pause : BK_ICON.play}</button>
+      <button type="button" class="bk-ghost" data-bk-open="${esc(b.id)}">Read along</button>
+    </div>
+    <div class="bk-list">${b.chapters.map((c, i) => `<div class="bk-row${playing && BK.ci === i ? " on" : ""}" data-bk-ch="${i}" data-bk-book="${esc(b.id)}" role="button" tabindex="0">
+        <span class="n">${i === 0 && !c.n ? "–" : i}</span>
+        <div><div class="t">${esc(bkChFull(c))}</div><div class="r">${esc(bkReader(c))}</div></div>
+        <span class="s">${c.audio ? bkMins(c) : "Read-along · " + bkMins(c)}</span></div>`).join("")}</div>
+    ${BOOKS.length > 1 ? `<h2 class="bk-shelf-h">More books</h2><div class="bk-shelf">${BOOKS.slice(1).map(o => `<button type="button" class="bk-card" data-bk-open="${esc(o.id)}"><img src="${esc(o.cover)}" alt=""><b>${esc(o.title)}</b><span>${esc(o.author)}</span></button>`).join("")}</div>` : ""}`;
+}
+
+function bkLoad(book, ci, autoplay) {
+  bkStop();
+  BK.book = book; BK.ci = ci; BK.t = 0; BK.li = -1;
+  const ch = book.chapters[ci];
+  const est = bkLines(ch); BK.lines = est.lines; BK.total = est.total;
+  if (ch.audio) {
+    BK.audio.src = ch.audio;
+    BK.audio.onloadedmetadata = () => {   // stretch the estimate to the real recording
+      const k = BK.audio.duration / BK.total; BK.lines.forEach(l => { l.start *= k; l.end *= k; }); BK.total = BK.audio.duration; bkPaint(true);
+    };
+  } else { BK.audio.removeAttribute("src"); }
+  bkRender(); if (autoplay) bkPlay(); else bkPaint(true);
+}
+function bkPlay() {
+  if (!BK.book) return;
+  BK.playing = true;
+  const ch = BK.book.chapters[BK.ci];
+  if (ch.audio) { BK.audio.playbackRate = BK.speed; BK.audio.currentTime = BK.t; BK.audio.play().catch(() => {}); }
+  BK.last = performance.now();
+  clearInterval(BK.timer); BK.timer = setInterval(bkTick, 200);
+  bkPaint();
+}
+function bkPause() { BK.playing = false; BK.audio.pause(); clearInterval(BK.timer); bkPaint(); }
+function bkStop() { BK.playing = false; BK.audio.pause(); clearInterval(BK.timer); }
+function bkTick() {
+  const ch = BK.book.chapters[BK.ci], now = performance.now();
+  if (ch.audio) BK.t = BK.audio.currentTime; else BK.t += (now - BK.last) / 1000 * BK.speed;
+  BK.last = now;
+  if (BK.t >= BK.total - 0.05 || (ch.audio && BK.audio.ended)) {
+    if (BK.ci < BK.book.chapters.length - 1) { bkLoad(BK.book, BK.ci + 1, true); return; }
+    BK.t = BK.total; bkPause(); return;
+  }
+  bkPaint();
+}
+function bkSeek(t) {
+  BK.t = Math.max(0, Math.min(BK.total, t));
+  if (BK.book.chapters[BK.ci].audio) BK.audio.currentTime = BK.t;
+  BK.last = performance.now(); bkPaint(true);
+}
+function bkRender() {          // build the lyrics for the loaded chapter
+  const b = BK.book, ch = b.chapters[BK.ci];
+  $("bkNow").style.setProperty("--bk-cover", `url("${b.cover}")`);
+  $("bkNowTitle").textContent = b.title;
+  let li = 0;
+  $("bkLyrics").innerHTML = `<div class="ly-wrap"><h2>${esc(bkChName(ch))} · ${esc(bkReader(ch))}</h2>${ch.n ? `<h3>${esc(ch.title)}</h3>` : ""}${ch.paras.map(p =>
+    `<div class="ly-p ${p.k || ""}">${p.img ? `<img class="ly-img" src="${esc(p.img)}" alt="">` : ""}${p.s.map(s => `<span class="ly" data-li="${li++}">${esc(s)}</span>`).join(" ")}</div>`).join("")}</div>`;
+  $("bkLyrics").scrollTop = 0;
+  $("bkNote").textContent = ch.audio ? "" : `${bkReader(ch)} · Recording coming soon, so the words play along at narration pace`;
+  $("bkPrev").disabled = BK.ci === 0; $("bkNext").disabled = BK.ci === b.chapters.length - 1;
+  $("bkMiniImg").src = b.cover;
+}
+function bkPaint(jump) {
+  if (!BK.book) return;
+  const ch = BK.book.chapters[BK.ci];
+  let li = BK.lines.findIndex(l => BK.t < l.end); if (li < 0) li = BK.lines.length - 1;
+  if (li !== BK.li || jump) {
+    BK.li = li;
+    $("bkLyrics").querySelectorAll(".ly").forEach((el, i) => { el.classList.toggle("on", i === li); el.classList.toggle("past", i < li); });
+    const cur = $("bkLyrics").querySelector(`.ly[data-li="${li}"]`);
+    if (cur && !$("bkNow").hidden) { const box = $("bkLyrics"); box.scrollTop = cur.offsetTop - box.clientHeight * 0.32; }
+  }
+  const pct = BK.total ? BK.t / BK.total : 0;
+  $("bkSeek").value = Math.round(pct * 1000);
+  $("bkCur").textContent = bkClock(BK.t); $("bkLeft").textContent = "-" + bkClock(BK.total - BK.t);
+  $("bkPlayBtn").innerHTML = BK.playing ? BK_ICON.pause : BK_ICON.play;
+  $("bkMiniPlay").innerHTML = BK.playing ? BK_ICON.pause : BK_ICON.play;
+  $("bkMiniBar").style.width = (pct * 100) + "%";
+  $("bkMiniT").textContent = `${bkChFull(ch)}`;
+  $("bkMiniS").textContent = `${BK.book.title} · ${bkReader(ch)}`;
+  $("bkMini").hidden = !$("bkNow").hidden;
+  $("bkSpeed").textContent = BK.speed + "×";
+  if (page === "books" && !jump) document.querySelectorAll("[data-bk-play] ").forEach(b => { b.innerHTML = BK.playing ? BK_ICON.pause : BK_ICON.play; });
+}
+function bkOpenNow() { $("bkNow").hidden = false; $("bkMini").hidden = true; document.body.style.overflow = "hidden"; BK.li = -1; bkPaint(true); }
+function bkCloseNow() { $("bkNow").hidden = true; document.body.style.overflow = ""; bkPaint(); if (page === "books") { const y = window.scrollY; render(); window.scrollTo(0, y); } }
+const bkFind = id => BOOKS.find(b => b.id === id);
+
+$("pages").addEventListener("click", e => {
+  const play = e.target.closest("[data-bk-play]"), open = e.target.closest("[data-bk-open]"), row = e.target.closest("[data-bk-ch]");
+  if (play) {
+    const b = bkFind(play.dataset.bkPlay);
+    if (BK.book && BK.book.id === b.id) { BK.playing ? bkPause() : bkPlay(); render(); return; }
+    bkLoad(b, 0, true); bkOpenNow(); return;
+  }
+  if (open) { const b = bkFind(open.dataset.bkOpen); if (!BK.book || BK.book.id !== b.id) bkLoad(b, 0, false); bkOpenNow(); return; }
+  if (row) { const b = bkFind(row.dataset.bkBook); bkLoad(b, +row.dataset.bkCh, true); bkOpenNow(); }
+});
+$("pages").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.closest("[data-bk-ch]")) e.target.click(); });
+$("bkClose").addEventListener("click", bkCloseNow);
+$("bkPlayBtn").addEventListener("click", () => BK.playing ? bkPause() : bkPlay());
+$("bkPrev").addEventListener("click", () => { if (BK.t > 4) bkSeek(0); else if (BK.ci > 0) bkLoad(BK.book, BK.ci - 1, BK.playing); });
+$("bkNext").addEventListener("click", () => { if (BK.ci < BK.book.chapters.length - 1) bkLoad(BK.book, BK.ci + 1, BK.playing); });
+$("bkBack").addEventListener("click", () => bkSeek(BK.t - 15));
+$("bkFwd").addEventListener("click", () => bkSeek(BK.t + 15));
+$("bkSpeed").addEventListener("click", () => {
+  const steps = [1, 1.25, 1.5, 2, 0.75]; BK.speed = steps[(steps.indexOf(BK.speed) + 1) % steps.length];
+  BK.audio.playbackRate = BK.speed; bkPaint();
+});
+$("bkSeek").addEventListener("input", e => bkSeek(e.target.value / 1000 * BK.total));
+$("bkLyrics").addEventListener("click", e => { const l = e.target.closest(".ly"); if (l) { bkSeek(BK.lines[+l.dataset.li].start); if (!BK.playing) bkPlay(); } });
+$("bkMini").addEventListener("click", e => {
+  if (e.target.closest("#bkMiniPlay")) { BK.playing ? bkPause() : bkPlay(); return; }
+  bkOpenNow();
+});
+document.addEventListener("keydown", e => {
+  if ($("bkNow").hidden) return;
+  if (e.key === "Escape") bkCloseNow();
+  else if (e.key === " ") { e.preventDefault(); BK.playing ? bkPause() : bkPlay(); }
+  else if (e.key === "ArrowRight") bkSeek(BK.t + 15);
+  else if (e.key === "ArrowLeft") bkSeek(BK.t - 15);
+});
 </script>
 
 <script src="install.js" data-name="GNS+" data-icon="apple-touch-icon.png" data-accent="#b5161f" data-theme="dark" data-tagline="Watch GNS+ from your Home Screen" defer></script>
