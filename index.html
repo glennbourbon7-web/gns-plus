@@ -38,7 +38,7 @@
   .bk-mini img { width: 42px; height: 42px; object-fit: cover; border-radius: 4px; }
   .bk-mini .mt { flex: 1; min-width: 0; }
   .bk-mini .mt b { display: block; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .bk-mini .mt span { font-size: 12.5px; color: #d7cfcc; }
+  .bk-mini .mt span { display: block; font-size: 12.5px; color: #d7cfcc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .bk-mini button { background: none; border: 0; color: var(--ink); width: 38px; height: 38px; display: grid; place-items: center; cursor: pointer; }
   .bk-mini button svg { width: 24px; height: 24px; }
   .bk-mini .bar { position: absolute; left: 12px; right: 12px; bottom: 4px; height: 2px; background: rgba(255,255,255,.25); border-radius: 2px; overflow: hidden; }
@@ -1031,7 +1031,7 @@
   </header>
 
   <main id="pages"></main>
-  <div class="bk-mini" id="bkMini" hidden><img id="bkMiniImg" alt=""><div class="mt"><b id="bkMiniT"></b><span id="bkMiniS"></span></div><button type="button" id="bkMiniPlay" aria-label="Play or pause"></button><div class="bar"><i id="bkMiniBar"></i></div></div>
+  <div class="bk-mini" id="bkMini" hidden><img id="bkMiniImg" alt=""><div class="mt"><b id="bkMiniT"></b><span id="bkMiniS"></span></div><button type="button" id="bkMiniPlay" aria-label="Play or pause"></button><button type="button" id="bkMiniClose" aria-label="Stop and close player"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div class="bar"><i id="bkMiniBar"></i></div></div>
   <div class="bk-soon" id="bkSoon" hidden role="dialog" aria-modal="true" aria-label="Coming soon"><div class="bk-soon-card"><button type="button" class="bk-soon-x" data-bk-soon-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div id="bkSoonBody" class="bk-soon-body"></div></div></div>
   <section class="bk-now" id="bkNow" hidden aria-label="Now playing">
     <div class="bk-top"><button type="button" id="bkClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="tt"><small>Playing from Books</small><b id="bkNowTitle"></b></div><button type="button" id="bkAmbBtn" aria-label="Background music" aria-pressed="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path transform="translate(-0.6 0.7)" d="M10 4.5l9-2v12.2a2.8 2.8 0 1 1-2-2.7V6.6l-5 1.1v9.5a2.8 2.8 0 1 1-2-2.7z"/></svg></button></div>
@@ -3477,6 +3477,7 @@ $("bkSeek").addEventListener("input", e => bkSeek(e.target.value / 1000 * BK.tot
 $("bkLyrics").addEventListener("click", e => { const l = e.target.closest(".ly"); if (l) { bkSeek(BK.lines[+l.dataset.li].start); if (!BK.playing) bkPlay(); } });
 $("bkMini").addEventListener("click", e => {
   if (e.target.closest("#bkMiniPlay")) { BK.playing ? bkPause() : bkPlay(); return; }
+  if (e.target.closest("#bkMiniClose")) { bkStop(); BK.book = null; $("bkMini").hidden = true; if (page === "books") render(); return; }
   bkOpenNow();
 });
 document.addEventListener("keydown", e => {
